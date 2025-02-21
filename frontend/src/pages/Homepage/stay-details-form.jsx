@@ -48,6 +48,9 @@ const formSchema = z.object({
 
 const StayDetailsForm = () => {
   const navigate = useNavigate();
+
+  const today = new Date();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -185,9 +188,10 @@ const StayDetailsForm = () => {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
+                      //   disabled={(date) =>
+                      //     date > new Date() || date < new Date("1900-01-01")
+                      //   }
+                      disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
                       initialFocus
                     />
                   </PopoverContent>
@@ -227,9 +231,10 @@ const StayDetailsForm = () => {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
+                      disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
+                      //   disabled={(date) =>
+                      //     date > new Date() || date < new Date("1900-01-01")
+                      //   }
                       initialFocus
                     />
                   </PopoverContent>
