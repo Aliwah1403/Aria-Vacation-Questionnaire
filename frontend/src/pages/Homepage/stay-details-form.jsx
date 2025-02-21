@@ -31,7 +31,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-const resorts = [{ label: "Balqis", value: "balqis" }];
+const resorts = [{ label: "Balqis Residence", value: "balqis residence" }];
 
 const formSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
