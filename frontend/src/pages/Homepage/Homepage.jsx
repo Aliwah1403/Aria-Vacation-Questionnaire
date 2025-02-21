@@ -4,7 +4,7 @@ import AriaLogo from "@/assets/AriaLogo.png";
 const Homepage = () => {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="w-full max-w-xl p-6 space-y-8">
+      <div className="w-full max-w-xl md:p-6  space-y-8">
         <img src={AriaLogo} className="mx-auto" width={300} height={120} />
 
         <div className="space-y-2 text-center">
