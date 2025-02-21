@@ -1,9 +1,8 @@
-import React from "react";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
@@ -28,18 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
-
-const resorts = [{ label: "Balqis Residence", value: "balqis residence" }];
+import { CalendarIcon } from "lucide-react";
 
 const formSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
@@ -57,8 +45,6 @@ const formSchema = z.object({
 const StayDetailsForm = () => {
   const navigate = useNavigate();
 
-  const today = new Date();
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,11 +55,23 @@ const StayDetailsForm = () => {
     },
   });
 
+  // Watch the check-in date to update check-out calendar
+  const checkInDate = form.watch("checkIn");
+
+  const handleCheckInSelect = (date) => {
+    form.setValue("checkIn", date);
+    // If check-out date is before check-in date, reset it
+    const checkOutDate = form.getValues("checkOut");
+    if (checkOutDate && checkOutDate < date) {
+      form.setValue("checkOut", null);
+    }
+  };
+
   function onSubmit(values) {
-    // Here you can handle the form data before navigation
     console.log(values);
     navigate("/feedback");
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -111,7 +109,6 @@ const StayDetailsForm = () => {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Resort</FormLabel>
-              {/* Select Dropdown */}
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -119,70 +116,17 @@ const StayDetailsForm = () => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Resorts</SelectLabel>
-                    <SelectItem value="balqis resort">Balqis Resort</SelectItem>
-                  </SelectGroup>
+                  <SelectItem value="balqis residence">
+                    Balqis Residence
+                  </SelectItem>
                 </SelectContent>
               </Select>
-
-              {/* Combobox */}
-              {/* <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? resorts.find((resort) => resort.value === field.value)
-                            ?.label
-                        : "Select resort"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
-                  <Command>
-                    <CommandInput placeholder="Search resort..." />
-                    <CommandList>
-                      <CommandEmpty>No resort found.</CommandEmpty>
-                      <CommandGroup>
-                        {resorts.map((resort) => (
-                          <CommandItem
-                            value={resort.label}
-                            key={resort.value}
-                            onSelect={() => {
-                              form.setValue("resort", resort.value);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                resort.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {resort.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover> */}
-
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="checkIn"
@@ -208,14 +152,15 @@ const StayDetailsForm = () => {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto p-0"
+                    align="start"
+                    side={window.innerWidth < 640 && "bottom"}
+                  >
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
-                      //   disabled={(date) =>
-                      //     date > new Date() || date < new Date("1900-01-01")
-                      //   }
+                      onSelect={handleCheckInSelect}
                       disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
                       initialFocus
                     />
@@ -251,15 +196,22 @@ const StayDetailsForm = () => {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto p-0"
+                    align="start"
+                    side={window.innerWidth < 640 && "bottom"}
+                  >
                     <Calendar
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
-                      //   disabled={(date) =>
-                      //     date > new Date() || date < new Date("1900-01-01")
-                      //   }
+                      disabled={[
+                        { dayOfWeek: [0, 1, 2, 3, 4, 5] },
+                        ...(checkInDate
+                          ? [{ before: addDays(checkInDate, 7) }]
+                          : []),
+                      ]}
+                      defaultMonth={checkInDate}
                       initialFocus
                     />
                   </PopoverContent>
