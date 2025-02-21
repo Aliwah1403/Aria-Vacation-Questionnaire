@@ -14,6 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -30,6 +37,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 
 const resorts = [{ label: "Balqis Residence", value: "balqis residence" }];
 
@@ -103,7 +111,23 @@ const StayDetailsForm = () => {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Resort</FormLabel>
-              <Popover>
+              {/* Select Dropdown */}
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Resort" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Resorts</SelectLabel>
+                    <SelectItem value="balqis resort">Balqis Resort</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              {/* Combobox */}
+              {/* <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
@@ -151,7 +175,8 @@ const StayDetailsForm = () => {
                     </CommandList>
                   </Command>
                 </PopoverContent>
-              </Popover>
+              </Popover> */}
+
               <FormMessage />
             </FormItem>
           )}
