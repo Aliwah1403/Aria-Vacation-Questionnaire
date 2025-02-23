@@ -65,11 +65,11 @@ const questions = [
 ];
 
 const emojiOptions = [
-  { emoji: "😔", label: "Very Dissatisfied" },
-  { emoji: "🙁", label: "Somewhat Dissatisfied" },
-  { emoji: "😐", label: "Neither Satisfied nor Dissatisfied" },
-  { emoji: "🙂", label: "Somewhat Satisfied" },
   { emoji: "😄", label: "Satisfied" },
+  { emoji: "🙂", label: "Somewhat Satisfied" },
+  { emoji: "😐", label: "Neither Satisfied nor Dissatisfied" },
+  { emoji: "🙁", label: "Somewhat Dissatisfied" },
+  { emoji: "😔", label: "Very Dissatisfied" },
 ];
 
 const Feedback = () => {
