@@ -105,7 +105,7 @@ const Feedback = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <div className="mb-12">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-600">
@@ -130,12 +130,12 @@ const Feedback = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="mb-12 text-left"
+            className="mb-6 sm:mb-12 text-left"
           >
-            <span className="text-gray-500 mb-2 block">
+            <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
               Question {currentStep}
             </span>
-            <h2 className="text-2xl font-medium mb-8">
+            <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
               {questions[currentStep - 1].text}
             </h2>
 
@@ -156,14 +156,14 @@ const Feedback = () => {
                       onClick={() => handleAnswer(option.label)}
                     >
                       {isSelected && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#4ABEC6] rounded-full flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
+                        <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-[#4ABEC6] rounded-full flex items-center justify-center">
+                          <Check className="size-3 sm:w-4 sm:h-4 text-white" />
                         </div>
                       )}
                       <span className="text-2xl sm:text-3xl sm:mb-2 mr-3 sm:mr-0">
                         {option.emoji}
                       </span>
-                      <span className="text-xs sm:text-sm text-gray-600">
+                      <span className="text-xs sm:text-sm text-gray-600 flex-1 sm:flex-none text-left sm:text-center">
                         {option.label}
                       </span>
                     </motion.button>
@@ -178,7 +178,7 @@ const Feedback = () => {
                   maxLength={maxLength}
                   onChange={handleChange}
                   aria-describedby={`${id}-description`}
-                  className="min-h-[200px] [resize:none]"
+                  className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base p-3 sm:p-4 [resize:none]"
                   placeholder="Share your thoughts with us... "
                 />
                 <p
@@ -202,20 +202,20 @@ const Feedback = () => {
                 onChange={(e) => handleAnswer(e.target.value)}
               /> */}
 
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-3 sm:gap-4">
           <Button
-            size="lg"
+            // size="lg"
             variant="outline"
             onClick={handlePrevious}
-            className="cursor-pointer px-6 py-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+            className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-200 hover:border-gray-300 transition-colors min-w-[100px] sm:min-w-[120px]"
             disabled={currentStep === 1}
           >
             Previous
           </Button>
           <Button
-            size="lg"
+            // size="lg"
             onClick={handleNext}
-            className="cursor-pointer px-6 py-2 rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors"
+            className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
             disabled={currentStep === questions.length}
           >
             {currentStep === questions.length ? "Submit" : "Continue"}
