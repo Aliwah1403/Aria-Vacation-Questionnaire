@@ -140,13 +140,13 @@ const Feedback = () => {
             </h2>
 
             {questions[currentStep - 1].type === "emoji" ? (
-              <div className="flex flex-col sm:grid sm:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-5 sm:gap-4">
                 {emojiOptions.map((option, index) => {
                   const isSelected = answers[currentStep] === option.label;
                   return (
                     <motion.button
                       key={index}
-                      className={`relative flex flex-col items-center p-4 rounded-lg mb-2 sm:mb-0 ${
+                      className={`relative flex flex-row sm:flex-col items-center p-2 sm:p-4 rounded-lg ${
                         isSelected
                           ? "bg-[#F0FBFA] border-2 border-[#4ABEC6]"
                           : "bg-gray-50 hover:bg-gray-100"
@@ -160,8 +160,10 @@ const Feedback = () => {
                           <Check className="w-4 h-4 text-white" />
                         </div>
                       )}
-                      <span className="text-3xl mb-2">{option.emoji}</span>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-2xl sm:text-3xl sm:mb-2 mr-3 sm:mr-0">
+                        {option.emoji}
+                      </span>
+                      <span className="text-xs sm:text-sm text-gray-600">
                         {option.label}
                       </span>
                     </motion.button>
