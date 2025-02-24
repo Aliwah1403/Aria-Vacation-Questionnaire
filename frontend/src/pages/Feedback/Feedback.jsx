@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { useCharacterLimit } from "@/hooks/use-character-limit";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router";
 
 const questions = [
   {
@@ -73,6 +74,8 @@ const emojiOptions = [
 ];
 
 const Feedback = () => {
+  const navigate = useNavigate();
+
   // Stepper
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState({});
@@ -91,6 +94,30 @@ const Feedback = () => {
 
   const handleAnswer = (answer) => {
     setAnswers({ ...answers, [currentStep]: answer });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // Collect all answers
+      const formattedAnswers = questions.map((question) => ({
+        questionId: question.id,
+        questionText: question.text,
+        answer: answers[question.id] || "",
+      }));
+
+      // Log the answers to console
+      console.log("Feedback Answers:", formattedAnswers);
+
+      // Simulate an API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Navigate to success page
+      navigate("/success");
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      // Here you could add error handling UI
+      alert("There was an error submitting your feedback. Please try again.");
+    }
   };
 
   //Textarea character limit
@@ -176,7 +203,10 @@ const Feedback = () => {
                   id={id}
                   value={value}
                   maxLength={maxLength}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    handleAnswer(e.target.value);
+                  }}
                   aria-describedby={`${id}-description`}
                   className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base p-3 sm:p-4 [resize:none]"
                   placeholder="Share your thoughts with us... "
@@ -212,14 +242,23 @@ const Feedback = () => {
           >
             Previous
           </Button>
-          <Button
-            // size="lg"
-            onClick={handleNext}
-            className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
-            disabled={currentStep === questions.length}
-          >
-            {currentStep === questions.length ? "Submit" : "Continue"}
-          </Button>
+          {currentStep === questions.length ? (
+            <Button
+              size="default"
+              onClick={handleSubmit}
+              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
+            >
+              Submit
+            </Button>
+          ) : (
+            <Button
+              size="default"
+              onClick={handleNext}
+              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
+            >
+              Continue
+            </Button>
+          )}
         </div>
       </div>
     </div>
