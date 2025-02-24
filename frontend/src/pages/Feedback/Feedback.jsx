@@ -6,6 +6,7 @@ import { useCharacterLimit } from "@/hooks/use-character-limit";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router";
+import { LoadingButton } from "@/components/ui/loading-button";
 
 const questions = [
   {
@@ -96,8 +97,12 @@ const Feedback = () => {
     setAnswers({ ...answers, [currentStep]: answer });
   };
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async () => {
     try {
+      setLoading(true);
+
       // Collect all answers
       const formattedAnswers = questions.map((question) => ({
         questionId: question.id,
@@ -110,13 +115,14 @@ const Feedback = () => {
 
       // Simulate an API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Navigate to success page
-      navigate("/success");
     } catch (error) {
       console.error("Error submitting feedback:", error);
       // Here you could add error handling UI
       alert("There was an error submitting your feedback. Please try again.");
+    } finally {
+      setLoading(false);
+      // Navigate to success page
+      navigate("/success");
     }
   };
 
@@ -243,13 +249,14 @@ const Feedback = () => {
             Previous
           </Button>
           {currentStep === questions.length ? (
-            <Button
+            <LoadingButton
+              loading={loading}
               size="default"
               onClick={handleSubmit}
               className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
               Submit
-            </Button>
+            </LoadingButton>
           ) : (
             <Button
               size="default"
