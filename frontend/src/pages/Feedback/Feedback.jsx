@@ -67,15 +67,26 @@ const questions = [
 ];
 
 const emojiOptions = [
-  { emoji: "😄", label: "Satisfied" },
-  { emoji: "🙂", label: "Somewhat Satisfied" },
-  { emoji: "😐", label: "Neither Satisfied nor Dissatisfied" },
-  { emoji: "🙁", label: "Somewhat Dissatisfied" },
-  { emoji: "😔", label: "Very Dissatisfied" },
+  { emoji: "1f603", label: "Satisfied" },
+  { emoji: "1f642", label: "Somewhat Satisfied" },
+  { emoji: "1f610", label: "Neither Satisfied nor Dissatisfied" },
+  { emoji: "1f641", label: "Somewhat Dissatisfied" },
+  { emoji: "1f614", label: "Very Dissatisfied" },
 ];
 
 const Feedback = () => {
   const navigate = useNavigate();
+
+  // Emojis
+  const renderEmoji = (unified) => {
+    return (
+      <img
+        src={`https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/${unified}.png`}
+        alt=""
+        className="w-8 h-8"
+      />
+    );
+  };
 
   // Stepper
   const [currentStep, setCurrentStep] = useState(1);
@@ -194,7 +205,7 @@ const Feedback = () => {
                         </div>
                       )}
                       <span className="text-2xl sm:text-3xl sm:mb-2 mr-3 sm:mr-0">
-                        {option.emoji}
+                        {renderEmoji(option.emoji)}
                       </span>
                       <span className="text-xs sm:text-sm text-gray-600 flex-1 sm:flex-none text-left sm:text-center">
                         {option.label}
