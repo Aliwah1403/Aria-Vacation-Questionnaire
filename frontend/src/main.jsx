@@ -7,6 +7,7 @@ import "./index.css";
 import App from "./App.jsx";
 import Homepage from "./pages/Homepage/Homepage.jsx";
 import Feedback from "./pages/Feedback/Feedback.jsx";
+import Success from "./pages/Success/Success";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/feedback",
     element: <Feedback />,
+  },
+  {
+    path: "/success",
+    element: <Success />,
   },
 ]);
 
