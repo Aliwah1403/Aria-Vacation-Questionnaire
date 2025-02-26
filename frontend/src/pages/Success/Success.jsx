@@ -6,7 +6,7 @@ const Success = () => {
   // Function to open WhatsApp chat
   const openWhatsApp = () => {
     // Replace with your actual WhatsApp number
-    const phoneNumber = "1234567890";
+    const phoneNumber = "97145420299";
     const whatsappUrl = `https://wa.me/${phoneNumber}`;
     window.open(whatsappUrl, "_blank");
   };
@@ -45,7 +45,7 @@ const Success = () => {
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-600">
                 <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span className="text-sm sm:text-base">+971 4542 0202</span>
+                <span className="text-sm sm:text-base">+971 4 542 0299</span>
               </div>
               <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-600">
                 <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
