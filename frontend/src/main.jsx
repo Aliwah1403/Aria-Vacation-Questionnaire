@@ -9,8 +9,18 @@ import Homepage from "./pages/Admin-Side/Homepage/Homepage";
 import Feedback from "./pages/Member-Side/Feedback/Feedback";
 import Success from "./pages/Member-Side/Success/Success";
 import AdminDashboard from "./pages/Admin-Side/AdminPanel";
+import AdminLayout from "./layouts/AdminLayout";
 
 const router = createBrowserRouter([
+  {
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "/admin/dashboard",
+        element: <AdminDashboard />,
+      },
+    ],
+  },
   {
     path: "/",
     element: <Homepage />,
@@ -22,10 +32,6 @@ const router = createBrowserRouter([
   {
     path: "/success",
     element: <Success />,
-  },
-  {
-    path: "/admin/dashboard",
-    element: <AdminDashboard />,
   },
 ]);
 
