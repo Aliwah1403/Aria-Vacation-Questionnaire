@@ -8,6 +8,7 @@ import App from "./App.jsx";
 import Homepage from "./pages/Admin-Side/Homepage/Homepage";
 import Feedback from "./pages/Member-Side/Feedback/Feedback";
 import Success from "./pages/Member-Side/Success/Success";
+import AdminDashboard from "./pages/Admin-Side/AdminPanel";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/success",
     element: <Success />,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
   },
 ]);
 
