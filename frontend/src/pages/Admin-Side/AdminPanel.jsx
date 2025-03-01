@@ -15,7 +15,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -23,9 +23,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminPageHeader from "@/components/admin-page-header";
 
 export default function AdminDashboard() {
   return (
@@ -49,26 +50,18 @@ export default function AdminDashboard() {
       </div> */}
 
       {/* Project Header */}
-      <div className="bg-background px-4 py-6 md:px-6">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Stay Experience Survey
-            </h1>
-            <p className="text-muted-foreground">
-              Manage and send questionnaires to gather feedback about members'
-              resort experience.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+      <AdminPageHeader
+        header="Stay Experience Survey"
+        description="  Manage and send questionnaires to gather feedback about members'
+              resort experience."
+        action={
+          <>
             <Button variant="outline">Preview Form</Button>
             <Button variant="outline">Edit Template</Button>
             <Button>Send to Members</Button>
-          </div>
-        </div>
-      </div>
-
-      <Separator />
+          </>
+        }
+      />
 
       {/* Content Area */}
       <div className="p-4 md:p-6">
