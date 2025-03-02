@@ -8,7 +8,7 @@ import App from "./App.jsx";
 import Homepage from "./pages/Admin-Side/Homepage/Homepage";
 import Feedback from "./pages/Member-Side/Feedback/Feedback";
 import Success from "./pages/Member-Side/Success/Success";
-import AdminDashboard from "./pages/Admin-Side/AdminPanel";
+import AdminDashboard from "./pages/Admin-Side/Dashboard/AdminPanel";
 import AdminLayout from "./layouts/AdminLayout";
 
 const router = createBrowserRouter([
