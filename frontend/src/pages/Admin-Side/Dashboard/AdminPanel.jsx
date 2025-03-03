@@ -30,104 +30,8 @@ import AdminPageHeader from "@/components/admin-page-header";
 import { ResponsesTable } from "./admin-panel-table";
 import { columns } from "./columns";
 import { DashboardDatePicker } from "@/components/dashboard-date-picker";
-const data = [
-  {
-    id: "1",
-    memberName: "John Smith",
-    stayDate: "2024-02-25",
-    submittedAt: "2024-03-01",
-    rating: 5,
-    status: "completed",
-  },
-  {
-    id: "2",
-    memberName: "Sarah Johnson",
-    stayDate: "2024-02-24",
-    submittedAt: "2024-02-28",
-    rating: 4,
-    status: "completed",
-  },
-  {
-    id: "3",
-    memberName: "Michael Chen",
-    stayDate: "2024-02-23",
-    submittedAt: "2024-02-27",
-    rating: 5,
-    status: "completed",
-  },
-  {
-    id: "4",
-    memberName: "Emma Wilson",
-    stayDate: "2024-02-22",
-    submittedAt: "2024-02-26",
-    rating: 3,
-    status: "completed",
-  },
-  {
-    id: "5",
-    memberName: "James Rodriguez",
-    stayDate: "2024-02-21",
-    submittedAt: "2024-02-25",
-    rating: 4,
-    status: "completed",
-  },
-  {
-    id: "6",
-    memberName: "Maria Garcia",
-    stayDate: "2024-02-20",
-    submittedAt: "2024-02-24",
-    rating: 5,
-    status: "completed",
-  },
-  {
-    id: "7",
-    memberName: "David Kim",
-    stayDate: "2024-02-19",
-    submittedAt: "2024-02-23",
-    rating: 4,
-    status: "completed",
-  },
-  {
-    id: "8",
-    memberName: "Lisa Brown",
-    stayDate: "2024-02-18",
-    submittedAt: "2024-02-22",
-    rating: 5,
-    status: "completed",
-  },
-  {
-    id: "9",
-    memberName: "Robert Taylor",
-    stayDate: "2024-02-17",
-    submittedAt: "2024-02-21",
-    rating: 2,
-    status: "completed",
-  },
-  {
-    id: "10",
-    memberName: "Amanda Martinez",
-    stayDate: "2024-02-16",
-    submittedAt: "2024-02-20",
-    rating: 4,
-    status: "completed",
-  },
-  {
-    id: "11",
-    memberName: "Thomas Anderson",
-    stayDate: "2024-02-15",
-    submittedAt: "2024-02-19",
-    rating: 5,
-    status: "completed",
-  },
-  {
-    id: "12",
-    memberName: "Sophie Williams",
-    stayDate: "2024-02-14",
-    submittedAt: "2024-02-18",
-    rating: 3,
-    status: "completed",
-  },
-];
+import { data } from "./dummyData";
+
 export default function AdminDashboard() {
   return (
     <>
@@ -252,9 +156,6 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Responses</CardTitle>
-            <CardDescription>
-              Latest feedback received from resort members
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsesTable columns={columns} data={data} />
