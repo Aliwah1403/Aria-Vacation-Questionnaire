@@ -11,15 +11,19 @@ import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ClipboardList, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AriaLogo from "@/assets/AriaLogo.png";
+import { Separator } from "@/components/ui/separator";
 
 const AdminPanelNavigation = () => {
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-      <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md border bg-primary text-primary-foreground">
+    <>
+      <header className="sticky top-0 z-10 flex h-16 items-center gap-4  bg-background px-4 md:px-6">
+        <div className="flex items-center gap-2">
+          <img src={AriaLogo} className="mx-auto" width={100} height={50} />
+          {/* <div className="flex h-8 w-8 items-center justify-center rounded-md border bg-primary text-primary-foreground">
           <ClipboardList className="h-4 w-4" />
-        </div>
-        <nav className="hidden md:flex">
+        </div> */}
+          {/* <nav className="hidden md:flex">
           <ul className="flex items-center gap-6">
             <li className="text-sm font-medium">
               <Link href="#" className="font-semibold">
@@ -70,24 +74,27 @@ const AdminPanelNavigation = () => {
               </DropdownMenu>
             </li>
           </ul>
-        </nav>
-      </div>
-      <div className="ml-auto flex items-center gap-4">
-        <Button variant="ghost" size="icon">
-          <Search className="h-5 w-5" />
-          <span className="sr-only">Search members</span>
-        </Button>
-        <div className="relative h-8 w-8 overflow-hidden rounded-full">
-          <img
-            src="/placeholder.svg?height=32&width=32"
-            alt="Avatar"
-            width={32}
-            height={32}
-            className="rounded-full border object-cover"
-          />
+        </nav> */}
         </div>
-      </div>
-    </header>
+        {/* <div className="ml-auto flex items-center gap-4">
+          <Button variant="ghost" size="icon">
+            <Search className="h-5 w-5" />
+            <span className="sr-only">Search members</span>
+          </Button>
+          <div className="relative h-8 w-8 overflow-hidden rounded-full">
+            <img
+              src="/placeholder.svg?height=32&width=32"
+              alt="Avatar"
+              width={32}
+              height={32}
+              className="rounded-full border object-cover"
+            />
+          </div>
+        </div> */}
+      </header>
+
+      <Separator />
+    </>
   );
 };
 

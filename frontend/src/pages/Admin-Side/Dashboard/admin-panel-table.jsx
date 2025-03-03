@@ -15,9 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { columns } from "./columns";
 
-
-
-export function RecentResponsesTable({ columns, data }) {
+export function ResponsesTable({ columns, data }) {
   const table = useReactTable({
     data,
     columns,

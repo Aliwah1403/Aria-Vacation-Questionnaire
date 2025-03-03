@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminPageHeader from "@/components/admin-page-header";
-import { RecentResponsesTable } from "./admin-panel-table";
+import { ResponsesTable } from "./admin-panel-table";
 import { columns } from "./columns";
 import { DashboardDatePicker } from "@/components/dashboard-date-picker";
 const data = [
@@ -156,17 +156,18 @@ export default function AdminDashboard() {
               resort experience."
         action={
           <>
-            <DashboardDatePicker />
-            {/* <Button variant="outline">Preview Form</Button>
-            <Button variant="outline">Edit Template</Button>
-            <Button>Send to Members</Button> */}
+            {/* <DashboardDatePicker /> */}
+            <Button variant="outline">Export</Button>
+            <Button className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80 ">
+              Send Questionnaires
+            </Button>
           </>
         }
       />
 
       {/* Content Area */}
       <div className="p-4 md:p-6">
-        <Tabs defaultValue="overview" className="space-y-4">
+        {/* <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="questions">Questions</TabsTrigger>
@@ -245,7 +246,20 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </Tabs> */}
+
+        {/* Single Page Approach */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Responses</CardTitle>
+            <CardDescription>
+              Latest feedback received from resort members
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsesTable columns={columns} data={data} />
+          </CardContent>
+        </Card>
       </div>
     </>
   );
