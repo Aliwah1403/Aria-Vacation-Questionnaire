@@ -2,6 +2,10 @@ import { Badge } from "@/components/ui/badge";
 
 export const columns = [
   {
+    accessorKey: "memberId",
+    header: "Member ID",
+  },
+  {
     accessorKey: "memberName",
     header: "Member Name",
   },
@@ -11,7 +15,7 @@ export const columns = [
   },
   {
     accessorKey: "unitNo",
-    header: "Unit",
+    header: "Unit No",
   },
   {
     accessorKey: "checkIn",
@@ -27,35 +31,35 @@ export const columns = [
       return new Date(row.getValue("checkOut")).toLocaleDateString();
     },
   },
-  {
-    accessorKey: "completedAt",
-    header: "Submitted",
-    cell: ({ row }) => {
-      const date = row.getValue("completedAt");
-      return date ? new Date(date).toLocaleDateString() : "-";
-    },
-  },
-  {
-    accessorKey: "averageRating",
-    header: "Rating",
-    cell: ({ row }) => {
-      // Calculate average rating from responses
-      const responses = row.original.responses;
-      const satisfactionMap = {
-        "Very Satisfied": 5,
-        Satisfied: 4,
-        "Somewhat Satisfied": 3,
-        "Neither Satisfied nor Dissatisfied": 2,
-        Dissatisfied: 1,
-      };
-      const numericResponses = responses
-        .filter((r) => satisfactionMap[r.response])
-        .map((r) => satisfactionMap[r.response]);
-      const average =
-        numericResponses.reduce((a, b) => a + b, 0) / numericResponses.length;
-      return <div className="font-medium">{average.toFixed(1)}/5</div>;
-    },
-  },
+//   {
+//     accessorKey: "completedAt",
+//     header: "Submitted",
+//     cell: ({ row }) => {
+//       const date = row.getValue("completedAt");
+//       return date ? new Date(date).toLocaleDateString() : "-";
+//     },
+//   },
+//   {
+//     accessorKey: "averageRating",
+//     header: "Rating",
+//     cell: ({ row }) => {
+//       // Calculate average rating from responses
+//       const responses = row.original.responses;
+//       const satisfactionMap = {
+//         "Very Satisfied": 5,
+//         Satisfied: 4,
+//         "Somewhat Satisfied": 3,
+//         "Neither Satisfied nor Dissatisfied": 2,
+//         Dissatisfied: 1,
+//       };
+//       const numericResponses = responses
+//         .filter((r) => satisfactionMap[r.response])
+//         .map((r) => satisfactionMap[r.response]);
+//       const average =
+//         numericResponses.reduce((a, b) => a + b, 0) / numericResponses.length;
+//       return <div className="font-medium">{average.toFixed(1)}/5</div>;
+//     },
+//   },
   {
     accessorKey: "status",
     header: "Status",
