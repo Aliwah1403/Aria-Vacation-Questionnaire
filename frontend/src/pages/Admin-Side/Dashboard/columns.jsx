@@ -1,14 +1,17 @@
 import { Badge } from "@/components/ui/badge";
+import { multiColumnFilterFn } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
 
 export const columns = [
   {
     accessorKey: "memberId",
     header: "Member ID",
+    filterFn: multiColumnFilterFn,
   },
   {
     accessorKey: "memberName",
     header: "Member Name",
+    filterFn: multiColumnFilterFn,
   },
   {
     accessorKey: "resort",
