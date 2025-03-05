@@ -71,20 +71,19 @@ export const columns = [
       const status = row.getValue("status");
       return (
         <Badge
-          variant={status === "completed" ? "outline" : "outline"}
-          className="capitalize"
+          variant="outline"
+          className="capitalize flex items-center gap-1.5 w-fit"
         >
-          {status === "pending" ? (
-            <span
-              className="size-1.5 rounded-full bg-amber-500"
-              aria-hidden="true"
-            ></span>
-          ) : (
+          {status === "completed" ? (
             <CheckIcon
               className="text-emerald-500"
               size={12}
               aria-hidden="true"
             />
+          ) : status === "pending" ? (
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+          ) : (
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
           )}
           {status}
         </Badge>
