@@ -73,6 +73,7 @@ import {
   EllipsisIcon,
   FilterIcon,
   ListFilterIcon,
+  XCircle,
   PlusIcon,
   TrashIcon,
 } from "lucide-react";
@@ -129,6 +130,8 @@ export function ResponsesTable({ columns, data }) {
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: false,
   });
+
+  const isFiltered = table.getState().columnFilters.length > 0;
 
   // Get unique status values
   const uniqueStatusValues = useMemo(() => {
@@ -255,6 +258,17 @@ export function ResponsesTable({ columns, data }) {
                 </div>
               </PopoverContent>
             </Popover>
+            {isFiltered && (
+              <Button
+                aria-label="Reset filters"
+                variant="ghost"
+                onClick={() => table.resetColumnFilters()}
+                className="h-8 px-2 lg:px-3"
+              >
+                Reset
+                <XCircle className="size-3.5" aria-hidden="true" />
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>
