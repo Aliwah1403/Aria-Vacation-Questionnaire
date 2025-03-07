@@ -82,6 +82,12 @@ import { Badge } from "@/components/ui/badge";
 import { columns } from "./columns";
 import { cn } from "@/lib/utils";
 
+// First, add this function near the top of your component
+const multiSelectFilter = (row, columnId, filterValue) => {
+  const value = row.getValue(columnId);
+  return !filterValue.length || filterValue.includes(value);
+};
+
 export function ResponsesTable({ columns, data }) {
   const tableId = useId();
   const [columnFilters, setColumnFilters] = useState([]);
@@ -95,7 +101,19 @@ export function ResponsesTable({ columns, data }) {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: useMemo(
+      () =>
+        columns.map((col) => {
+          if (col.accessorKey === "status") {
+            return {
+              ...col,
+              filterFn: multiSelectFilter, // Add the custom filter function
+            };
+          }
+          return col;
+        }),
+      [columns]
+    ),
     state: {
       pagination,
       columnFilters,
@@ -136,21 +154,19 @@ export function ResponsesTable({ columns, data }) {
   }, [table.getColumn("status")?.getFilterValue()]);
 
   const handleStatusChange = (checked, value) => {
-    const filterValue = table.getColumn("status")?.getFilterValue();
-    const newFilterValue = filterValue ? [...filterValue] : [];
+    const column = table.getColumn("status");
+    if (!column) return;
+
+    const filterValue = column.getFilterValue() ?? [];
+    let newFilterValue = [...filterValue];
 
     if (checked) {
       newFilterValue.push(value);
     } else {
-      const index = newFilterValue.indexOf(value);
-      if (index > -1) {
-        newFilterValue.splice(index, 1);
-      }
+      newFilterValue = newFilterValue.filter((v) => v !== value);
     }
 
-    table
-      .getColumn("status")
-      ?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
+    column.setFilterValue(newFilterValue.length ? newFilterValue : []);
   };
 
   return (
