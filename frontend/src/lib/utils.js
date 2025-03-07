@@ -12,3 +12,9 @@ export const multiColumnFilterFn = (row, columnId, filterValue) => {
   const searchTerm = (filterValue ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
+
+// Faceted column filtering
+export const multiSelectFilter = (row, columnId, filterValue) => {
+  const value = row.getValue(columnId);
+  return !filterValue.length || filterValue.includes(value);
+};

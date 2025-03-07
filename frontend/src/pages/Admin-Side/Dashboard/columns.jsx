@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { multiColumnFilterFn } from "@/lib/utils";
+import { multiSelectFilter } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
 
 export const columns = [
@@ -67,6 +68,7 @@ export const columns = [
   {
     accessorKey: "status",
     header: "Status",
+    filterFn: multiSelectFilter,
     cell: ({ row }) => {
       const status = row.getValue("status");
       return (
