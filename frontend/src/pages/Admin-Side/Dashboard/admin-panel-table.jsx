@@ -3,6 +3,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getFilteredRowModel,
+  getExpandedRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   useReactTable,
@@ -74,10 +75,11 @@ import {
   FilterIcon,
   ListFilterIcon,
   XCircle,
+  InfoIcon,
   PlusIcon,
   TrashIcon,
 } from "lucide-react";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import FacetedDataFilter from "@/components/faceted-data-filter";
 
@@ -95,6 +97,9 @@ export function ResponsesTable({ columns, data }) {
   const table = useReactTable({
     data,
     columns,
+    getRowCanExpand: (row) =>
+      row.original.status === "completed" && row.original.responses?.length > 0,
+    getExpandedRowModel: getExpandedRowModel(),
     state: {
       pagination,
       columnFilters,
@@ -193,19 +198,55 @@ export function ResponsesTable({ columns, data }) {
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  <Fragment key={row.id}>
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {row.getIsExpanded() && (
+                      <TableRow>
+                        <TableCell colSpan={row.getVisibleCells().length}>
+                          <div className="space-y-4 py-2">
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                              {row.original.responses.map((response, index) => (
+                                <div
+                                  key={index}
+                                  className="space-y-2 rounded-lg border p-4"
+                                >
+                                  <p className="text-sm font-medium overflow-hidden text-wrap">
+                                    {response.questionId}
+                                    {"."} {response.question}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {response.response}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                            {row.original.additionalComments && (
+                              <div className="rounded-lg border p-4">
+                                <p className="text-sm font-medium">
+                                  Additional Comments
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {row.original.additionalComments}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
                 ))
               ) : (
                 <TableRow>

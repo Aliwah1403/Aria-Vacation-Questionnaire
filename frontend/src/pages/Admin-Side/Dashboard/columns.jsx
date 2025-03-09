@@ -1,9 +1,46 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { multiColumnFilterFn } from "@/lib/utils";
 import { multiSelectFilter } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 export const columns = [
+  {
+    id: "expander",
+    header: () => null,
+    cell: ({ row }) => {
+      // Only show expander for completed rows with responses
+      return row.original.status === "completed" &&
+        row.original.responses?.length > 0 ? (
+        <Button
+          {...{
+            className: "size-7 shadow-none text-muted-foreground",
+            onClick: row.getToggleExpandedHandler(),
+            "aria-expanded": row.getIsExpanded(),
+            "aria-label": row.getIsExpanded()
+              ? `Collapse responses for ${row.original.memberName}`
+              : `View responses for ${row.original.memberName}`,
+            size: "icon",
+            variant: "ghost",
+          }}
+        >
+          {row.getIsExpanded() ? (
+            <ChevronUpIcon
+              className="opacity-60"
+              size={16}
+              aria-hidden="true"
+            />
+          ) : (
+            <ChevronDownIcon
+              className="opacity-60"
+              size={16}
+              aria-hidden="true"
+            />
+          )}
+        </Button>
+      ) : null;
+    },
+  },
   {
     accessorKey: "memberId",
     header: "Member ID",
