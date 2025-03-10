@@ -137,6 +137,7 @@ const StayDetailsForm = ({ setStayDetailsDialog }) => {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
+                        type="button"
                         variant={"outline"}
                         className={cn(
                           "w-full pl-3 text-left font-normal",
@@ -155,7 +156,7 @@ const StayDetailsForm = ({ setStayDetailsDialog }) => {
                   <PopoverContent
                     className="w-auto p-0"
                     align="start"
-                    side={window.innerWidth < 640 && "bottom"}
+                    side="bottom"
                   >
                     <Calendar
                       mode="single"
@@ -181,6 +182,7 @@ const StayDetailsForm = ({ setStayDetailsDialog }) => {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
+                        type="button"
                         variant={"outline"}
                         className={cn(
                           "w-full pl-3 text-left font-normal",
@@ -197,9 +199,9 @@ const StayDetailsForm = ({ setStayDetailsDialog }) => {
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-0"
+                    className="w-auto p-0 z-50"
                     align="start"
-                    side={window.innerWidth < 640 && "bottom"}
+                    side="bottom"
                   >
                     <Calendar
                       mode="single"

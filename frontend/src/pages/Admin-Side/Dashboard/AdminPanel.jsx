@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Breadcrumb,
@@ -64,12 +65,29 @@ export default function AdminDashboard() {
           <>
             {/* <DashboardDatePicker /> */}
             <Button variant="outline">Export</Button>
-            <Button
-              className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
-              onClick={() => setStayDetailsDialog(true)}
+
+            {/* Stay Details Dialog */}
+            <Dialog
+              open={stayDetailsDialog}
+              onOpenChange={setStayDetailsDialog}
             >
-              Send Questionnaires
-            </Button>
+              <DialogTrigger asChild>
+                <Button
+                  className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
+                  // onClick={() => setStayDetailsDialog(true)}
+                >
+                  Send Questionnaires
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-semibold">
+                    Send Questionnaire
+                  </DialogTitle>
+                </DialogHeader>
+                <StayDetailsForm setStayDetailsDialog={setStayDetailsDialog} />
+              </DialogContent>
+            </Dialog>
           </>
         }
       />
@@ -158,30 +176,10 @@ export default function AdminDashboard() {
         </Tabs> */}
 
         {/* Single Page Approach */}
-        <ResponsesTable columns={columns} data={data} />
-
-        {/* Stay Details Dialog */}
-        <Dialog open={stayDetailsDialog} onOpenChange={setStayDetailsDialog}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold">
-                Send Questionnaire
-              </DialogTitle>
-            </DialogHeader>
-            <StayDetailsForm setStayDetailsDialog={setStayDetailsDialog} />
-            {/* <StayDetailsForm
-              onSubmit={(values) => {
-                console.log("Stay details submitted:", values);
-                // Here you would typically send the questionnaire
-                setShowStayDetailsDialog(false);
-                // Show success message
-                alert("Questionnaire sent successfully!");
-              }}
-              onCancel={() => setShowStayDetailsDialog(false)}
-            /> */}
-          </DialogContent>
-        </Dialog>
+        {/* <ResponsesTable columns={columns} data={data} /> */}
       </div>
+
+      <ResponsesTable columns={columns} data={data} />
     </>
   );
 }
