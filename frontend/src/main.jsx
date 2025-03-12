@@ -5,11 +5,22 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 import App from "./App.jsx";
-import Homepage from "./pages/Homepage/Homepage.jsx";
-import Feedback from "./pages/Feedback/Feedback.jsx";
-import Success from "./pages/Success/Success";
+import Homepage from "./pages/Admin-Side/Member-Details/Homepage";
+import Feedback from "./pages/Member-Side/Feedback/Feedback";
+import Success from "./pages/Member-Side/Success/Success";
+import AdminDashboard from "./pages/Admin-Side/Dashboard/AdminPanel";
+import AdminLayout from "./layouts/AdminLayout";
 
 const router = createBrowserRouter([
+  {
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "/admin/dashboard",
+        element: <AdminDashboard />,
+      },
+    ],
+  },
   {
     path: "/",
     element: <Homepage />,

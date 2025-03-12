@@ -42,7 +42,7 @@ const formSchema = z.object({
   unitNo: z.string().min(1, "Unit number is required"),
 });
 
-const StayDetailsForm = () => {
+const StayDetailsForm = ({ setStayDetailsDialog }) => {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -137,6 +137,7 @@ const StayDetailsForm = () => {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
+                        type="button"
                         variant={"outline"}
                         className={cn(
                           "w-full pl-3 text-left font-normal",
@@ -155,7 +156,7 @@ const StayDetailsForm = () => {
                   <PopoverContent
                     className="w-auto p-0"
                     align="start"
-                    side={window.innerWidth < 640 && "bottom"}
+                    side="bottom"
                   >
                     <Calendar
                       mode="single"
@@ -181,6 +182,7 @@ const StayDetailsForm = () => {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
+                        type="button"
                         variant={"outline"}
                         className={cn(
                           "w-full pl-3 text-left font-normal",
@@ -197,9 +199,9 @@ const StayDetailsForm = () => {
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-0"
+                    className="w-auto p-0 z-50"
                     align="start"
-                    side={window.innerWidth < 640 && "bottom"}
+                    side="bottom"
                   >
                     <Calendar
                       mode="single"
@@ -236,12 +238,17 @@ const StayDetailsForm = () => {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full bg-[#4ABEC6] hover:bg-[#4ABEC6]/80 cursor-pointer"
-        >
-          Start Feedback
-        </Button>
+        <div className="flex flex-row space-x-2 items-center justify-between">
+          <Button variant="outline" onClick={() => setStayDetailsDialog(false)}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80 cursor-pointer"
+          >
+            Generate Questionnaire
+          </Button>
+        </div>
       </form>
     </Form>
   );
