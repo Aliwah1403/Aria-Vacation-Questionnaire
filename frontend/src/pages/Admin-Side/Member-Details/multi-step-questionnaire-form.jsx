@@ -109,41 +109,29 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
 
   // Handle step 2 submission
   const onQuestionnaireTypeSubmit = async (values) => {
-    setLoading(true);
-    const completeFormData = { ...formData, ...values };
-
     try {
-      await setFormData(completeFormData);
+      setLoading(true);
+      const completeFormData = { ...formData, ...values };
 
-      //   Generate a unique link (in a real app, this would be a proper API call)
+      // Simulate API call with setTimeout
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Update form data
+      setFormData(completeFormData);
+
+      // Generate a unique link (simulate API response)
       const uniqueId = Math.random().toString(36).substring(2, 10);
       const link = `https://yourdomain.com/feedback/${uniqueId}`;
       setGeneratedLink(link);
+
+      setStep(3);
     } catch (error) {
-      console.log(error.message);
+      console.error("Error generating questionnaire:", error);
+      //show an error toast/alert
     } finally {
       setLoading(false);
-      setStep(3);
     }
   };
-
-  //   function onQuestionnaireTypeSubmit(values) {
-  //     setLoading(true);
-  //     const completeFormData = { ...formData, ...values };
-  //     try {
-  //       setFormData(completeFormData);
-
-  //       // Generate a unique link (in a real app, this would be a proper API call)
-  //       const uniqueId = Math.random().toString(36).substring(2, 10);
-  //       const link = `https://yourdomain.com/feedback/${uniqueId}`;
-  //       setGeneratedLink(link);
-  //     } catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setLoading(false);
-  //       setStep(3);
-  //     }
-  //   }
 
   // Copy link to clipboard
   const copyToClipboard = () => {
@@ -499,15 +487,17 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 type="button"
                 variant="outline"
                 onClick={() => setStep(1)}
+                disabled={loading} // Disable back button while loading
               >
                 Back
               </Button>
               <LoadingButton
-                loading={loading}
                 type="submit"
+                loading={loading}
+                disabled={loading} // Explicitly disable while loading
                 className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
               >
-                Generate Link
+                {loading ? "Generating..." : "Generate Link"}
               </LoadingButton>
             </div>
           </form>
