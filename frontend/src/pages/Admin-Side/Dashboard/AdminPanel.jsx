@@ -33,6 +33,7 @@ import { columns } from "./columns";
 import { DashboardDatePicker } from "@/components/dashboard-date-picker";
 import { data } from "./dummyData";
 import StayDetailsForm from "../Member-Details/stay-details-form";
+import MultiStepQuestionnaireForm from "../Member-Details/multi-step-questionnaire-form";
 
 export default function AdminDashboard() {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
@@ -85,7 +86,10 @@ export default function AdminDashboard() {
                     Send Questionnaire
                   </DialogTitle>
                 </DialogHeader>
-                <StayDetailsForm setStayDetailsDialog={setStayDetailsDialog} />
+                {/* <StayDetailsForm setStayDetailsDialog={setStayDetailsDialog} /> */}
+                <MultiStepQuestionnaireForm
+                  setStayDetailsDialog={setStayDetailsDialog}
+                />
               </DialogContent>
             </Dialog>
           </>
@@ -176,10 +180,10 @@ export default function AdminDashboard() {
         </Tabs> */}
 
         {/* Single Page Approach */}
-        {/* <ResponsesTable columns={columns} data={data} /> */}
+        <ResponsesTable columns={columns} data={data} />
       </div>
 
-      <ResponsesTable columns={columns} data={data} />
+      {/* <ResponsesTable columns={columns} data={data} /> */}
     </>
   );
 }
