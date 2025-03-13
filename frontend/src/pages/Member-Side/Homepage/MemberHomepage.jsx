@@ -17,7 +17,7 @@ const translations = {
     fr: "Merci de prendre le temps de partager vos réflexions avec nous. Vos commentaires nous aident à améliorer nos services.",
   },
   clientInfo: {
-    en: "Client Information",
+    en: "Vacation Stay Details",
     ar: "معلومات العميل",
     fr: "Informations client",
   },
@@ -111,7 +111,7 @@ const MemberHomepage = () => {
         <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
             {translations.welcome[language]}
-            {/* <span className="block text-indigo-600 text-2xl md:text-3xl mt-2">
+            {/* <span className="block text-fountain-blue-600 text-2xl md:text-3xl mt-2">
               Curtis Aliwah
             </span> */}
           </h1>
@@ -122,9 +122,9 @@ const MemberHomepage = () => {
 
         {/* Info Panel */}
         <div className="mb-16">
-          <div className="bg-indigo-50/50 rounded-lg p-6 max-w-xl mx-auto">
+          <div className="bg-fountain-blue-50/50 rounded-lg p-6 max-w-xl mx-auto">
             <div className="flex items-center gap-3 mb-4">
-              <User2Icon className="h-5 w-5 text-indigo-600" />
+              <User2Icon className="h-5 w-5 text-fountain-blue-600" />
               <h2 className="text-lg font-semibold text-gray-900">
                 {translations.clientInfo[language]}
               </h2>
@@ -141,11 +141,11 @@ const MemberHomepage = () => {
               </p>
               <p className="flex justify-between">
                 <span>Check-in:</span>
-                <span>08-03-2025</span>
+                <span>March 8, 2025</span>
               </p>
               <p className="flex justify-between">
                 <span>Check-out:</span>
-                <span>15-03-2025</span>
+                <span>March 15, 2025</span>
               </p>
             </div>
           </div>
@@ -159,8 +159,8 @@ const MemberHomepage = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-indigo-600" />
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-fountain-blue-600" />
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 mb-1">
@@ -173,8 +173,8 @@ const MemberHomepage = () => {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                <ClockIcon className="h-6 w-6 text-indigo-600" />
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
+                <ClockIcon className="h-6 w-6 text-fountain-blue-600" />
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 mb-1">
@@ -187,8 +187,8 @@ const MemberHomepage = () => {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-indigo-600" />
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-fountain-blue-600" />
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 mb-1">
@@ -205,18 +205,20 @@ const MemberHomepage = () => {
         {/* Start Button */}
         <div className="flex justify-center">
           <Link to={"/feedback"}>
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg rounded-full">
+            <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-500 text-white px-8 py-6 text-lg ">
               {translations.startQuestionnaire[language]}
             </Button>
           </Link>
         </div>
+
       </main>
-      <footer className=" text-center text-sm text-gray-400">
+
+      {/* <footer className=" text-center text-sm text-gray-400">
         <p>
           Your privacy is important to us. All responses are confidential and
           will be used only for service improvement purposes
         </p>
-      </footer>
+      </footer> */}
     </div>
   );
 };

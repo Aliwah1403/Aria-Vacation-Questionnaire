@@ -97,4 +97,18 @@
   body {
     @apply bg-background text-foreground;
   }
-} 
+}
+
+@theme {
+  --color-fountain-blue-50: #f0fbfa;
+  --color-fountain-blue-100: #d8f4f5;
+  --color-fountain-blue-200: #b6e9eb;
+  --color-fountain-blue-300: #84d8dc;
+  --color-fountain-blue-400: #4abec6;
+  --color-fountain-blue-500: #2ea2ac;
+  --color-fountain-blue-600: #298491;
+  --color-fountain-blue-700: #276a77;
+  --color-fountain-blue-800: #285862;
+  --color-fountain-blue-900: #254a54;
+  --color-fountain-blue-950: #143038;
+}
