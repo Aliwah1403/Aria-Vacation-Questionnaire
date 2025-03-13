@@ -10,6 +10,7 @@ import Feedback from "./pages/Member-Side/Feedback/Feedback";
 import Success from "./pages/Member-Side/Success/Success";
 import AdminDashboard from "./pages/Admin-Side/Dashboard/AdminPanel";
 import AdminLayout from "./layouts/AdminLayout";
+import MemberHomepage from "./pages/Member-Side/Homepage/MemberHomepage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
+  },
+  {
+    path: "feedback/q20zb13c", //will replace with actual ID and form type
+    element: <MemberHomepage />,
   },
   {
     path: "/feedback",
