@@ -8,6 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { questions } from "./Questions/Questions";
+import AriaLogo from "@/assets/AriaLogo.png";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -90,25 +98,63 @@ const Feedback = () => {
     maxLength: limit,
   } = useCharacterLimit({ maxLength });
 
+  // First, create a Stepper component to avoid code duplication
+  const QuestionStepper = ({ currentStep, totalSteps }) => (
+    <div className="flex flex-col w-full">
+      <div className="flex items-center justify-between mb-2 md:hidden">
+        <span className="text-sm text-gray-600">
+          {currentStep} of {totalSteps}
+        </span>
+      </div>
+      <div className="flex gap-1">
+        {Array.from({ length: totalSteps }, (_, i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full ${
+              i < currentStep ? "bg-[#2FA5AF]" : "bg-gray-200"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">
-              {currentStep} of {questions.length}
-            </span>
+    <div className="flex w-full flex-col min-h-screen bg-gray-50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
           </div>
-          <div className="flex gap-1">
-            {Array.from({ length: questions.length }, (_, i) => (
-              <div
-                key={i}
-                className={`h-1 flex-1 rounded-full ${
-                  i < currentStep ? "bg-[#2FA5AF]" : "bg-gray-200"
-                }`}
-              />
-            ))}
+
+          {/* Hide on mobile, show on desktop */}
+          <div className="hidden md:block w-[500px]">
+            <QuestionStepper
+              currentStep={currentStep}
+              totalSteps={questions.length}
+            />
           </div>
+
+          <Select>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="English" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="ar">العربية</SelectItem>
+              <SelectItem value="fr">Français</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </nav>
+
+      <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
+        {/* Show on mobile, hide on desktop */}
+        <div className="mb-12 md:hidden">
+          <QuestionStepper
+            currentStep={currentStep}
+            totalSteps={questions.length}
+          />
         </div>
 
         <AnimatePresence mode="wait">

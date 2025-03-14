@@ -89,7 +89,6 @@ const translations = {
 };
 
 const MemberHomepage = () => {
-  // Fix the useState syntax
   const [language, setLanguage] = useState("en");
 
   const handleLanguageChange = (value) => {
@@ -210,7 +209,6 @@ const MemberHomepage = () => {
             </Button>
           </Link>
         </div>
-
       </main>
 
       {/* <footer className=" text-center text-sm text-gray-400">
