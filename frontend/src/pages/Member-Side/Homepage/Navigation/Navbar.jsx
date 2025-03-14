@@ -7,29 +7,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
+import { localesList } from "@/i18n";
 
-const Navbar = ({ language, onLanguageChange, translations }) => {
+const Navbar = ({ language, onLanguageChange }) => {
+  const { t } = useTranslation();
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <img
-            src={AriaLogo}
-            alt="Company Logo"
-            width={100}
-            height={50}
-            //   className="h-8 w-auto"
-          />
+          <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
         </div>
 
         <Select value={language} onValueChange={onLanguageChange}>
           <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder={translations.selectLanguage} />
+            <SelectValue placeholder={t("selectLanguage")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="ar">العربية</SelectItem>
-            <SelectItem value="fr">Français</SelectItem>
+            {localesList.map(({ locale, description }) => (
+              <SelectItem key={locale} value={locale}>
+                {description}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

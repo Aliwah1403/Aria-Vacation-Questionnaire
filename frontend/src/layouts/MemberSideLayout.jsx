@@ -15,11 +15,7 @@ const MemberSideLayout = () => {
       }`}
     >
       {/* Navigation */}
-      <Navbar
-        language={language}
-        onLanguageChange={handleLanguageChange}
-        translations={translations}
-      />
+      <Navbar language={language} onLanguageChange={handleLanguageChange} />
       <main className="flex-1">
         <Outlet />
       </main>

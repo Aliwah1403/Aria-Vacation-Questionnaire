@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 import App from "./App.jsx";
+import "./i18n";
 import Homepage from "./pages/Admin-Side/Member-Details/Homepage";
 import Feedback from "./pages/Member-Side/Feedback/Feedback";
 import Success from "./pages/Member-Side/Success/Success";
