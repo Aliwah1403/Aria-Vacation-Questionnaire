@@ -101,7 +101,7 @@ const Feedback = () => {
   // First, create a Stepper component to avoid code duplication
   const QuestionStepper = ({ currentStep, totalSteps }) => (
     <div className="flex flex-col w-full">
-      <div className="flex items-center justify-between mb-2 md:hidden">
+      <div className="flex items-center justify-between mb-2 ">
         <span className="text-sm text-gray-600">
           {currentStep} of {totalSteps}
         </span>
@@ -128,14 +128,6 @@ const Feedback = () => {
             <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
           </div>
 
-          {/* Hide on mobile, show on desktop */}
-          <div className="hidden md:block w-[500px]">
-            <QuestionStepper
-              currentStep={currentStep}
-              totalSteps={questions.length}
-            />
-          </div>
-
           <Select>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="English" />
@@ -151,7 +143,7 @@ const Feedback = () => {
 
       <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
         {/* Show on mobile, hide on desktop */}
-        <div className="mb-12 md:hidden">
+        <div className="mb-12">
           <QuestionStepper
             currentStep={currentStep}
             totalSteps={questions.length}
