@@ -8,27 +8,7 @@ import { Link } from "react-router";
 import { localesList } from "@/i18n";
 
 const MemberHomepage = () => {
-  const { t, i18n } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-
-  // Handle language changes and URL updates
-  const handleLanguageChange = (value) => {
-    const currentPath = window.location.pathname;
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set("lng", value);
-
-    i18n.changeLanguage(value);
-    navigate(`${currentPath}?${newUrl.searchParams.toString()}`);
-  };
-
-  // Set initial language from URL or browser
-  useEffect(() => {
-    const urlLang = searchParams.get("lng");
-    if (urlLang && localesList.some((locale) => locale.locale === urlLang)) {
-      i18n.changeLanguage(urlLang);
-    }
-  }, []);
+  const { t } = useTranslation();
 
   const features = [
     {
@@ -49,61 +29,50 @@ const MemberHomepage = () => {
   ];
 
   return (
-    <div
-      className={`min-h-screen bg-gray-50 ${
-        i18n.language === "ar" ? "rtl" : "ltr"
-      }`}
-    >
-      <Navbar
-        language={i18n.language}
-        onLanguageChange={handleLanguageChange}
-      />
+    <div className="container mx-auto px-4 pt-24 pb-12 max-w-5xl">
+      {/* Hero Section */}
+      <div className="text-center mb-16">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          {t("welcome")}
+        </h1>
+        <p className="text-gray-600 md:text-lg max-w-3xl mx-auto">
+          {t("subtitle")}
+        </p>
+      </div>
 
-      <main className="container mx-auto px-4 pt-24 pb-12 max-w-5xl">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {t("welcome")}
-          </h1>
-          <p className="text-gray-600 md:text-lg max-w-3xl mx-auto">
-            {t("subtitle")}
-          </p>
+      {/* What to Expect Section */}
+      <div className="mb-16">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-8 text-center">
+          {t("whatToExpect")}
+        </h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm"
+            >
+              {feature.icon}
+              <h3 className="mt-4 mb-2 font-medium text-gray-900">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 text-sm">{feature.description}</p>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* What to Expect Section */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-8 text-center">
-            {t("whatToExpect")}
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm"
-              >
-                {feature.icon}
-                <h3 className="mt-4 mb-2 font-medium text-gray-900">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-sm">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Start Button */}
-        <div className="text-center">
-          <Button
-            asChild
-            size="lg"
-            className="bg-[#2FA5AF] hover:bg-[#2FA5AF]/90"
-          >
-            <Link to="/feedback" className="inline-flex items-center">
-              {t("startQuestionnaire")}
-            </Link>
-          </Button>
-        </div>
-      </main>
+      {/* Start Button */}
+      <div className="text-center">
+        <Button
+          asChild
+          size="lg"
+          className="bg-[#2FA5AF] hover:bg-[#2FA5AF]/90"
+        >
+          <Link to="/feedback" className="inline-flex items-center">
+            {t("startQuestionnaire")}
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 };

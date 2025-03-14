@@ -12,6 +12,7 @@ import Success from "./pages/Member-Side/Success/Success";
 import AdminDashboard from "./pages/Admin-Side/Dashboard/AdminPanel";
 import AdminLayout from "./layouts/AdminLayout";
 import MemberHomepage from "./pages/Member-Side/Homepage/MemberHomepage";
+import MemberSideLayout from "./layouts/MemberSideLayout";
 
 const router = createBrowserRouter([
   {
@@ -24,13 +25,19 @@ const router = createBrowserRouter([
     ],
   },
   {
+    element: <MemberSideLayout />,
+    children: [
+      {
+        path: "feedback/q20zb13c", //will replace with actual ID and form type
+        element: <MemberHomepage />,
+      },
+    ],
+  },
+  {
     path: "/",
     element: <Homepage />,
   },
-  {
-    path: "feedback/q20zb13c", //will replace with actual ID and form type
-    element: <MemberHomepage />,
-  },
+
   {
     path: "/feedback",
     element: <Feedback />,
