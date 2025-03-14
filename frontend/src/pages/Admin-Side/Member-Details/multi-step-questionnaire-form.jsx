@@ -344,7 +344,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </Button>
               <Button
                 type="submit"
-                className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80 cursor-pointer"
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
               >
                 Continue
               </Button>
@@ -495,7 +495,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 type="submit"
                 loading={loading}
                 disabled={loading} // Explicitly disable while loading
-                className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
               >
                 {loading ? "Generating..." : "Generate Link"}
               </LoadingButton>
@@ -589,7 +589,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </Button>
               <Button
                 type="button"
-                className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                 onClick={() => setStayDetailsDialog(false)}
               >
                 Done

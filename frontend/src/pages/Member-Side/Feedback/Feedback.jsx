@@ -111,7 +111,7 @@ const Feedback = () => {
           <div
             key={i}
             className={`h-1 flex-1 rounded-full ${
-              i < currentStep ? "bg-[#2FA5AF]" : "bg-gray-200"
+              i < currentStep ? "bg-fountain-blue-400" : "bg-gray-200"
             }`}
           />
         ))}
@@ -124,6 +124,7 @@ const Feedback = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-2">
+            {/* change to width of 80 for mobile device */}
             <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
           </div>
 
@@ -181,7 +182,7 @@ const Feedback = () => {
                       key={index}
                       className={`relative flex flex-row sm:flex-col items-center p-2 sm:p-4 rounded-lg ${
                         isSelected
-                          ? "bg-[#F0FBFA] border-2 border-[#4ABEC6]"
+                          ? "bg-[#F0FBFA] border-2 border-fountain-blue-400"
                           : "bg-gray-50 hover:bg-gray-100"
                       }`}
                       whileHover={{ scale: 1.02 }}
@@ -189,7 +190,7 @@ const Feedback = () => {
                       onClick={() => handleAnswer(option.label)}
                     >
                       {isSelected && (
-                        <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-[#4ABEC6] rounded-full flex items-center justify-center">
+                        <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-fountain-blue-400 rounded-full flex items-center justify-center">
                           <Check className="size-3 sm:w-4 sm:h-4 text-white" />
                         </div>
                       )}
@@ -232,7 +233,7 @@ const Feedback = () => {
         </AnimatePresence>
 
         {/* <textarea
-                className="w-full p-4 border border-gray-200 rounded-lg focus:border-[#4ABEC6] focus:ring-1 focus:ring-[#4ABEC6] outline-none min-h-[200px] resize-none"
+                className="w-full p-4 border border-gray-200 rounded-lg focus:border-fountain-blue-400 focus:ring-1 focus:ring-fountain-blue-400 outline-none min-h-[200px] resize-none"
                 placeholder="Please share your thoughts with us..."
                 value={answers[currentStep] || ""}
                 onChange={(e) => handleAnswer(e.target.value)}
@@ -253,7 +254,7 @@ const Feedback = () => {
               loading={loading}
               size="default"
               onClick={handleSubmit}
-              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
+              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
               Submit
             </LoadingButton>
@@ -261,7 +262,7 @@ const Feedback = () => {
             <Button
               size="default"
               onClick={handleNext}
-              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-[#4ABEC6] text-white hover:bg-[#4ABEC6]/80 transition-colors min-w-[100px] sm:min-w-[120px]"
+              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
               Continue
             </Button>

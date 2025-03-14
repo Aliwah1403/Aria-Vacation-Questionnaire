@@ -244,7 +244,7 @@ const StayDetailsForm = ({ setStayDetailsDialog }) => {
           </Button>
           <Button
             type="submit"
-            className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80 cursor-pointer"
+            className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
           >
             Generate Questionnaire
           </Button>
