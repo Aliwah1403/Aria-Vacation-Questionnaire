@@ -60,6 +60,8 @@ const questionnaireTypeSchema = z.object({
   emailBody: z.string().min(1, "Email body is required"),
 });
 
+const URL = import.meta.env.VITE_URL;
+
 const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
@@ -121,7 +123,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
 
       // Generate a unique link (simulate API response)
       const uniqueId = Math.random().toString(36).substring(2, 10);
-      const link = "/feedback/testID";
+      const link = `${URL}/feedback/testID`;
       // const link = `https://yourdomain.com/feedback/${uniqueId}`;
       setGeneratedLink(link);
 
