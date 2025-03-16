@@ -1,0 +1,20 @@
+{
+  "translation": {
+    "welcome": "Share Your Resort Experience With Us",
+    "subtitle": "Thank you for taking the time to share your thoughts with us. Your feedback helps us improve our services.",
+    "clientInfo": "Vacation Stay Details",
+    "questionnaireDetails": "Questionnaire Details",
+    "whatToExpect": "What to expect",
+    "simpleQuestions": "Simple Questions",
+    "quickCompletion": "Quick Completion",
+    "valuableImpact": "Valuable Impact",
+    "simpleQuestionsDesc": "Easy to answer multiple choice questions",
+    "quickCompletionDesc": "Takes only 5 minutes of your time",
+    "valuableImpactDesc": "Your feedback directly influences our improvements",
+    "startQuestionnaire": "Start Questionnaire",
+    "selectLanguage": "Select Language",
+    "type": "Type",
+    "estimatedTime": "Estimated time",
+    "questions": "Questions"
+  }
+}

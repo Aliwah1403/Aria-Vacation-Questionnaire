@@ -5,11 +5,14 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 import App from "./App.jsx";
+import "./i18n";
 import Homepage from "./pages/Admin-Side/Member-Details/Homepage";
 import Feedback from "./pages/Member-Side/Feedback/Feedback";
 import Success from "./pages/Member-Side/Success/Success";
 import AdminDashboard from "./pages/Admin-Side/Dashboard/AdminPanel";
 import AdminLayout from "./layouts/AdminLayout";
+import MemberHomepage from "./pages/Member-Side/Homepage/MemberHomepage";
+import MemberSideLayout from "./layouts/MemberSideLayout";
 
 const router = createBrowserRouter([
   {
@@ -22,13 +25,23 @@ const router = createBrowserRouter([
     ],
   },
   {
+    element: <MemberSideLayout />,
+    children: [
+      {
+        path: "/feedback/testID", //will replace with actual ID and form type
+        element: <MemberHomepage />,
+      },
+      {
+        path: "/feedback/testID/questionnaire", //will replace with actual ID and form type
+        element: <Feedback />,
+      },
+    ],
+  },
+  {
     path: "/",
     element: <Homepage />,
   },
-  {
-    path: "/feedback",
-    element: <Feedback />,
-  },
+
   {
     path: "/success",
     element: <Success />,

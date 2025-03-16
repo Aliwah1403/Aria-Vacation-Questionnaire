@@ -18,7 +18,7 @@ const Success = () => {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="w-12 h-12 sm:w-16 sm:h-16 bg-[#4ABEC6] rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6"
+          className="w-12 h-12 sm:w-16 sm:h-16 bg-fountain-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6"
         >
           <Check className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
         </motion.div>
@@ -51,7 +51,7 @@ const Success = () => {
                 <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <a
                   href="mailto:members@ariavacationclub.com"
-                  className="text-sm sm:text-base text-[#4ABEC6] hover:underline"
+                  className="text-sm sm:text-base text-fountain-blue-400 hover:underline"
                 >
                   members@ariavacationclub.com
                 </a>

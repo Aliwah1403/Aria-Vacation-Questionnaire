@@ -60,6 +60,8 @@ const questionnaireTypeSchema = z.object({
   emailBody: z.string().min(1, "Email body is required"),
 });
 
+const URL = import.meta.env.VITE_URL;
+
 const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
@@ -121,7 +123,8 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
 
       // Generate a unique link (simulate API response)
       const uniqueId = Math.random().toString(36).substring(2, 10);
-      const link = `https://yourdomain.com/feedback/${uniqueId}`;
+      const link = `${URL}/feedback/testID`;
+      // const link = `https://yourdomain.com/feedback/${uniqueId}`;
       setGeneratedLink(link);
 
       setStep(3);
@@ -344,7 +347,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </Button>
               <Button
                 type="submit"
-                className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80 cursor-pointer"
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
               >
                 Continue
               </Button>
@@ -495,7 +498,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 type="submit"
                 loading={loading}
                 disabled={loading} // Explicitly disable while loading
-                className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
               >
                 {loading ? "Generating..." : "Generate Link"}
               </LoadingButton>
@@ -589,7 +592,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </Button>
               <Button
                 type="button"
-                className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                 onClick={() => setStayDetailsDialog(false)}
               >
                 Done

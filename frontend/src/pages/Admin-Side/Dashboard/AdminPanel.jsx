@@ -74,7 +74,7 @@ export default function AdminDashboard() {
             >
               <DialogTrigger asChild>
                 <Button
-                  className="bg-[#4ABEC6] hover:bg-[#4ABEC6]/80"
+                  className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                   // onClick={() => setStayDetailsDialog(true)}
                 >
                   Send Questionnaires

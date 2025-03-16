@@ -97,4 +97,126 @@
   body {
     @apply bg-background text-foreground;
   }
-} 
+}
+
+@theme {
+  --color-fountain-blue-50: #f0fbfa;
+  --color-fountain-blue-100: #d8f4f5;
+  --color-fountain-blue-200: #b6e9eb;
+  --color-fountain-blue-300: #84d8dc;
+  --color-fountain-blue-400: #4abec6;
+  --color-fountain-blue-500: #2ea2ac;
+  --color-fountain-blue-600: #298491;
+  --color-fountain-blue-700: #276a77;
+  --color-fountain-blue-800: #285862;
+  --color-fountain-blue-900: #254a54;
+  --color-fountain-blue-950: #143038;
+}
+
+/* arabic layout */
+/* RTL support for Arabic */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.rtl .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.rtl .mr-3 {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+.rtl .ml-3 {
+  margin-left: 0;
+  margin-right: 0.75rem;
+}
+
+.rtl .space-x-3 > * + * {
+  margin-left: 0;
+  margin-right: 0.75rem;
+}
+
+.rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+.rtl .icon-arrow-right {
+  transform: rotate(180deg);
+}
+
+/* Enhanced RTL support */
+/* Text alignment */
+.rtl .text-left {
+  text-align: right;
+}
+
+.rtl .text-right {
+  text-align: left;
+}
+
+/* Margins and positioning */
+.rtl .-right-1\.5 {
+  right: auto;
+  left: -0.375rem;
+}
+
+.rtl .-right-2 {
+  right: auto;
+  left: -0.5rem;
+}
+
+/* Grid and flexbox */
+.rtl .sm\:text-left {
+  text-align: right;
+}
+
+.rtl .sm\:text-right {
+  text-align: left;
+}
+
+.rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+.rtl .sm\:flex-col {
+  flex-direction: column;
+}
+
+/* Spacing */
+.rtl .mr-3 {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+.rtl .sm\:mr-0 {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.rtl .gap-3 {
+  gap: 0.75rem;
+}
+
+.rtl .sm\:gap-4 {
+  gap: 1rem;
+}
+
+/* Absolute positioning for emoji selection checkmark */
+.rtl .absolute.-top-1\.5.-right-1\.5 {
+  left: -0.375rem;
+  right: auto;
+}
+
+.rtl .sm\:-top-2.sm\:-right-2 {
+  left: -0.5rem;
+  right: auto;
+}

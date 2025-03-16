@@ -1,0 +1,20 @@
+{
+  "translation": {
+    "welcome": "شارك تجربتك في المنتجع",
+    "subtitle": "شكراً لك على أخذ الوقت لمشاركة أفكارك معنا. ملاحظاتك تساعدنا على تحسين خدماتنا.",
+    "clientInfo": "معلومات العميل",
+    "questionnaireDetails": "تفاصيل الاستبيان",
+    "whatToExpect": "ما يمكن توقعه",
+    "simpleQuestions": "أسئلة بسيطة",
+    "quickCompletion": "إكمال سريع",
+    "valuableImpact": "تأثير قيم",
+    "simpleQuestionsDesc": "أسئلة اختيار من متعدد سهلة الإجابة",
+    "quickCompletionDesc": "يستغرق 5 دقائق فقط من وقتك",
+    "valuableImpactDesc": "ملاحظاتك تؤثر مباشرة على تحسيناتنا",
+    "startQuestionnaire": "ابدأ الاستبيان",
+    "selectLanguage": "اختر اللغة",
+    "type": "النوع",
+    "estimatedTime": "الوقت المقدر",
+    "questions": "الأسئلة"
+  }
+}
