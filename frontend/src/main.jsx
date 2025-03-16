@@ -28,11 +28,11 @@ const router = createBrowserRouter([
     element: <MemberSideLayout />,
     children: [
       {
-        path: "feedback/q20zb13c", //will replace with actual ID and form type
+        path: "/feedback/testID", //will replace with actual ID and form type
         element: <MemberHomepage />,
       },
       {
-        path: "/feedback",
+        path: "/feedback/testID/questionnaire", //will replace with actual ID and form type
         element: <Feedback />,
       },
     ],

@@ -68,7 +68,10 @@ const MemberHomepage = () => {
           size="lg"
           className="bg-[#2FA5AF] hover:bg-[#2FA5AF]/90"
         >
-          <Link to="/feedback" className="inline-flex items-center">
+          <Link
+            to="/feedback/testID/questionnaire"
+            className="inline-flex items-center"
+          >
             {t("startQuestionnaire")}
           </Link>
         </Button>

@@ -121,7 +121,8 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
 
       // Generate a unique link (simulate API response)
       const uniqueId = Math.random().toString(36).substring(2, 10);
-      const link = `https://yourdomain.com/feedback/${uniqueId}`;
+      const link = "/feedback/testID";
+      // const link = `https://yourdomain.com/feedback/${uniqueId}`;
       setGeneratedLink(link);
 
       setStep(3);
