@@ -216,10 +216,6 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                       <SelectItem value="balqis residence">
                         Balqis Residence
                       </SelectItem>
-                      <SelectItem value="palm jumeirah">
-                        Palm Jumeirah
-                      </SelectItem>
-                      <SelectItem value="marina bay">Marina Bay</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -278,7 +274,11 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 <FormItem>
                   <FormLabel>Unit Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter unit number" {...field} />
+                    <Input
+                      placeholder="BExxx"
+                      className="uppercase"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -531,11 +531,11 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  // In a real app, this would send the email
+                  // On live, this would send the email
                   alert("Email sent successfully!");
                 }}
               >
-                Send Email
+                Send Link
               </Button>
               <Button
                 type="button"
