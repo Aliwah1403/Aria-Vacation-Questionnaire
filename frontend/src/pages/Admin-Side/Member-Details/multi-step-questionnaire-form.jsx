@@ -167,7 +167,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
   return (
     <div>
       {/* Progress indicator */}
-      <div className="mx-auto max-w-xl mb-6 text-center">
+      <div className="mx-auto mb-6 text-center">
         <Stepper value={step} onValueChange={setStep}>
           {steps.map((step) => (
             <StepperItem key={step} step={step} className="not-last:flex-1">
