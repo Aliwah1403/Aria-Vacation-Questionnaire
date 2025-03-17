@@ -1,4 +1,3 @@
-"use client";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { CheckIcon, LoaderCircleIcon } from "lucide-react";
@@ -144,7 +143,7 @@ function StepperIndicator({ asChild = false, className, children, ...props }) {
     <span
       data-slot="stepper-indicator"
       className={cn(
-        "bg-muted text-muted-foreground data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium",
+        "bg-muted text-muted-foreground data-[state=active]:bg-fountain-blue-400 data-[state=completed]:bg-fountain-blue-400 data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium",
         className
       )}
       data-state={state}
@@ -205,7 +204,7 @@ function StepperSeparator({ className, ...props }) {
     <div
       data-slot="stepper-separator"
       className={cn(
-        "bg-muted group-data-[state=completed]/step:bg-primary m-0.5 group-data-[orientation=horizontal]/stepper:h-0.5 group-data-[orientation=horizontal]/stepper:w-full group-data-[orientation=horizontal]/stepper:flex-1 group-data-[orientation=vertical]/stepper:h-12 group-data-[orientation=vertical]/stepper:w-0.5",
+        "bg-muted group-data-[state=completed]/step:bg-fountain-blue-400 m-0.5 group-data-[orientation=horizontal]/stepper:h-0.5 group-data-[orientation=horizontal]/stepper:w-full group-data-[orientation=horizontal]/stepper:flex-1 group-data-[orientation=vertical]/stepper:h-12 group-data-[orientation=vertical]/stepper:w-0.5",
         className
       )}
       {...props}

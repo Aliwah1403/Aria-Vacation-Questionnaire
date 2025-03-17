@@ -20,7 +20,7 @@ const Navbar = ({ language, onLanguageChange }) => {
           <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
         </div>
 
-        <Select value={language} onValueChange={onLanguageChange}>
+        <Select value={language} onValueChange={onLanguageChange} defaultValue="en">
           <SelectTrigger className="w-[140px]">
             <SelectValue placeholder={t("selectLanguage")} />
           </SelectTrigger>

@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/stepper";
 import StepperComponent from "@/components/stepper-component";
 import { LoadingButton } from "@/components/ui/loading-button";
+import CheckInOutDatePicker from "@/components/check-in-out-date-picker";
 // Form schemas
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
@@ -143,6 +144,24 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Send email
+  const handleEmailSend = async () => {
+    setLoading(true);
+
+    try {
+      // Simulate API call with setTimeout
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Show success toast/alert
+      alert("Email sent successfully!");
+      // setStayDetailsDialog(false);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const steps = [1, 2, 3];
 
   return (
@@ -215,10 +234,6 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                       <SelectItem value="balqis residence">
                         Balqis Residence
                       </SelectItem>
-                      <SelectItem value="palm jumeirah">
-                        Palm Jumeirah
-                      </SelectItem>
-                      <SelectItem value="marina bay">Marina Bay</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -233,40 +248,13 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Check-in Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto p-0"
-                        align="start"
-                        side="bottom"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={handleCheckInSelect}
-                          disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <CheckInOutDatePicker
+                        value={field.value}
+                        onChange={(date) => handleCheckInSelect(date)}
+                        disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -278,46 +266,19 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Check-out Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto p-0"
-                        align="start"
-                        side="bottom"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={[
-                            { dayOfWeek: [0, 1, 2, 3, 4, 5] },
-                            ...(checkInDate
-                              ? [{ before: addDays(checkInDate, 0) }]
-                              : []),
-                          ]}
-                          defaultMonth={checkInDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <CheckInOutDatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={[
+                          { dayOfWeek: [0, 1, 2, 3, 4, 5] },
+                          ...(checkInDate
+                            ? [{ before: addDays(checkInDate, 0) }]
+                            : []),
+                        ]}
+                        defaultMonth={checkInDate}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -331,7 +292,11 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 <FormItem>
                   <FormLabel>Unit Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter unit number" {...field} />
+                    <Input
+                      placeholder="BRxxxxx"
+                      className="uppercase"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -551,15 +516,15 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
           <div className="space-y-2">
             <label className="text-sm font-medium">Shareable Link</label>
             <div className="flex items-center">
-              <div className="flex-1 p-3 bg-gray-50 rounded-l-md border border-r-0 truncate">
-                <div className="flex items-center">
+              <div className="flex-1 p-3 h-10 bg-gray-50 rounded-l-md border border-r-0 truncate">
+                <div className="flex items-center h-full">
                   <LinkIcon className="h-4 w-4 mr-2 text-gray-500" />
                   <span className="text-sm truncate">{generatedLink}</span>
                 </div>
               </div>
               <Button
                 type="button"
-                className="rounded-l-none"
+                className="rounded-l-none h-10 bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                 onClick={copyToClipboard}
               >
                 {copied ? (
@@ -580,16 +545,15 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               Back
             </Button>
             <div className="space-x-2">
-              <Button
+              <LoadingButton
+                loading={loading}
+                disabled={loading} // Explicitly disable while loading
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  // In a real app, this would send the email
-                  alert("Email sent successfully!");
-                }}
+                onClick={() => handleEmailSend()}
               >
-                Send Email
-              </Button>
+                Send Link
+              </LoadingButton>
               <Button
                 type="button"
                 className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
