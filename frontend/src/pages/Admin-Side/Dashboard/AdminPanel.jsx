@@ -80,7 +80,7 @@ export default function AdminDashboard() {
                   Send Questionnaires
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-full mx-auto">
+              <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-semibold">
                     Send Questionnaire
