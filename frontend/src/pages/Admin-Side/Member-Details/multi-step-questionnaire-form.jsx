@@ -293,7 +293,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                   <FormLabel>Unit Number</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="BExxx"
+                      placeholder="BRxxxxx"
                       className="uppercase"
                       {...field}
                     />
@@ -524,7 +524,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </div>
               <Button
                 type="button"
-                className="rounded-l-none h-10 bg-fountain-blue-400"
+                className="rounded-l-none h-10 bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                 onClick={copyToClipboard}
               >
                 {copied ? (
