@@ -144,6 +144,24 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Send email
+  const handleEmailSend = async () => {
+    setLoading(true);
+
+    try {
+      // Simulate API call with setTimeout
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Show success toast/alert
+      alert("Email sent successfully!");
+      // setStayDetailsDialog(false);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const steps = [1, 2, 3];
 
   return (
@@ -527,16 +545,15 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               Back
             </Button>
             <div className="space-x-2">
-              <Button
+              <LoadingButton
+                loading={loading}
+                disabled={loading} // Explicitly disable while loading
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  // On live, this would send the email
-                  alert("Email sent successfully!");
-                }}
+                onClick={() => handleEmailSend()}
               >
                 Send Link
-              </Button>
+              </LoadingButton>
               <Button
                 type="button"
                 className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
