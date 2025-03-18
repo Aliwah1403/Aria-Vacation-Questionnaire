@@ -45,6 +45,9 @@ import CheckInOutDatePicker from "@/components/check-in-out-date-picker";
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
   name: z.string().min(1, "Name is required"),
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
   resort: z.string().min(1, "Resort is required"),
   checkIn: z.date({
     required_error: "Check-in date is required",
@@ -76,6 +79,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
     defaultValues: {
       memberId: "",
       name: "",
+      email: "",
       resort: "",
       unitNo: "",
     },
@@ -211,6 +215,19 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                     <Input placeholder="Enter member name" {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={stayDetailsForm.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="you@example.com" {...field} />
+                  </FormControl>
                 </FormItem>
               )}
             />
@@ -478,8 +495,12 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
           <div className="bg-gray-50 p-4 rounded-md">
             <div className="flex flex-col space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Member</span>
-                <span className="text-sm">{formData.name}</span>
+                <span className="text-sm font-medium">Member Name</span>
+                <span className="text-sm capitalize">{formData.name}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Member Email</span>
+                <span className="text-sm">{formData.email}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Member ID</span>
@@ -502,7 +523,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Unit Number</span>
-                <span className="text-sm">{formData.unitNo}</span>
+                <span className="text-sm uppercase">{formData.unitNo}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Questionnaire Type</span>
