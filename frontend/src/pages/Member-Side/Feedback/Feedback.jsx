@@ -1,25 +1,19 @@
-import React, { useState, useId } from "react";
+"use client";
+
+import { useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import { useCharacterLimit } from "@/hooks/use-character-limit";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { questions } from "./Questions/Questions";
-import AriaLogo from "@/assets/AriaLogo.png";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { feedbackSchema } from "./schemas/feedback-schema";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -47,6 +41,7 @@ const Feedback = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
+  const [testimonialConsent, setTestimonialConsent] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(feedbackSchema),
@@ -55,6 +50,7 @@ const Feedback = () => {
         questionId: q.id,
         answer: "",
       })),
+      testimonialConsent: false,
     },
   });
 
@@ -96,6 +92,7 @@ const Feedback = () => {
       }));
 
       console.log("Feedback Answers:", formattedAnswers);
+      console.log("Testimonial Consent:", data.testimonialConsent);
       await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/success");
     } catch (error) {
@@ -137,7 +134,7 @@ const Feedback = () => {
   );
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
+    <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-12">
@@ -201,6 +198,17 @@ const Feedback = () => {
                       </div>
                     ) : (
                       <div>
+                        <p
+                          id={`${id}-description`}
+                          className="text-muted-foreground mb-2 text-right text-xs"
+                          role="status"
+                          aria-live="polite"
+                        >
+                          <span className="tabular-nums">
+                            {limit - characterCount}
+                          </span>{" "}
+                          characters left
+                        </p>
                         <Textarea
                           {...field}
                           id={id}
@@ -215,17 +223,36 @@ const Feedback = () => {
                           className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base p-3 sm:p-4 [resize:none]"
                           placeholder="Share your thoughts with us... "
                         />
-                        <p
-                          id={`${id}-description`}
-                          className="text-muted-foreground mt-2 text-right text-xs"
-                          role="status"
-                          aria-live="polite"
-                        >
-                          <span className="tabular-nums">
-                            {limit - characterCount}
-                          </span>{" "}
-                          characters left
-                        </p>
+
+                        {/* Testimonial Consent Checkbox */}
+                        <FormField
+                          control={form.control}
+                          name="testimonialConsent"
+                          render={({ field }) => (
+                            <div className="flex items-start space-x-2 mt-4">
+                              <Checkbox
+                                id="testimonialConsent"
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                className="mt-1"
+                              />
+                              <div className="grid gap-1.5 leading-none">
+                                <label
+                                  htmlFor="testimonialConsent"
+                                  className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  I agree that my feedback may be used as a
+                                  testimonial
+                                </label>
+                                <p className="text-xs text-muted-foreground">
+                                  By submitting your comments, you agree that
+                                  they may be used in the testimonial section of
+                                  our website.
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        />
                       </div>
                     )}
                     <FormMessage />
