@@ -135,9 +135,9 @@ export function ResponsesTable({ columns, data }) {
                 )}
                 value={globalFilter ?? ""}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                placeholder="Filter by Name or Member ID..."
+                placeholder="Filter by Name, Email or Member ID..."
                 type="text"
-                aria-label="Filter by Name or Member ID"
+                aria-label="Filter by Name, Email or Member ID"
               />
               <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
                 <ListFilterIcon size={16} aria-hidden="true" />

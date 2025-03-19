@@ -8,7 +8,7 @@ export function cn(...inputs) {
 // Custom filter function for multi-column searching
 export const multiColumnFilterFn = (row, columnId, filterValue) => {
   const searchableRowContent =
-    `${row.original.memberName} ${row.original.memberId}`.toLowerCase();
+    `${row.original.memberName} ${row.original.memberId} ${row.original.memberEmail}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
