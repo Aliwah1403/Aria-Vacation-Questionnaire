@@ -63,7 +63,12 @@ export const columns = [
   },
   {
     accessorKey: "memberName",
-    header: "Member Name",
+    header: "Name",
+    filterFn: multiColumnFilterFn,
+  },
+  {
+    accessorKey: "memberEmail",
+    header: "Email",
     filterFn: multiColumnFilterFn,
   },
   {
