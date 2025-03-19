@@ -6,7 +6,7 @@ const AdminLayout = () => {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <AdminPanelNavigation />
-      <main className="flex-1">
+      <main className="flex-1 bg-[#00000008]">
         <Outlet />
       </main>
     </div>

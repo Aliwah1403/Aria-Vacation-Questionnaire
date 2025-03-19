@@ -179,11 +179,57 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs> */}
 
-        {/* Single Page Approach */}
-        <ResponsesTable columns={columns} data={data} />
-      </div>
+        <Tabs defaultValue="overview">
+          <TabsList className="h-auto rounded-none border-b bg-transparent p-0">
+            <TabsTrigger
+              value="overview"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="stay-experience"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Stay Experience
+            </TabsTrigger>
+            <TabsTrigger
+              value="amenities"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Amenities
+            </TabsTrigger>
+            <TabsTrigger
+              value="customer-service"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Customer Service
+            </TabsTrigger>
+          </TabsList>
 
-      {/* <ResponsesTable columns={columns} data={data} /> */}
+          <TabsContent value="overview">
+            {/* From every questionnaire */}
+            <ResponsesTable columns={columns} data={data} />
+          </TabsContent>
+          <TabsContent value="stay-experience">
+            {/* From stay experience questionnaire */}
+            <p className="text-muted-foreground p-4 text-center text-xs">
+              Stay Experience Questionnaire Data Table
+            </p>
+          </TabsContent>
+          <TabsContent value="amenities">
+            {/* From amenities questionnaire */}
+            <p className="text-muted-foreground p-4 text-center text-xs">
+              Amenities Questionnaire Data Table
+            </p>
+          </TabsContent>
+          <TabsContent value="customer-service">
+            <p className="text-muted-foreground p-4 text-center text-xs">
+              Customer Service Questionnaire Data Table
+            </p>
+          </TabsContent>
+        </Tabs>
+      </div>
     </>
   );
 }
