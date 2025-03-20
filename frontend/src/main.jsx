@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         element: <Feedback />,
       },
       {
-        path: "feedback/testID/success",
+        path: "/feedback/testID/success",
         element: <Success />,
       },
     ],
