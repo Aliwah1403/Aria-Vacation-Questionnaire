@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const columns = [
+export const overviewColumns = [
   {
     id: "expander",
     header: () => null,

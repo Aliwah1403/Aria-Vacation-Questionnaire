@@ -83,7 +83,7 @@ import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import FacetedDataFilter from "@/components/faceted-data-filter";
 
-export function ResponsesTable({ columns, data }) {
+export function QuestionnairesOverviewTable({ columns, data }) {
   const tableId = useId();
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
