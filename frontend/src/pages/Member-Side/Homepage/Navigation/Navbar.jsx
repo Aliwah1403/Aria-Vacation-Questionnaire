@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 import { localesList } from "@/i18n";
+import { LanguagesIcon } from "lucide-react";
 
 const Navbar = ({ language, onLanguageChange }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
@@ -20,8 +21,13 @@ const Navbar = ({ language, onLanguageChange }) => {
           <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
         </div>
 
-        <Select value={language} onValueChange={onLanguageChange} defaultValue="en">
+        <Select
+          value={language}
+          onValueChange={onLanguageChange}
+          defaultValue="en"
+        >
           <SelectTrigger className="w-[140px]">
+            <LanguagesIcon />
             <SelectValue placeholder={t("selectLanguage")} />
           </SelectTrigger>
           <SelectContent>

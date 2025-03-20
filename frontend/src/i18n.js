@@ -4,6 +4,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import enContent from "./locales/en/content.json";
 import arContent from "./locales/ar/content.json";
 import frContent from "./locales/fr/content.json";
+import ruContent from "./locales/ru/content.json";
 
 const options = {
   order: [
@@ -28,12 +29,14 @@ const resources = {
   en: enContent,
   ar: arContent,
   fr: frContent,
+  ru: ruContent,
 };
 
 export const localesList = [
   { locale: "en", description: "English" },
   { locale: "ar", description: "Arabic" },
   { locale: "fr", description: "Français" },
+  { locale: "ru", description: "Russian" },
 ];
 
 i18n

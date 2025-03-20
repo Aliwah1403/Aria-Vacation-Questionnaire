@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { feedbackSchema } from "./schemas/feedback-schema";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -24,6 +25,7 @@ const emojiOptions = [
 ];
 
 const Feedback = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Emojis
@@ -115,9 +117,9 @@ const Feedback = () => {
 
   const QuestionStepper = ({ currentStep, totalSteps }) => (
     <div className="flex flex-col w-full">
-      <div className="flex items-center justify-between mb-2 ">
+      <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-gray-600">
-          {currentStep} of {totalSteps}
+          {t("question")} {currentStep} {t("of")} {totalSteps}
         </span>
       </div>
       <div className="flex gap-1">
@@ -158,7 +160,7 @@ const Feedback = () => {
                 render={({ field }) => (
                   <FormItem>
                     <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
-                      Question {currentStep}
+                      {t("question")} {currentStep}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
                       {questions[currentStep - 1].text}
@@ -241,13 +243,10 @@ const Feedback = () => {
                                   htmlFor="testimonialConsent"
                                   className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
-                                  I agree that my feedback may be used as a
-                                  testimonial
+                                  {t("testimonialConsent")}
                                 </label>
                                 <p className="text-xs text-muted-foreground">
-                                  By submitting your comments, you agree that
-                                  they may be used in the testimonial section of
-                                  our website.
+                                  {t("testimonialDisclaimer")}
                                 </p>
                               </div>
                             </div>
@@ -268,9 +267,9 @@ const Feedback = () => {
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 1}
-              className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-200 hover:border-gray-300 transition-colors min-w-[100px] sm:min-w-[120px]"
+              className="cursor-pointer capitalize px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-200 hover:border-gray-300 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
-              Previous
+              {t("previous")}
             </Button>
             {currentStep === questions.length ? (
               <LoadingButton
@@ -279,7 +278,7 @@ const Feedback = () => {
                 size="default"
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-                Submit
+                {t("submit")}
               </LoadingButton>
             ) : (
               <Button
@@ -288,7 +287,7 @@ const Feedback = () => {
                 onClick={handleNext}
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-                Continue
+                {t("continue")}
               </Button>
             )}
           </div>

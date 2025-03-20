@@ -168,6 +168,30 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
 
   const steps = [1, 2, 3];
 
+  const questionnaireTypes = {
+    "stay-experience": {
+      title: "Stay Experience Survey",
+      description:
+        "Collects feedback about the overall stay experience, including check-in/out, room comfort, and resort facilities.",
+      questions: "10 questions",
+      duration: "5-10 minutes",
+    },
+    amenities: {
+      title: "Amenities Survey",
+      description:
+        "Focuses on the resort amenities such as pools, restaurants, spa services, and recreational activities.",
+      questions: "8 questions",
+      duration: "3-5 minutes",
+    },
+    "customer-service": {
+      title: "Customer Service Survey",
+      description:
+        "Evaluates the quality of customer service provided by resort staff during the member's stay.",
+      questions: "6 questions",
+      duration: "2-4 minutes",
+    },
+  };
+
   return (
     <div>
       {/* Progress indicator */}
@@ -309,11 +333,16 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 <FormItem>
                   <FormLabel>Unit Number</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="BRxxxxx"
-                      className="uppercase"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        placeholder="xxxxx"
+                        className="peer ps-[29px]"
+                        {...field}
+                      />
+                      <span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
+                       BR
+                      </span>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -353,83 +382,45 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               render={({ field }) => (
                 <FormItem className="space-y-4">
                   <FormLabel>Questionnaire Type</FormLabel>
-                  <FormControl>
-                    <Tabs
-                      defaultValue={field.value || "stay-experience"}
-                      className="w-full"
-                      onValueChange={field.onChange}
-                    >
-                      <TabsList className="grid grid-cols-3 w-full">
-                        <TabsTrigger value="stay-experience">
-                          Stay Experience
-                        </TabsTrigger>
-                        <TabsTrigger value="amenities">Amenities</TabsTrigger>
-                        <TabsTrigger value="customer-service">
-                          Customer Service
-                        </TabsTrigger>
-                      </TabsList>
-                      <TabsContent
-                        value="stay-experience"
-                        className="mt-4 border rounded-md p-4"
-                      >
-                        <h3 className="font-medium mb-2">
-                          Stay Experience Survey
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Collects feedback about the overall stay experience,
-                          including check-in/out, room comfort, and resort
-                          facilities.
-                        </p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <Badge variant="outline" className="bg-gray-100">
-                            10 questions
-                          </Badge>
-                          <Badge variant="outline" className="bg-gray-100">
-                            5-10 minutes
-                          </Badge>
-                        </div>
-                      </TabsContent>
-                      <TabsContent
-                        value="amenities"
-                        className="mt-4 border rounded-md p-4"
-                      >
-                        <h3 className="font-medium mb-2">Amenities Survey</h3>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Focuses on the resort amenities such as pools,
-                          restaurants, spa services, and recreational
-                          activities.
-                        </p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <Badge variant="outline" className="bg-gray-100">
-                            8 questions
-                          </Badge>
-                          <Badge variant="outline" className="bg-gray-100">
-                            3-5 minutes
-                          </Badge>
-                        </div>
-                      </TabsContent>
-                      <TabsContent
-                        value="customer-service"
-                        className="mt-4 border rounded-md p-4"
-                      >
-                        <h3 className="font-medium mb-2">
-                          Customer Service Survey
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Evaluates the quality of customer service provided by
-                          resort staff during the member's stay.
-                        </p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <Badge variant="outline" className="bg-gray-100">
-                            6 questions
-                          </Badge>
-                          <Badge variant="outline" className="bg-gray-100">
-                            2-4 minutes
-                          </Badge>
-                        </div>
-                      </TabsContent>
-                    </Tabs>
-                  </FormControl>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    defaultValue={field.value || "stay-experience"}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select questionnaire type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="stay-experience">
+                        Stay Experience
+                      </SelectItem>
+                      <SelectItem value="amenities">Amenities</SelectItem>
+                      <SelectItem value="customer-service">
+                        Customer Service
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Description Section */}
+                  <div className=" border rounded-md p-4">
+                    <h3 className="font-medium mb-2">
+                      {questionnaireTypes[field.value]?.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {questionnaireTypes[field.value]?.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <Badge variant="outline" className="bg-gray-100">
+                        {questionnaireTypes[field.value]?.questions}
+                      </Badge>
+                      <Badge variant="outline" className="bg-gray-100">
+                        {questionnaireTypes[field.value]?.duration}
+                      </Badge>
+                    </div>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
