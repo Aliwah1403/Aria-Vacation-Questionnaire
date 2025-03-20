@@ -333,11 +333,16 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 <FormItem>
                   <FormLabel>Unit Number</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="BRxxxxx"
-                      className="uppercase"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        placeholder="xxxxx"
+                        className="peer ps-[29px]"
+                        {...field}
+                      />
+                      <span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
+                       BR
+                      </span>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
