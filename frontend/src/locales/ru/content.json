@@ -1,0 +1,20 @@
+{
+  "translation": {
+    "welcome": "Поделитесь своими впечатлениями о курорте",
+    "subtitle": "Благодарим вас за то, что нашли время поделиться с нами своими мыслями. Ваши отзывы помогают нам улучшать наши услуги.",
+    "clientInfo": "Детали вашего пребывания",
+    "questionnaireDetails": "Детали опроса",
+    "whatToExpect": "Чего ожидать",
+    "simpleQuestions": "Простые вопросы",
+    "quickCompletion": "Быстрое заполнение",
+    "valuableImpact": "Важное влияние",
+    "simpleQuestionsDesc": "Легкие вопросы с выбором ответа",
+    "quickCompletionDesc": "Займет всего 5 минут вашего времени",
+    "valuableImpactDesc": "Ваши отзывы напрямую влияют на наши улучшения",
+    "startQuestionnaire": "Начать опрос",
+    "selectLanguage": "Выбрать язык",
+    "type": "Тип",
+    "estimatedTime": "Расчетное время",
+    "questions": "Вопросы"
+  }
+}
