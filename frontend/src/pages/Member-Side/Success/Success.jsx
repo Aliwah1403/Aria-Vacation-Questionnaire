@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { MessageCircle, Phone, Mail, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const Success = () => {
-  // Function to open WhatsApp chat
+  const { t } = useTranslation();
+
   const openWhatsApp = () => {
-    // Replace with your actual WhatsApp number
     const phoneNumber = "97145420299";
     const whatsappUrl = `https://wa.me/${phoneNumber}`;
     window.open(whatsappUrl, "_blank");
@@ -30,21 +31,21 @@ const Success = () => {
           className="space-y-4 sm:space-y-6"
         >
           <h1 className="text-xl sm:text-3xl font-semibold text-gray-900">
-            Thank You for Your Feedback!
+            {t("thankYou")}
           </h1>
 
           <p className="text-sm sm:text-base text-gray-600 px-2 sm:px-0">
-            We appreciate you taking the time to share your experience with us.
-            Your feedback helps us improve our services.
+            {t("thankYouComment")}
           </p>
 
           <div className="border-t border-b border-gray-200 py-4 sm:py-6 my-4 sm:my-6">
             <h2 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">
-              Need further assistance?
+              {t("assistanceAsk")}
             </h2>
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-600">
                 <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                {/* Prevent layout switch in AR for mobile number */}
                 <span className="text-sm sm:text-base">+971 4 5420 202</span>
               </div>
               <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-600">
@@ -64,7 +65,7 @@ const Success = () => {
             className="bg-[#25D366] hover:bg-[#25D366]/90 text-white inline-flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base px-4 sm:px-6 py-2"
           >
             <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            Chat with us on WhatsApp
+            {t("whatsappChat")}
           </Button>
         </motion.div>
       </div>

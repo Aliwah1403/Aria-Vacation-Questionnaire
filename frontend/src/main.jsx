@@ -40,16 +40,15 @@ const router = createBrowserRouter([
         path: "/feedback/testID/questionnaire", //will replace with actual ID and form type
         element: <Feedback />,
       },
+      {
+        path: "/feedback/testID/success",
+        element: <Success />,
+      },
     ],
   },
   {
     path: "/",
     element: <Homepage />,
-  },
-
-  {
-    path: "/success",
-    element: <Success />,
   },
 ]);
 

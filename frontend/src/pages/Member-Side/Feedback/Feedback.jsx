@@ -96,7 +96,7 @@ const Feedback = () => {
       console.log("Feedback Answers:", formattedAnswers);
       console.log("Testimonial Consent:", data.testimonialConsent);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate("/success");
+      navigate("/feedback/testID/success");
     } catch (error) {
       console.error("Error submitting feedback:", error);
       alert("There was an error submitting your feedback. Please try again.");
