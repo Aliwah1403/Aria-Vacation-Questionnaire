@@ -1,4 +1,4 @@
-import FormType from "../models/formTypeModel.js";
+import FormType from "../models/formType.model.js";
 
 export const addFormType = async (req, res) => {
   try {
