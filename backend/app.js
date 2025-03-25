@@ -11,7 +11,7 @@ app.use(express.json());
 
 // routes
 app.use("/api/v1/form-type", formTypeRouter);
-app.use("api/v1/form-template", formTemplateRouter);
+app.use("/api/v1/form-template", formTemplateRouter);
 
 const server = () => {
   app.listen(PORT, async () => {
