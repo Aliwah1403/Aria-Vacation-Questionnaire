@@ -129,3 +129,32 @@ export const updateFormType = async (req, res) => {
     });
   }
 };
+
+export const deleteFormType = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if form exists
+    const existingForm = await FormType.findById(id);
+    if (!existingForm) {
+      return res.status(404).json({
+        success: false,
+        message: "Form type not found",
+      });
+    }
+
+    await FormType.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Form type deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting form type:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting form type",
+      error: error.message,
+    });
+  }
+};
