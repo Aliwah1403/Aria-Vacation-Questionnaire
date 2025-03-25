@@ -1,6 +1,6 @@
 import express from "express";
 import { PORT } from "./config/env.js";
-import { readdirSync } from "fs";
+import formTypeRouter from "./routes/formType.routes.js";
 import connectToDb from "./database/mongoDb.js";
 
 const app = express();
@@ -9,9 +9,7 @@ const app = express();
 app.use(express.json());
 
 // routes
-// readdirSync("./routes").map((route) =>
-//   app.use("/", require("./routes/" + route))
-// );
+app.use("/api/v1/form-type", formTypeRouter);
 
 const server = () => {
   app.listen(PORT, async () => {

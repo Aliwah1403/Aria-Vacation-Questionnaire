@@ -5,10 +5,12 @@ const formTypeSchema = new mongoose.Schema(
     formName: {
       type: String,
       required: true,
+      trim: true,
     },
     formCode: {
       type: String,
       required: true,
+      unique: true,
     },
     formDescription: {
       type: String,
@@ -22,4 +24,6 @@ const formTypeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("formType", formTypeSchema);
+const FormType = mongoose.model("FormType", formTypeSchema);
+
+export default FormType;
