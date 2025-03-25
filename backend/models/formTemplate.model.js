@@ -1,5 +1,14 @@
 import mongoose from "mongoose";
 
+// Define emoji codes mapped to scores
+const EMOJI_SCORES = {
+  5: "1f603", // Satisfied - 😃
+  4: "1f642", // Somewhat Satisfied - 🙂
+  3: "1f610", // Neutral - 😐
+  2: "1f641", // Somewhat Dissatisfied - 🙁
+  1: "1f614", // Very Dissatisfied - 😔
+};
+
 const formTemplateSchema = new mongoose.Schema(
   {
     formTypeId: {
@@ -32,16 +41,6 @@ const formTemplateSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
-        // maxLength: {
-        //   type: Number,
-        //   default: 4000,
-        //   validate: {
-        //     validator: function (v) {
-        //       return this.questionType === "text" ? v > 0 : true;
-        //     },
-        //     message: "Maximum length must be greater than 0 for text questions",
-        //   },
-        // },
       },
     ],
     ratingOptions: [
@@ -51,15 +50,24 @@ const formTemplateSchema = new mongoose.Schema(
           required: true,
           trim: true,
         },
-        emoji: {
-          type: String,
-          required: true,
-        },
         score: {
           type: Number,
           required: true,
           min: 1,
           max: 5,
+          validate: {
+            validator: function (v) {
+              return Number.isInteger(v);
+            },
+            message: "Score must be a whole number between 1 and 5",
+          },
+        },
+        emoji: {
+          type: String,
+          required: true,
+          default: function () {
+            return EMOJI_SCORES[this.score];
+          },
         },
       },
     ],
