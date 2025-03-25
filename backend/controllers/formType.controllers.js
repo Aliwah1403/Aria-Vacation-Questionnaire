@@ -34,3 +34,32 @@ export const addFormType = async (req, res) => {
     });
   }
 };
+
+export const getFormType = async (req, res) => {
+  try {
+    const formTypes = await FormType.find()
+      .sort({ createdAt: -1 })
+      .select("-__v"); // Exclude version key
+
+    if (!formTypes.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No form types found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Form types retrieved successfully",
+      count: formTypes.length,
+      data: formTypes,
+    });
+  } catch (error) {
+    console.error("Error retrieving form types:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving form types",
+      error: error.message,
+    });
+  }
+};

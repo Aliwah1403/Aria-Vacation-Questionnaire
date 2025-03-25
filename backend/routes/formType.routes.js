@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { addFormType } from "../controllers/formType.controllers.js";
+import {
+  addFormType,
+  getFormType,
+} from "../controllers/formType.controllers.js";
 
 const formTypeRouter = Router();
 
-formTypeRouter.post("/add", addFormType);
+formTypeRouter.post("/add", addFormType).get("/get", getFormType);
 
 export default formTypeRouter;
