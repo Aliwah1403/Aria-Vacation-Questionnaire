@@ -60,3 +60,51 @@ export const addFormTemplate = async (req, res) => {
     });
   }
 };
+
+export const getFormTemplate = async (req, res) => {
+  try {
+    const { formCode } = req.query;
+    let query = {};
+
+    // If formCode provided, filter by form type
+    if (formCode) {
+      const formType = await FormType.findOne({ formCode });
+      if (!formType) {
+        return res.status(404).json({
+          success: false,
+          message: "Form type not found",
+        });
+      }
+      query.formTypeId = formType._id;
+    }
+
+    // Fetch templates with populated form type details
+    const templates = await FormTemplate.find(query)
+      .populate("formTypeId", "formName formCode formDescription")
+      .select("-__v")
+      .sort({ createdAt: -1 });
+
+    if (!templates.length) {
+      return res.status(404).json({
+        success: false,
+        message: formCode
+          ? `No templates found for form type: ${formCode}`
+          : "No templates found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Form templates retrieved successfully",
+      count: templates.length,
+      data: templates,
+    });
+  } catch (error) {
+    console.error("Error retrieving form templates:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving form templates",
+      error: error.message,
+    });
+  }
+};
