@@ -108,3 +108,149 @@ export const getFormTemplate = async (req, res) => {
     });
   }
 };
+
+export const updateFormTemplate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { questions, ratingOptions, isActive } = req.body;
+
+    // Check if template exists
+    const existingTemplate = await FormTemplate.findById(id);
+    if (!existingTemplate) {
+      return res.status(404).json({
+        success: false,
+        message: "Form template not found"
+      });
+    }
+
+    // Validate questions order if questions are being updated
+    if (questions) {
+      const orders = questions.map(q => q.order);
+      const hasDuplicateOrders = orders.length !== new Set(orders).size;
+      if (hasDuplicateOrders) {
+        return res.status(400).json({
+          success: false,
+          message: "Questions must have unique order numbers"
+        });
+      }
+    }
+
+    // Check if emoji questions exist and rating options are provided
+    const updatedQuestions = questions || existingTemplate.questions;
+    const hasEmojiQuestions = updatedQuestions.some(q => q.questionType === "emoji");
+    if (hasEmojiQuestions && (!ratingOptions?.length && !existingTemplate.ratingOptions?.length)) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating options are required when using emoji questions"
+      });
+    }
+
+    // Update template
+    const updatedTemplate = await FormTemplate.findByIdAndUpdate(
+      id,
+      {
+        questions: questions || existingTemplate.questions,
+        ratingOptions: ratingOptions || existingTemplate.ratingOptions,
+        isActive: isActive ?? existingTemplate.isActive
+      },
+      { new: true, runValidators: true }
+    )
+    .populate("formTypeId", "formName formCode formDescription")
+    .select("-__v");
+
+    res.status(200).json({
+      success: true,
+      message: "Form template updated successfully",
+      data: updatedTemplate
+    });
+
+  } catch (error) {
+    console.error("Error updating form template:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating form template",
+      error: error.message
+    });
+  }
+};
+
+export const updateQuestion = async (req, res) => {
+  try {
+    const { templateId, questionId } = req.params;
+    const { questionText, questionType, required, order } = req.body;
+
+    // Find template and verify it exists
+    const template = await FormTemplate.findById(templateId);
+    if (!template) {
+      return res.status(404).json({
+        success: false,
+        message: "Form template not found"
+      });
+    }
+
+    // Find the specific question
+    const questionIndex = template.questions.findIndex(
+      q => q._id.toString() === questionId
+    );
+
+    if (questionIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Question not found in template"
+      });
+    }
+
+    // Check if order is being changed and validate uniqueness
+    if (order && order !== template.questions[questionIndex].order) {
+      const orderExists = template.questions.some(
+        (q, idx) => idx !== questionIndex && q.order === order
+      );
+      if (orderExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Question order must be unique"
+        });
+      }
+    }
+
+    // Update the specific question
+    template.questions[questionIndex] = {
+      ...template.questions[questionIndex].toObject(),
+      questionText: questionText || template.questions[questionIndex].questionText,
+      questionType: questionType || template.questions[questionIndex].questionType,
+      required: required ?? template.questions[questionIndex].required,
+      order: order || template.questions[questionIndex].order
+    };
+
+    // If changing to emoji type, verify rating options exist
+    if (questionType === "emoji" && !template.ratingOptions?.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating options are required for emoji questions"
+      });
+    }
+
+    // Save the updated template
+    const updatedTemplate = await FormTemplate.findByIdAndUpdate(
+      templateId,
+      { questions: template.questions },
+      { new: true, runValidators: true }
+    )
+    .populate("formTypeId", "formName formCode formDescription")
+    .select("-__v");
+
+    res.status(200).json({
+      success: true,
+      message: "Question updated successfully",
+      data: updatedTemplate
+    });
+
+  } catch (error) {
+    console.error("Error updating question:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating question",
+      error: error.message
+    });
+  }
+};
