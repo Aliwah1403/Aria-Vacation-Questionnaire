@@ -119,29 +119,35 @@ export const updateFormTemplate = async (req, res) => {
     if (!existingTemplate) {
       return res.status(404).json({
         success: false,
-        message: "Form template not found"
+        message: "Form template not found",
       });
     }
 
     // Validate questions order if questions are being updated
     if (questions) {
-      const orders = questions.map(q => q.order);
+      const orders = questions.map((q) => q.order);
       const hasDuplicateOrders = orders.length !== new Set(orders).size;
       if (hasDuplicateOrders) {
         return res.status(400).json({
           success: false,
-          message: "Questions must have unique order numbers"
+          message: "Questions must have unique order numbers",
         });
       }
     }
 
     // Check if emoji questions exist and rating options are provided
     const updatedQuestions = questions || existingTemplate.questions;
-    const hasEmojiQuestions = updatedQuestions.some(q => q.questionType === "emoji");
-    if (hasEmojiQuestions && (!ratingOptions?.length && !existingTemplate.ratingOptions?.length)) {
+    const hasEmojiQuestions = updatedQuestions.some(
+      (q) => q.questionType === "emoji"
+    );
+    if (
+      hasEmojiQuestions &&
+      !ratingOptions?.length &&
+      !existingTemplate.ratingOptions?.length
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Rating options are required when using emoji questions"
+        message: "Rating options are required when using emoji questions",
       });
     }
 
@@ -151,25 +157,24 @@ export const updateFormTemplate = async (req, res) => {
       {
         questions: questions || existingTemplate.questions,
         ratingOptions: ratingOptions || existingTemplate.ratingOptions,
-        isActive: isActive ?? existingTemplate.isActive
+        isActive: isActive ?? existingTemplate.isActive,
       },
       { new: true, runValidators: true }
     )
-    .populate("formTypeId", "formName formCode formDescription")
-    .select("-__v");
+      .populate("formTypeId", "formName formCode formDescription")
+      .select("-__v");
 
     res.status(200).json({
       success: true,
       message: "Form template updated successfully",
-      data: updatedTemplate
+      data: updatedTemplate,
     });
-
   } catch (error) {
     console.error("Error updating form template:", error);
     res.status(500).json({
       success: false,
       message: "Error updating form template",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -184,19 +189,19 @@ export const updateQuestion = async (req, res) => {
     if (!template) {
       return res.status(404).json({
         success: false,
-        message: "Form template not found"
+        message: "Form template not found",
       });
     }
 
     // Find the specific question
     const questionIndex = template.questions.findIndex(
-      q => q._id.toString() === questionId
+      (q) => q._id.toString() === questionId
     );
 
     if (questionIndex === -1) {
       return res.status(404).json({
         success: false,
-        message: "Question not found in template"
+        message: "Question not found in template",
       });
     }
 
@@ -208,7 +213,7 @@ export const updateQuestion = async (req, res) => {
       if (orderExists) {
         return res.status(400).json({
           success: false,
-          message: "Question order must be unique"
+          message: "Question order must be unique",
         });
       }
     }
@@ -216,17 +221,19 @@ export const updateQuestion = async (req, res) => {
     // Update the specific question
     template.questions[questionIndex] = {
       ...template.questions[questionIndex].toObject(),
-      questionText: questionText || template.questions[questionIndex].questionText,
-      questionType: questionType || template.questions[questionIndex].questionType,
+      questionText:
+        questionText || template.questions[questionIndex].questionText,
+      questionType:
+        questionType || template.questions[questionIndex].questionType,
       required: required ?? template.questions[questionIndex].required,
-      order: order || template.questions[questionIndex].order
+      order: order || template.questions[questionIndex].order,
     };
 
     // If changing to emoji type, verify rating options exist
     if (questionType === "emoji" && !template.ratingOptions?.length) {
       return res.status(400).json({
         success: false,
-        message: "Rating options are required for emoji questions"
+        message: "Rating options are required for emoji questions",
       });
     }
 
@@ -236,21 +243,49 @@ export const updateQuestion = async (req, res) => {
       { questions: template.questions },
       { new: true, runValidators: true }
     )
-    .populate("formTypeId", "formName formCode formDescription")
-    .select("-__v");
+      .populate("formTypeId", "formName formCode formDescription")
+      .select("-__v");
 
     res.status(200).json({
       success: true,
       message: "Question updated successfully",
-      data: updatedTemplate
+      data: updatedTemplate,
     });
-
   } catch (error) {
     console.error("Error updating question:", error);
     res.status(500).json({
       success: false,
       message: "Error updating question",
-      error: error.message
+      error: error.message,
+    });
+  }
+};
+
+export const deleteFormTemplate = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if template exists
+    const existingTemplate = await FormTemplate.findById(id);
+    if (!existingTemplate) {
+      return res.status(404).json({
+        success: false,
+        message: "Form template not found",
+      });
+    }
+
+    await FormTemplate.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Form template deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting form template:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting form template",
+      error: error.message,
     });
   }
 };
