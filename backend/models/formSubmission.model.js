@@ -73,6 +73,7 @@ const formSubmissionSchema = new mongoose.Schema(
       {
         questionId: {
           type: mongoose.Schema.Types.ObjectId,
+          ref: "FormTemplate",
           required: true,
         },
         question: {
@@ -81,10 +82,16 @@ const formSubmissionSchema = new mongoose.Schema(
         },
         response: {
           type: String,
-          required: true,
+          required: false,
+          default: "",
         },
       },
     ],
+    testimonialConsent: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     additionalComments: {
       type: String,
       trim: true,
