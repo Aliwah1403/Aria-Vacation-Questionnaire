@@ -1,6 +1,5 @@
 import FormSubmission from "../models/formSubmission.model.js";
 import FormTemplate from "../models/formTemplate.model.js";
-import crypto from "crypto";
 
 export const addFormSubmission = async (req, res) => {
   try {
@@ -24,9 +23,6 @@ export const addFormSubmission = async (req, res) => {
       });
     }
 
-    // Generate unique access token
-    const uniqueAccessToken = crypto.randomBytes(32).toString("hex");
-
     // Create form submission
     const newSubmission = await FormSubmission.create({
       formTemplateId,
@@ -37,7 +33,6 @@ export const addFormSubmission = async (req, res) => {
       unitNo,
       checkIn: new Date(checkIn),
       checkOut: new Date(checkOut),
-      uniqueAccessToken,
       status: "pending",
       sentAt: new Date(),
       responses: [], // Initialize empty responses array

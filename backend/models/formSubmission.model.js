@@ -47,11 +47,6 @@ const formSubmissionSchema = new mongoose.Schema(
     },
 
     // Access and status
-    uniqueAccessToken: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     status: {
       type: String,
       enum: ["pending", "viewed", "completed"],
@@ -101,7 +96,6 @@ const formSubmissionSchema = new mongoose.Schema(
 
 // Indexes for better query performance
 formSubmissionSchema.index({ memberId: 1, status: 1 });
-formSubmissionSchema.index({ uniqueAccessToken: 1 });
 formSubmissionSchema.index({ resort: 1, checkIn: -1 });
 
 // Virtual for calculating stay duration
