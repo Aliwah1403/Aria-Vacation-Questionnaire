@@ -70,58 +70,87 @@ export const addFormSubmission = async (req, res) => {
   }
 };
 
+export const formSubmissionResponses = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { responses, additionalComments, testimonialConsent } = req.body;
 
-// export const formSubmissionResponses = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { responses, additionalComments } = req.body;
+    // Find submission and populate template details for validation
+    const submission = await FormSubmission.findById(id).populate({
+      path: "formTemplateId",
+      select: "questions ratingOptions",
+    });
 
-//     // Find submission and validate it exists
-//     const submission = await FormSubmission.findById(id);
-//     if (!submission) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Form submission not found",
-//       });
-//     }
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: "Form submission not found",
+      });
+    }
 
-//     // If this is first view, set viewedAt
-//     if (!submission.viewedAt) {
-//       submission.viewedAt = new Date();
-//       submission.status = "viewed";
-//     }
+    const template = submission.formTemplateId;
+    const validRatingOptions = template.ratingOptions.map(
+      (option) => option.value
+    );
 
-//     // If submitting responses, update completion details
-//     if (responses?.length > 0) {
-//       submission.responses = responses;
-//       submission.additionalComments = additionalComments || "";
-//       submission.completedAt = new Date();
-//       submission.status = "completed";
-//     }
+    // Validate responses
+    for (const response of responses) {
+      // Find corresponding question in template
+      const templateQuestion = template.questions.find(
+        (q) => q._id.toString() === response.questionId.toString()
+      );
 
-//     // Save changes
-//     await submission.save();
+      if (!templateQuestion) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid question ID: ${response.questionId}`,
+        });
+      }
 
-//     // Return updated submission with populated data
-//     const updatedSubmission = await FormSubmission.findById(id).populate({
-//       path: "formTemplateId",
-//       populate: { path: "formTypeId" },
-//     });
+      if (!submission.viewedAt) {
+        submission.viewedAt = new Date();
+        submission.status = "viewed";
+      }
 
-//     res.status(200).json({
-//       success: true,
-//       message:
-//         responses?.length > 0
-//           ? "Responses submitted successfully"
-//           : "Form viewed",
-//       data: updatedSubmission,
-//     });
-//   } catch (error) {
-//     console.error("Error updating form submission:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Error updating form submission",
-//       error: error.message,
-//     });
-//   }
-// };
+      // Validate emoji responses against rating options
+      if (
+        templateQuestion.questionType === "emoji" &&
+        !validRatingOptions.includes(response.response)
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid response for question ${
+            response.questionId
+          }. Must be one of: ${validRatingOptions.join(", ")}`,
+        });
+      }
+    }
+
+    // Update submission with validated responses
+    submission.responses = responses;
+    submission.additionalComments = additionalComments || "";
+    submission.testimonialConsent = testimonialConsent || false;
+    submission.completedAt = new Date();
+    submission.status = "completed";
+
+    await submission.save();
+
+    const updatedSubmission = await FormSubmission.findById(id).populate({
+      path: "formTemplateId",
+      populate: { path: "formTypeId" },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Responses submitted successfully",
+      data: updatedSubmission,
+    });
+  } catch (error) {
+    console.error("Error updating form submission:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating form submission",
+      error: error.message,
+    });
+  }
+};
