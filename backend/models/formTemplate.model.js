@@ -34,7 +34,7 @@ const formTemplateSchema = new mongoose.Schema(
         },
         questionType: {
           type: String,
-          enum: ["emoji", "text"],
+          enum: ["emoji", "text", "comments"],
           required: true,
           trim: true,
         },
