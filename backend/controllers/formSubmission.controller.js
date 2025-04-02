@@ -45,6 +45,10 @@ export const addFormSubmission = async (req, res) => {
       responses, // Pre-filled with questions
     });
 
+    const BASE_URL = process.env.FRONTEND_URL;
+    const formType = template.formTypeName.toLowerCase().replace(/\s+/g, "_");
+    const feedbackUrl = `${BASE_URL}/feedback/${formType}/${newSubmission.id}/`;
+
     // Populate template details in response
     const populatedSubmission = await FormSubmission.findById(
       newSubmission._id
@@ -59,12 +63,90 @@ export const addFormSubmission = async (req, res) => {
       success: true,
       message: "Form submission created successfully",
       data: populatedSubmission,
+      feedbackUrl: feedbackUrl,
     });
   } catch (error) {
     console.error("Error creating form submission:", error);
     res.status(500).json({
       success: false,
       message: "Error creating form submission",
+      error: error.message,
+    });
+  }
+};
+
+export const getFormSubmission = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // populate template details
+    const submission = await FormSubmission.findById(id).populate({
+      path: "formTemplateId",
+      select: "questions ratingOptions formTypeName",
+      populate: {
+        path: "formTypeId",
+        select: "formName formCode",
+      },
+    });
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: "Form submission not found",
+      });
+    }
+
+    // Check if feedback is already completed
+    if (submission.status === "completed") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Thank you for your feedback. You have already completed this survey.",
+        data: {
+          completedAt: submission.completedAt,
+          memberName: submission.memberName,
+          resort: submission.resort,
+          checkOut: submission.checkOut,
+        },
+      });
+    }
+
+    // If not completed, mark as viewed if first time
+    if (!submission.viewedAt) {
+      submission.viewedAt = new Date();
+      submission.status = "viewed";
+      await submission.save();
+    }
+
+    const responseData = {
+      memberDetails: {
+        name: submission.memberName,
+        email: submission.memberEmail,
+        memberId: submission.memberId,
+        resort: submission.resort,
+        unitNo: submission.unitNo,
+        checkIn: submission.checkIn,
+        checkOut: submission.checkOut,
+      },
+      formDetails: {
+        formType: submission.formTemplateId.formTypeName,
+        questions: submission.formTemplateId.questions,
+        ratingOptions: submission.formTemplateId.ratingOptions,
+      },
+      status: submission.status,
+      responses: submission.responses,
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "Form submission retrieved successfully",
+      data: responseData,
+    });
+  } catch (error) {
+    console.error("Error fetching form submission:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching form submission",
       error: error.message,
     });
   }
@@ -81,6 +163,19 @@ export const formSubmissionResponses = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Form submission not found",
+      });
+    }
+
+    // Check if already completed
+    if (submission.status === "completed") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "This feedback form has already been submitted. Thank you for your participation.",
+        data: {
+          completedAt: submission.completedAt,
+          memberName: submission.memberName,
+        },
       });
     }
 
@@ -138,10 +233,6 @@ export const formSubmissionResponses = async (req, res) => {
     submission.completedAt = new Date();
     submission.status = "completed";
 
-    if (!submission.viewedAt) {
-      submission.viewedAt = new Date();
-    }
-
     await submission.save();
 
     // Get fully populated submission for response
@@ -152,13 +243,13 @@ export const formSubmissionResponses = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Responses submitted successfully",
+      message:
+        "Thank you for your feedback! Your responses have been submitted successfully.",
       data: updatedSubmission,
     });
   } catch (error) {
-    // console.error("Error updating form submission:", error);
-    // console.error("Submission ID:", id);
-    // console.error("Request body:", JSON.stringify(req.body, null, 2));
+    console.error("Error updating form submission:", error);
+    console.error("Request body:", JSON.stringify(req.body, null, 2));
     res.status(500).json({
       success: false,
       message: "Error updating form submission",
