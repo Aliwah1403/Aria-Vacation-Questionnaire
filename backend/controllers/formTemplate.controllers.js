@@ -123,9 +123,29 @@ export const updateFormTemplate = async (req, res) => {
       });
     }
 
-    // Validate questions order if questions are being updated
+    let updatedQuestions = [...existingTemplate.questions]; // Create copy of existing questions
+
     if (questions) {
-      const orders = questions.map((q) => q.order);
+      // Check if we're adding new questions or updating existing ones
+      questions.forEach((newQuestion) => {
+        const existingIndex = updatedQuestions.findIndex(
+          (q) => q._id?.toString() === newQuestion._id
+        );
+
+        if (existingIndex !== -1) {
+          // Update existing question
+          updatedQuestions[existingIndex] = {
+            ...updatedQuestions[existingIndex].toObject(),
+            ...newQuestion,
+          };
+        } else {
+          // Add new question
+          updatedQuestions.push(newQuestion);
+        }
+      });
+
+      // Validate order numbers
+      const orders = updatedQuestions.map((q) => q.order);
       const hasDuplicateOrders = orders.length !== new Set(orders).size;
       if (hasDuplicateOrders) {
         return res.status(400).json({
@@ -136,7 +156,6 @@ export const updateFormTemplate = async (req, res) => {
     }
 
     // Check if emoji questions exist and rating options are provided
-    const updatedQuestions = questions || existingTemplate.questions;
     const hasEmojiQuestions = updatedQuestions.some(
       (q) => q.questionType === "emoji"
     );
@@ -151,12 +170,43 @@ export const updateFormTemplate = async (req, res) => {
       });
     }
 
+    let updatedRatingOptions = [...existingTemplate.ratingOptions]; // Create copy
+
+    if (ratingOptions) {
+      ratingOptions.forEach((newOption) => {
+        const existingIndex = updatedRatingOptions.findIndex(
+          (o) => o._id?.toString() === newOption._id
+        );
+
+        if (existingIndex !== -1) {
+          // Update existing option
+          updatedRatingOptions[existingIndex] = {
+            ...updatedRatingOptions[existingIndex].toObject(),
+            ...newOption,
+          };
+        } else {
+          // Add new option
+          updatedRatingOptions.push(newOption);
+        }
+      });
+
+      // Validate scores are unique
+      const scores = updatedRatingOptions.map((o) => o.score);
+      const hasDuplicateScores = scores.length !== new Set(scores).size;
+      if (hasDuplicateScores) {
+        return res.status(400).json({
+          success: false,
+          message: "Rating options must have unique scores",
+        });
+      }
+    }
+
     // Update template
     const updatedTemplate = await FormTemplate.findByIdAndUpdate(
       id,
       {
-        questions: questions || existingTemplate.questions,
-        ratingOptions: ratingOptions || existingTemplate.ratingOptions,
+        questions: updatedQuestions,
+        ratingOptions: updatedRatingOptions,
         isActive: isActive ?? existingTemplate.isActive,
       },
       { new: true, runValidators: true }
