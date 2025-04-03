@@ -14,6 +14,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import MemberHomepage from "./pages/Member-Side/Homepage/MemberHomepage";
 import MemberSideLayout from "./layouts/MemberSideLayout";
 import QuestionnairesOverview from "./pages/Admin-Side/Questionnaires/Overview/Overview";
+import QuestionnaireSetup from "./pages/Admin-Side/Setup";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/questionnaires",
         element: <QuestionnairesOverview />,
+      },
+      {
+        path: "/admin/questionnaire-setup",
+        element: <QuestionnaireSetup />,
       },
     ],
   },
