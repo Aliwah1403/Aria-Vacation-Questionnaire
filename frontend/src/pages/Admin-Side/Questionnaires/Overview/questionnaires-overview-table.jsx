@@ -67,6 +67,8 @@ import {
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CheckIcon,
+  XIcon,
   ChevronUpIcon,
   CircleAlertIcon,
   CircleXIcon,
@@ -82,6 +84,7 @@ import {
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import FacetedDataFilter from "@/components/faceted-data-filter";
+import { Badge } from "@/components/ui/badge";
 
 export function QuestionnairesOverviewTable({ columns, data }) {
   const tableId = useId();
@@ -234,9 +237,33 @@ export function QuestionnairesOverviewTable({ columns, data }) {
                             </div>
                             {row.original.additionalComments && (
                               <div className="rounded-lg border p-4">
-                                <p className="text-sm font-medium">
-                                  Additional Comments
-                                </p>
+                                <div className="flex justify-between items-start mb-1">
+                                  <p className="text-sm font-medium">
+                                    Additional Comments
+                                  </p>
+
+                                  {row.original.testimonialConsent === true && (
+                                    <Badge variant="outline" className="gap-1">
+                                      <CheckIcon
+                                        className="text-emerald-500"
+                                        size={12}
+                                        aria-hidden="true"
+                                      />
+                                      Approved For Testimonials
+                                    </Badge>
+                                  )}
+                                  {row.original.testimonialConsent ===
+                                    false && (
+                                    <Badge variant="outline" className="gap-1">
+                                      <XIcon
+                                        className="text-red-500"
+                                        size={12}
+                                        aria-hidden="true"
+                                      />
+                                      Not Approved For Testimonials
+                                    </Badge>
+                                  )}
+                                </div>
                                 <p className="text-sm text-muted-foreground">
                                   {row.original.additionalComments}
                                 </p>

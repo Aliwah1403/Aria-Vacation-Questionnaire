@@ -77,6 +77,7 @@ export const data = [
       },
     ],
     additionalComments: "Amazing service and great views. Loved it!",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b832",
@@ -156,6 +157,7 @@ export const data = [
       },
     ],
     additionalComments: "Great stay overall. The staff was very helpful.",
+    testimonialConsent: false,
   },
   {
     _id: "65de89fb4b7219a3f4e1b833",
@@ -175,6 +177,7 @@ export const data = [
     completedAt: null,
     responses: [],
     additionalComments: "",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b834",
@@ -254,6 +257,7 @@ export const data = [
       },
     ],
     additionalComments: "Exceptional experience! Will definitely return.",
+    testimonialConsent: false,
   },
   {
     _id: "65de89fb4b7219a3f4e1b835",
@@ -273,6 +277,7 @@ export const data = [
     completedAt: null,
     responses: [],
     additionalComments: "",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b836",
@@ -353,6 +358,7 @@ export const data = [
     ],
     additionalComments:
       "Good experience overall. Room service could be improved.",
+    testimonialConsent: false,
   },
   {
     _id: "65de89fb4b7219a3f4e1b837",
@@ -432,6 +438,7 @@ export const data = [
       },
     ],
     additionalComments: "Perfect vacation spot! The amenities were top-notch.",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b838",
@@ -451,6 +458,7 @@ export const data = [
     completedAt: null,
     responses: [],
     additionalComments: "",
+    testimonialConsent: false,
   },
   {
     _id: "65de89fb4b7219a3f4e1b839",
@@ -530,6 +538,7 @@ export const data = [
       },
     ],
     additionalComments: "Wonderful stay. The beach access was a highlight.",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b840",
@@ -549,6 +558,7 @@ export const data = [
     completedAt: null,
     responses: [],
     additionalComments: "",
+    testimonialConsent: false,
   },
   {
     _id: "65de89fb4b7219a3f4e1b841",
@@ -629,6 +639,7 @@ export const data = [
     ],
     additionalComments:
       "Absolutely flawless experience. Best resort I've ever stayed at!",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b842",
@@ -708,6 +719,7 @@ export const data = [
       },
     ],
     additionalComments: "Nice holiday stay. The spa services were excellent.",
+    testimonialConsent: false,
   },
   {
     _id: "65de89fb4b7219a3f4e1b843",
@@ -727,6 +739,7 @@ export const data = [
     completedAt: null,
     responses: [],
     additionalComments: "",
+    testimonialConsent: true,
   },
   {
     _id: "65de89fb4b7219a3f4e1b844",
@@ -807,5 +820,6 @@ export const data = [
     ],
     additionalComments:
       "Lovely property with excellent dining options. Will recommend!",
+    testimonialConsent: false,
   },
 ];

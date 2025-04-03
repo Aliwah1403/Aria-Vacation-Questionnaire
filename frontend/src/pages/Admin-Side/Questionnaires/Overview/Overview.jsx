@@ -39,23 +39,6 @@ const QuestionnairesOverview = () => {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
   return (
     <>
-      {/* <div className="border-b bg-background px-4 py-4 md:px-6">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="#">Questionnaires</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Stay Experience Survey</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div> */}
 
       {/* Project Header */}
       <AdminPageHeader
