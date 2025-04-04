@@ -3,6 +3,36 @@ import AdminPageHeader from "@/components/admin-page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { FormTypeTable } from "./formType/form-type-table";
+import { formTypeColumns } from "./formType/columns";
+
+const formTypes = [
+    // convert boolean values to strings when connecting DB
+  {
+    id: 1,
+    formName: "Stay Experience Survey",
+    formDescription: "Gather feedback about members' resort experience",
+    isActive: true,
+  },
+  {
+    id: 2,
+    formName: "Amenities Feedback",
+    formDescription: "Collect feedback on resort amenities",
+    isActive: true,
+  },
+  {
+    id: 3,
+    formName: "Customer Service Rating",
+    formDescription: "Rate the quality of customer service",
+    isActive: true,
+  },
+  {
+    id: 4,
+    formName: "Post-Stay Survey",
+    formDescription: "Follow-up survey after member checkout",
+    isActive: false,
+  },
+];
 
 const QuestionnaireSetup = () => {
   return (
@@ -36,7 +66,8 @@ const QuestionnaireSetup = () => {
           </TabsList>
 
           <TabsContent value="form-types" className="mt-0">
-            {/* <FormTypesList /> */} FormType
+            {/* <FormTypesList /> */}
+            <FormTypeTable columns={formTypeColumns} data={formTypes} />
           </TabsContent>
 
           <TabsContent value="form-templates" className="mt-0">
