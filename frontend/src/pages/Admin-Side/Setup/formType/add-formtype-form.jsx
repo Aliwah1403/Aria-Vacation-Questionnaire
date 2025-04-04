@@ -64,7 +64,11 @@ const FormTypeForm = ({ onSubmit, onCancel }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8" id="add-form-type">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-8"
+        id="add-form-type"
+      >
         <FormField
           control={form.control}
           name="formName"

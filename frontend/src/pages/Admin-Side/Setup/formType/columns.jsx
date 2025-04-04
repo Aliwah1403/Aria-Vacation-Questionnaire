@@ -11,6 +11,7 @@ import {
 import { multiSelectFilter } from "@/lib/utils";
 import {
   PlusCircle,
+  BanIcon,
   Pencil,
   Trash2,
   EllipsisIcon,
@@ -56,35 +57,42 @@ export const formTypeColumns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <EllipsisIcon className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="middle">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <EllipsisIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="middle">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <DropdownMenuSeparator />
+            <DropdownMenuSeparator />
 
-          <DropdownMenuItem>
-            <Pencil className="size-4" />
-            Edit form type
-          </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Pencil className="size-4" />
+              Edit form type
+            </DropdownMenuItem>
 
-          <DropdownMenuItem>
-            <Trash2 className="size-4" />
-            Delete form type
-          </DropdownMenuItem>
+            <DropdownMenuItem>
+              <BanIcon className="size-4" />
+              Disable form type
+            </DropdownMenuItem>
 
-          {/* <AlertDialogTrigger>
+            <DropdownMenuItem>
+              <Trash2 className="size-4" />
+              Delete form type
+            </DropdownMenuItem>
+
+            {/* <AlertDialogTrigger>
               <DropdownMenuItem>
                 <BanIcon className="mr-2 size-5" />
                 Disable vehicle
               </DropdownMenuItem>
             </AlertDialogTrigger> */}
-        </DropdownMenuContent>
-      </DropdownMenu>;
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
     },
   },
 ];
