@@ -79,6 +79,7 @@ export function FormTypeTable({ columns, data }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -103,6 +104,21 @@ export function FormTypeTable({ columns, data }) {
   });
 
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      // Add your API call here
+      console.log("Form submitted:", formData);
+
+      // Close the sheet after successful submission
+      setSheetOpen(false);
+
+      // Optionally refresh the table data
+      // await refetchData();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
   return (
     <Card>
@@ -158,70 +174,56 @@ export function FormTypeTable({ columns, data }) {
             {/* /* <FacetedDataFilter
                     column={table.getColumn("isActive")}
                     title="Status"
-                  /> */} 
-                  {isFiltered && (
-                    <Button
-                    aria-label="Reset filters"
-                    variant="ghost"
-                    onClick={() => table.resetColumnFilters()}
-                    className="h-8 px-2 lg:px-3"
-                    >
-                    Reset
-                    <XCircle className="size-3.5" aria-hidden="true" />
-                    </Button>
-                  )}
-                  </div>
-                  <Sheet>
-                  <SheetTrigger asChild>
-                    <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
-                    <PlusCircle />
-                    Create New Form Type
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent>
-                    <SheetHeader>
-                    <SheetTitle>Create New Form Type</SheetTitle>
-                    <SheetDescription>
-                      Add a new form type to the system. Fill in the required details below.
-                    </SheetDescription>
-                    </SheetHeader>
-                    <div className="p-4">
-                    {" "}
-                    <FormTypeForm />
-                    </div>
-                    {/* <div className="grid gap-4 p-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                      Name
-                      </Label>
-                      <Input
-                      id="name"
-                      value="Pedro Duarte"
-                      className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="username" className="text-right">
-                      Username
-                      </Label>
-                      <Input
-                      id="username"
-                      value="@peduarte"
-                      className="col-span-3"
-                      />
-                    </div>
-                    </div> */}
-              {/* <SheetFooter>
+                  /> */}
+            {isFiltered && (
+              <Button
+                aria-label="Reset filters"
+                variant="ghost"
+                onClick={() => table.resetColumnFilters()}
+                className="h-8 px-2 lg:px-3"
+              >
+                Reset
+                <XCircle className="size-3.5" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
+                <PlusCircle />
+                Create New Form Type
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Create New Form Type</SheetTitle>
+                <SheetDescription>
+                  Add a new form type to the system. Fill in the required
+                  details below.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="p-4">
+                {" "}
+                <FormTypeForm onSubmit={handleFormSubmit} />
+              </div>
+
+              <SheetFooter>
                 <div className="flex items-center justify-end space-x-2">
                   {" "}
                   <SheetClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline" type="button">
+                      Cancel
+                    </Button>
                   </SheetClose>
-                  <SheetClose asChild>
-                    <Button type="submit">Save changes</Button>
-                  </SheetClose>
+                  <Button
+                    type="submit"
+                    form="add-form-type"
+                    className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                  >
+                    Save changes
+                  </Button>
                 </div>
-              </SheetFooter> */}
+              </SheetFooter>
             </SheetContent>
           </Sheet>
         </div>

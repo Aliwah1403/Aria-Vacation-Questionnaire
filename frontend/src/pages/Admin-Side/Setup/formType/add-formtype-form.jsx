@@ -26,7 +26,7 @@ const formSchema = z.object({
   formCode: z.string(),
 });
 
-const FormTypeForm = () => {
+const FormTypeForm = ({ onSubmit, onCancel }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,15 +51,20 @@ const FormTypeForm = () => {
     form.setValue("formCode", formatted);
   }, [formName, form]);
 
-  function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const handleSubmit = async (values) => {
+    try {
+      await onSubmit(values);
+      form.reset();
+      setFormName("");
+      setFormCode("");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8" id="add-form-type">
         <FormField
           control={form.control}
           name="formName"
@@ -121,7 +126,7 @@ const FormTypeForm = () => {
           )}
         />
 
-        <div className="flex items-center justify-end space-x-2">
+        {/* <div className="flex items-center justify-end space-x-2">
           <Button variant="outline">Cancel</Button>
           <Button
             type="submit"
@@ -129,7 +134,7 @@ const FormTypeForm = () => {
           >
             Submit
           </Button>
-        </div>
+        </div> */}
       </form>
     </Form>
   );
