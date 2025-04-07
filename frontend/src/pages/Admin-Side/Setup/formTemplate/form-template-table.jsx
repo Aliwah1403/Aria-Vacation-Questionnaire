@@ -57,7 +57,12 @@ import {
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  FileText,
+  ArrowLeft,
+  Plus,
+  X,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   flexRender,
   getCoreRowModel,
@@ -90,7 +95,9 @@ const formTypeDetails = {
 };
 
 export function FormTemplateTable({ columns, data }) {
+  // 1. Declare ALL hooks at the top of component
   const tableId = useId();
+  const inputRef = useRef(null);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState({
@@ -111,16 +118,13 @@ export function FormTemplateTable({ columns, data }) {
   });
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  const inputRef = useRef(null);
-
+  // 2. Initialize table after all hooks
   const table = useReactTable({
     data,
     columns,
-
     state: {
       pagination,
       columnFilters,
-      //   globalFilter,
     },
     pageCount: Math.ceil(data.length / pagination.pageSize),
     onPaginationChange: setPagination,
@@ -133,8 +137,530 @@ export function FormTemplateTable({ columns, data }) {
     manualPagination: false,
   });
 
-  const isFiltered = table.getState().columnFilters.length > 0;
+  // 3. Handler functions after hooks and table initialization
+  const handleContinueToQuestions = () => {
+    setIsLoading(true);
+    setIsCreateDialogOpen(false);
 
+    // Simulate loading delay
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowQuestionBuilder(true);
+    }, 1000);
+  };
+
+  const handleAddQuestion = () => {
+    if (newQuestion.text) {
+      setQuestions([...questions, { ...newQuestion }]);
+      setNewQuestion({
+        text: "",
+        type: "text",
+        options: [""],
+        required: true,
+      });
+    }
+  };
+
+  const handleSaveTemplate = () => {
+    // Here you would save the template with questions
+    console.log("Saving template:", {
+      name: templateName || formTypeDetails[selectedFormType]?.name,
+      formType: selectedFormType,
+      questions,
+    });
+
+    // Reset and return to list view
+    setShowQuestionBuilder(false);
+    setSelectedFormType(null);
+    setTemplateName("");
+    setQuestions([]);
+  };
+
+  const handleCancel = () => {
+    setShowQuestionBuilder(false);
+    setSelectedFormType(null);
+    setTemplateName("");
+    setQuestions([]);
+  };
+
+  // 4. Render conditions AFTER all hooks and initialization
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-lg">Preparing question builder...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (showQuestionBuilder) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-white z-50 overflow-auto"
+      >
+        <div className="flex h-screen">
+          {/* Left Column - Form Info */}
+          <div className="w-1/4 bg-gray-50 p-8 border-r overflow-auto">
+            <div className="mb-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mb-4"
+                onClick={handleCancel}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Templates
+              </Button>
+
+              <div className="mb-8">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">
+                  {formTypeDetails[selectedFormType]?.name}
+                </h2>
+                <p className="text-muted-foreground">
+                  {formTypeDetails[selectedFormType]?.description}
+                </p>
+              </div>
+
+              {templateName && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                    Template Name
+                  </h3>
+                  <p className="font-medium">{templateName}</p>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                  Questions
+                </h3>
+                <p className="font-medium">{questions.length} added</p>
+              </div>
+
+              <div className="space-y-4 mt-8">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={handleSaveTemplate}
+                  disabled={questions.length === 0}
+                >
+                  Save Template
+                </Button>
+                <Button
+                  className="w-full justify-start"
+                  variant="ghost"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Question Builder */}
+          <div className="w-3/4 p-8 overflow-auto">
+            <div className="max-w-3xl mx-auto">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold mb-2">Question Builder</h2>
+                <p className="text-muted-foreground">
+                  Add and configure questions for your form template
+                </p>
+              </div>
+
+              {/* Question List */}
+              {questions.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-medium mb-4">Added Questions</h3>
+                  <div className="space-y-4">
+                    {questions.map((question, index) => (
+                      <div
+                        key={index}
+                        className="border rounded-lg p-4 bg-white shadow-sm"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-muted-foreground">
+                                Q{index + 1}
+                              </span>
+                              <h4 className="font-medium">{question.text}</h4>
+                            </div>
+                            <div className="text-sm text-muted-foreground mt-1">
+                              {question.type === "multiple_choice"
+                                ? "Multiple Choice"
+                                : question.type === "text"
+                                ? "Text Input"
+                                : question.type === "rating"
+                                ? "Rating Scale"
+                                : "Question"}
+                              {question.required && " • Required"}
+                            </div>
+
+                            {question.type === "multiple_choice" &&
+                              question.options?.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                  {question.options.map((option, optIndex) => (
+                                    <div
+                                      key={optIndex}
+                                      className="text-xs bg-gray-100 px-2 py-1 rounded"
+                                    >
+                                      {option || `Option ${optIndex + 1}`}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                setNewQuestion({ ...questions[index] });
+                                setCurrentQuestionIndex(index);
+                                // Remove the question to replace it with edited version
+                                const newQuestions = [...questions];
+                                newQuestions.splice(index, 1);
+                                setQuestions(newQuestions);
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                const newQuestions = [...questions];
+                                newQuestions.splice(index, 1);
+                                setQuestions(newQuestions);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Add Question Form */}
+              <div className="border rounded-lg p-6 bg-white shadow-sm">
+                <h3 className="text-lg font-medium mb-4">
+                  {currentQuestionIndex !== null
+                    ? "Edit Question"
+                    : "Add New Question"}
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="question-text">Question Text</Label>
+                    <Input
+                      id="question-text"
+                      placeholder="Enter your question"
+                      value={newQuestion.text}
+                      onChange={(e) =>
+                        setNewQuestion({
+                          ...newQuestion,
+                          text: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="question-type">Question Type</Label>
+                      <Select
+                        value={newQuestion.type}
+                        onValueChange={(value) =>
+                          setNewQuestion({
+                            ...newQuestion,
+                            type: value,
+                            options:
+                              value === "multiple_choice" ? [""] : undefined,
+                            scale: value === "rating" ? 5 : undefined,
+                          })
+                        }
+                      >
+                        <SelectTrigger id="question-type">
+                          <SelectValue placeholder="Select question type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="text">Text Input</SelectItem>
+                          <SelectItem value="multiple_choice">
+                            Multiple Choice
+                          </SelectItem>
+                          <SelectItem value="rating">Rating Scale</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-8">
+                      <Label
+                        htmlFor="required"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          id="required"
+                          checked={newQuestion.required}
+                          onChange={(e) =>
+                            setNewQuestion({
+                              ...newQuestion,
+                              required: e.target.checked,
+                            })
+                          }
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                        Required question
+                      </Label>
+                    </div>
+                  </div>
+
+                  {newQuestion.type === "multiple_choice" && (
+                    <div className="grid gap-2 mt-2">
+                      <Label>Options</Label>
+                      <div className="space-y-2">
+                        {newQuestion.options?.map((option, index) => (
+                          <div key={index} className="flex gap-2">
+                            <Input
+                              value={option}
+                              onChange={(e) => {
+                                const newOptions = [
+                                  ...(newQuestion.options || []),
+                                ];
+                                newOptions[index] = e.target.value;
+                                setNewQuestion({
+                                  ...newQuestion,
+                                  options: newOptions,
+                                });
+                              }}
+                              placeholder={`Option ${index + 1}`}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                if (newQuestion.options.length > 1) {
+                                  const newOptions = [
+                                    ...(newQuestion.options || []),
+                                  ];
+                                  newOptions.splice(index, 1);
+                                  setNewQuestion({
+                                    ...newQuestion,
+                                    options: newOptions,
+                                  });
+                                }
+                              }}
+                              disabled={newQuestion.options.length <= 1}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2 w-fit"
+                        onClick={() => {
+                          const newOptions = [
+                            ...(newQuestion.options || []),
+                            "",
+                          ];
+                          setNewQuestion({
+                            ...newQuestion,
+                            options: newOptions,
+                          });
+                        }}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Option
+                      </Button>
+                    </div>
+                  )}
+
+                  {newQuestion.type === "rating" && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="rating-scale">Rating Scale</Label>
+                      <Select
+                        value={newQuestion.scale?.toString() || "5"}
+                        onValueChange={(value) =>
+                          setNewQuestion({
+                            ...newQuestion,
+                            scale: Number.parseInt(value),
+                          })
+                        }
+                      >
+                        <SelectTrigger id="rating-scale">
+                          <SelectValue placeholder="Select scale" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="5">1-5 Scale</SelectItem>
+                          <SelectItem value="10">1-10 Scale</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <div className="mt-2">
+                        <Label className="mb-2 block">Preview</Label>
+                        <div className="flex gap-2 mt-2">
+                          {[
+                            ...Array(
+                              Number.parseInt(
+                                newQuestion.scale?.toString() || "5"
+                              )
+                            ),
+                          ].map((_, i) => (
+                            <div key={i} className="flex flex-col items-center">
+                              <div className="h-10 w-14 border rounded-md flex items-center justify-center">
+                                {i + 1}
+                              </div>
+                              {i === 0 && (
+                                <div className="text-xs mt-1">Low</div>
+                              )}
+                              {i ===
+                                Number.parseInt(
+                                  newQuestion.scale?.toString() || "5"
+                                ) -
+                                  1 && <div className="text-xs mt-1">High</div>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end mt-4">
+                    {currentQuestionIndex !== null ? (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setNewQuestion({
+                              text: "",
+                              type: "text",
+                              options: [""],
+                              required: true,
+                            });
+                            setCurrentQuestionIndex(null);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (newQuestion.text) {
+                              const newQuestions = [...questions];
+                              newQuestions.splice(currentQuestionIndex, 0, {
+                                ...newQuestion,
+                              });
+                              setQuestions(newQuestions);
+                              setNewQuestion({
+                                text: "",
+                                type: "text",
+                                options: [""],
+                                required: true,
+                              });
+                              setCurrentQuestionIndex(null);
+                            }
+                          }}
+                          disabled={!newQuestion.text}
+                        >
+                          Update Question
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={handleAddQuestion}
+                        disabled={!newQuestion.text}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Question
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview Section */}
+              {questions.length > 0 && (
+                <div className="mt-8 border rounded-lg p-6 bg-white shadow-sm">
+                  <h3 className="text-lg font-medium mb-4">Form Preview</h3>
+                  <div className="border rounded-lg p-6 bg-gray-50">
+                    <h4 className="text-xl font-bold mb-6">
+                      {templateName || formTypeDetails[selectedFormType]?.name}
+                    </h4>
+
+                    {questions.map((question, index) => (
+                      <div key={index} className="mb-6">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-medium">{question.text}</span>
+                          {question.required && (
+                            <span className="text-red-500">*</span>
+                          )}
+                        </div>
+
+                        {question.type === "text" && (
+                          <Input placeholder="Text answer" disabled />
+                        )}
+
+                        {question.type === "multiple_choice" && (
+                          <div className="flex flex-wrap gap-2">
+                            {question.options.map((option, optIndex) => (
+                              <div
+                                key={optIndex}
+                                className="border rounded-md px-4 py-2 bg-white"
+                              >
+                                {option || `Option ${optIndex + 1}`}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {question.type === "rating" && (
+                          <div className="flex gap-2">
+                            {[
+                              ...Array(
+                                Number.parseInt(
+                                  question.scale?.toString() || "5"
+                                )
+                              ),
+                            ].map((_, i) => (
+                              <div
+                                key={i}
+                                className="h-10 w-14 border rounded-md flex items-center justify-center bg-white"
+                              >
+                                {i + 1}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    <Button className="mt-4" disabled>
+                      Continue
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+  const isFiltered = table.getState().columnFilters.length > 0;
+  // 5. Main return
   return (
     <Card>
       <CardHeader>
@@ -263,7 +789,7 @@ export function FormTemplateTable({ columns, data }) {
                 </Button>
                 <Button
                   className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
-                  //   onClick={handleContinueToQuestions}
+                  onClick={handleContinueToQuestions}
                   disabled={!selectedFormType}
                 >
                   Continue to Questions
