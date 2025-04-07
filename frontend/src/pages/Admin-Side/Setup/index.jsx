@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { FormTypeTable } from "./formType/form-type-table";
 import { formTypeColumns } from "./formType/columns";
+import { formTemplateColumns } from "./formTemplate/columns";
+import { FormTemplateTable } from "./formTemplate/form-template-table";
 
 const formTypes = [
-    // convert boolean values to strings when connecting DB
+  // convert boolean values to strings when connecting DB
   {
     id: 1,
     formName: "Stay Experience Survey",
@@ -30,6 +32,41 @@ const formTypes = [
     id: 4,
     formName: "Post-Stay Survey",
     formDescription: "Follow-up survey after member checkout",
+    isActive: false,
+  },
+];
+
+const formTemplates = [
+  {
+    id: 1,
+    formTemplateName: "Stay Experience Survey",
+    formTypeName: "Stay Experience Survey",
+    questions: 10,
+    updatedAt: "07/04/2024",
+    isActive: true,
+  },
+  {
+    id: 2,
+    formTemplateName: "Pool and Spa Feedback",
+    formTypeName: "Amenities Feedback",
+    questions: 8,
+    updatedAt: "05/04/2024",
+    isActive: true,
+  },
+  {
+    id: 3,
+    formTemplateName: "Front Desk Service Survey",
+    formTypeName: "Customer Service Rating",
+    questions: 12,
+    updatedAt: "06/04/2024",
+    isActive: true,
+  },
+  {
+    id: 4,
+    formTemplateName: "Resort Experience Review",
+    formTypeName: "Post-Stay Survey",
+    questions: 15,
+    updatedAt: "08/04/2024",
     isActive: false,
   },
 ];
@@ -71,7 +108,11 @@ const QuestionnaireSetup = () => {
           </TabsContent>
 
           <TabsContent value="form-templates" className="mt-0">
-            {/* <FormTemplatesList /> */} FormTemplate
+            {/* <FormTemplatesList /> */}
+            <FormTemplateTable
+              columns={formTemplateColumns}
+              data={formTemplates}
+            />
           </TabsContent>
 
           <TabsContent value="email-content" className="mt-0">
