@@ -71,6 +71,24 @@ import {
 import FacetedDataFilter from "@/components/faceted-data-filter";
 // import FormTypeForm from "./add-formtype-form";
 
+const formTypeDetails = {
+  "stay-experience": {
+    name: "Stay Experience Survey",
+    description:
+      "Gather feedback about members' resort experience, including room quality, cleanliness, and overall satisfaction.",
+  },
+  amenities: {
+    name: "Amenities Feedback",
+    description:
+      "Collect feedback on resort amenities such as pools, restaurants, spa services, and recreational activities.",
+  },
+  "customer-service": {
+    name: "Customer Service Rating",
+    description:
+      "Rate the quality of customer service provided by staff members during the guest's stay.",
+  },
+};
+
 export function FormTemplateTable({ columns, data }) {
   const tableId = useId();
   const [columnFilters, setColumnFilters] = useState([]);
@@ -79,7 +97,19 @@ export function FormTemplateTable({ columns, data }) {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedFormType, setSelectedFormType] = useState(null);
+  const [templateName, setTemplateName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showQuestionBuilder, setShowQuestionBuilder] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [newQuestion, setNewQuestion] = useState({
+    text: "",
+    type: "text",
+    options: [""],
+    required: true,
+  });
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const inputRef = useRef(null);
 
@@ -104,21 +134,6 @@ export function FormTemplateTable({ columns, data }) {
   });
 
   const isFiltered = table.getState().columnFilters.length > 0;
-
-  const handleFormSubmit = async (formData) => {
-    try {
-      // Add your API call here
-      console.log("Form submitted:", formData);
-
-      // Close the sheet after successful submission
-      setSheetOpen(false);
-
-      // Optionally refresh the table data
-      // await refetchData();
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
-  };
 
   return (
     <Card>
@@ -191,10 +206,71 @@ export function FormTemplateTable({ columns, data }) {
               </Button>
             )}
           </div>
-          <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
-            <PlusCircle />
-            Create Form Template
-          </Button>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
+                <PlusCircle />
+                Create Form Template
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+              <DialogHeader>
+                <DialogTitle>Create Form Template</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="form-type">Form Type</Label>
+                  <Select onValueChange={(value) => setSelectedFormType(value)}>
+                    <SelectTrigger id="form-type">
+                      <SelectValue placeholder="Select form type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="stay-experience">
+                        Stay Experience Survey
+                      </SelectItem>
+                      <SelectItem value="amenities">
+                        Amenities Feedback
+                      </SelectItem>
+                      <SelectItem value="customer-service">
+                        Customer Service Rating
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="template-name">
+                    Template Name (Optional)
+                  </Label>
+                  <Input
+                    id="template-name"
+                    placeholder="Custom template name"
+                    onChange={(e) => setTemplateName(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    If left blank, the form type name will be used.
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                  //   onClick={handleContinueToQuestions}
+                  disabled={!selectedFormType}
+                >
+                  Continue to Questions
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </CardHeader>
       <CardContent>
