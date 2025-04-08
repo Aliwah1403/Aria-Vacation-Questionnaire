@@ -70,20 +70,8 @@ import {
 } from "@tanstack/react-table";
 import FacetedDataFilter from "@/components/faceted-data-filter";
 import FormTypeForm from "./add-formtype-form";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { formTypeApi } from "@/api/formTypes";
 
 export function FormTypeTable({ columns, data }) {
-const queryClient = useQueryClient()
-
-// Query for fetching form types
-  const query = useQuery({
-    queryKey: ['formTypes'],
-    queryFn: formTypeApi.getAll,
-  });
-
-  console.log(query.data)
-
   const tableId = useId();
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");

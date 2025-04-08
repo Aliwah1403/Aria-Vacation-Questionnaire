@@ -7,34 +7,8 @@ import { FormTypeTable } from "./formType/form-type-table";
 import { formTypeColumns } from "./formType/columns";
 import { formTemplateColumns } from "./formTemplate/columns";
 import { FormTemplateTable } from "./formTemplate/form-template-table";
-
-const formTypes = [
-  // convert boolean values to strings when connecting DB
-  {
-    id: 1,
-    formName: "Stay Experience Survey",
-    formDescription: "Gather feedback about members' resort experience",
-    isActive: true,
-  },
-  {
-    id: 2,
-    formName: "Amenities Feedback",
-    formDescription: "Collect feedback on resort amenities",
-    isActive: true,
-  },
-  {
-    id: 3,
-    formName: "Customer Service Rating",
-    formDescription: "Rate the quality of customer service",
-    isActive: true,
-  },
-  {
-    id: 4,
-    formName: "Post-Stay Survey",
-    formDescription: "Follow-up survey after member checkout",
-    isActive: false,
-  },
-];
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { formTypeApi } from "@/api/formTypes";
 
 const formTemplates = [
   {
@@ -72,6 +46,25 @@ const formTemplates = [
 ];
 
 const QuestionnaireSetup = () => {
+  const queryClient = useQueryClient();
+
+  // Query for fetching form types
+  const {
+    data: formTypeData,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["formTypes"],
+    queryFn: formTypeApi.getAll,
+  });
+
+  if (isPending) {
+    return <div>Loading.....</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching form types: {error.message}</div>;
+  }
   return (
     <>
       <AdminPageHeader
@@ -104,7 +97,10 @@ const QuestionnaireSetup = () => {
 
           <TabsContent value="form-types" className="mt-0">
             {/* <FormTypesList /> */}
-            <FormTypeTable columns={formTypeColumns} data={formTypes} />
+            <FormTypeTable
+              columns={formTypeColumns}
+              data={formTypeData || []}
+            />
           </TabsContent>
 
           <TabsContent value="form-templates" className="mt-0">
