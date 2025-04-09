@@ -18,10 +18,15 @@ import {
   XIcon,
   CheckIcon,
 } from "lucide-react";
+import { dateFormat } from "@/utils/dateFormat";
 
 export const formTemplateColumns = [
+  // {
+  //   accessorKey: "formTemplateName",
+  //   header: "Template Name",
+  // },
   {
-    accessorKey: "formTemplateName",
+    accessorKey: "formTypeName",
     header: "Template Name",
   },
   {
@@ -31,10 +36,18 @@ export const formTemplateColumns = [
   {
     accessorKey: "questions",
     header: "Questions",
+    cell: ({ row }) => {
+      const questions = row.getValue("questions");
+      return <div>{questions.length}</div>;
+    },
   },
   {
     accessorKey: "updatedAt",
     header: "Last Updated",
+    cell: ({ row }) => {
+      const date = row.getValue("updatedAt");
+      return <div>{dateFormat(date)}</div>;
+    },
   },
   {
     accessorKey: "isActive",

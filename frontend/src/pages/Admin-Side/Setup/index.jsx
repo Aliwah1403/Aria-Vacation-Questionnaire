@@ -9,6 +9,7 @@ import { formTemplateColumns } from "./formTemplate/columns";
 import { FormTemplateTable } from "./formTemplate/form-template-table";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { formTypeApi } from "@/api/formTypes";
+import { formTemplateApi } from "@/api/formTemplates";
 
 const formTemplates = [
   {
@@ -51,20 +52,42 @@ const QuestionnaireSetup = () => {
   // Query for fetching form types
   const {
     data: formTypeData,
-    isPending,
-    error,
+    isPending: isLoadingFormTypes,
+    error: formTypeError,
   } = useQuery({
     queryKey: ["formTypes"],
     queryFn: formTypeApi.getAll,
   });
 
-  if (isPending) {
-    return <div>Loading.....</div>;
+  // Query for fetching form templates
+  const {
+    data: formTemplateData,
+    isPending: isLoadingFormTemplates,
+    error: formTemplateError,
+  } = useQuery({
+    queryKey: ["formTemplates"],
+    queryFn: formTemplateApi.getAll,
+  });
+
+  // Show loading state if either query is loading
+  if (isLoadingFormTypes || isLoadingFormTemplates) {
+    return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error fetching form types: {error.message}</div>;
+  // Show any errors that occur
+  if (formTypeError || formTemplateError) {
+    return (
+      <div>
+        {formTypeError && (
+          <div>Error fetching form types: {formTypeError.message}</div>
+        )}
+        {formTemplateError && (
+          <div>Error fetching templates: {formTemplateError.message}</div>
+        )}
+      </div>
+    );
   }
+
   return (
     <>
       <AdminPageHeader
@@ -107,7 +130,7 @@ const QuestionnaireSetup = () => {
             {/* <FormTemplatesList /> */}
             <FormTemplateTable
               columns={formTemplateColumns}
-              data={formTemplates}
+              data={formTemplateData || []}
             />
           </TabsContent>
 
