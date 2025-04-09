@@ -152,6 +152,87 @@ export const getFormSubmission = async (req, res) => {
   }
 };
 
+export const getAllFormSubmissions = async (req,res) => {
+try {
+  const {
+    // page = 1,
+    // limit = 10,
+    // status,
+    // resort,
+    formType,
+    // startDate,
+    // endDate,
+  } = req.query;
+
+  // Build query object
+  const query = {};
+
+  // Add filters if provided
+  // if (status) query.status = status;
+  // if (resort) query.resort = resort;
+  // if (startDate && endDate) {
+  //   query.checkOut = {
+  //     $gte: new Date(startDate),
+  //     $lte: new Date(endDate),
+  //   };
+  // }
+
+  // Create base query
+  let submissionsQuery = FormSubmission.find(query)
+    .populate({
+      path: "formTemplateId",
+      select: "formTypeName questions",
+      populate: {
+        path: "formTypeId",
+        select: "formName formCode",
+      },
+    })
+    .sort({ createdAt: -1 }) // Latest first
+    // .skip((page - 1) * limit)
+    // .limit(parseInt(limit));
+
+  // Add formType filter if provided
+  if (formType) {
+    submissionsQuery = submissionsQuery.populate({
+      path: "formTemplateId",
+      match: { "formTypeId.formCode": formType },
+    });
+  }
+
+  // Execute query
+  const [submissions, total] = await Promise.all([
+    submissionsQuery.exec(),
+    FormSubmission.countDocuments(query),
+  ]);
+
+  // Filter out null results from formType matching
+  const filteredSubmissions = formType
+    ? submissions.filter((sub) => sub.formTemplateId)
+    : submissions;
+
+  res.status(200).json({
+    success: true,
+    message: "Form submissions retrieved successfully",
+    data: {
+      submissions: filteredSubmissions,
+      pagination: {
+        total,
+        // page: parseInt(page),
+        // pages: Math.ceil(total / limit),
+        // limit: parseInt(limit),
+      },
+    },
+  });
+} catch (error) {
+  console.error("Error fetching form submissions:", error);
+  res.status(500).json({
+    success: false,
+    message: "Error fetching form submissions",
+    error: error.message,
+  });
+}
+}
+
 export const formSubmissionResponses = async (req, res) => {
   try {
     const { id } = req.params;
