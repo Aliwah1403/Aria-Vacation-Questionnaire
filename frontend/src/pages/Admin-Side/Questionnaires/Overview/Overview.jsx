@@ -32,14 +32,32 @@ import { QuestionnairesOverviewTable } from "./questionnaires-overview-table";
 import { overviewColumns } from "./columns";
 import { DashboardDatePicker } from "@/components/dashboard-date-picker";
 import { data } from "./dummyData";
-// import StayDetailsForm from "../Member-Details/stay-details-form";
 import MultiStepQuestionnaireForm from "../../Member-Details/multi-step-questionnaire-form";
+import { useQuery } from "@tanstack/react-query";
+import { formSubmissionApi } from "@/api/formSubmissions";
 
 const QuestionnairesOverview = () => {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
+
+  const {
+    data: formSubmissionData,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["formSubmissions"],
+    queryFn: formSubmissionApi.getAll,
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
+
   return (
     <>
-
       {/* Project Header */}
       <AdminPageHeader
         header="Stay Experience Survey"
@@ -194,7 +212,7 @@ const QuestionnairesOverview = () => {
             {/* From every questionnaire */}
             <QuestionnairesOverviewTable
               columns={overviewColumns}
-              data={data}
+              data={formSubmissionData || []}
             />
           </TabsContent>
           <TabsContent value="stay-experience">

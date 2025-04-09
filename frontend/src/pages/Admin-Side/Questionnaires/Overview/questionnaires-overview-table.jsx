@@ -223,11 +223,10 @@ export function QuestionnairesOverviewTable({ columns, data }) {
                               {row.original.responses.map((response, index) => (
                                 <div
                                   key={index}
-                                  className="space-y-2 rounded-lg border p-4"
+                                  className="space-y-2 rounded-lg border p-4 text-wrap"
                                 >
                                   <p className="text-sm font-medium overflow-hidden text-wrap">
-                                    {response.questionId}
-                                    {"."} {response.question}
+                                    {index + 1}. {response.question}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
                                     {response.response}
