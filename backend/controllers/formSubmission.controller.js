@@ -1,5 +1,6 @@
 import FormSubmission from "../models/formSubmission.model.js";
 import FormTemplate from "../models/formTemplate.model.js";
+import FormType from "../models/formType.model.js";
 
 export const addFormSubmission = async (req, res) => {
   try {
@@ -147,6 +148,58 @@ export const getFormSubmission = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching form submission",
+      error: error.message,
+    });
+  }
+};
+
+export const getAllFormSubmissions = async (req, res) => {
+  try {
+    const { formCode } = req.query;
+
+    // Build base query
+    let query = {};
+
+    if (formCode) {
+      // First find the form type by code
+      const formType = await FormType.findOne({ formCode });
+      if (formType) {
+        // Find templates of this form type
+        const templates = await FormTemplate.find({ formTypeId: formType._id });
+        const templateIds = templates.map((template) => template._id);
+
+        // Add template filter to main query
+        query.formTemplateId = { $in: templateIds };
+      }
+    }
+
+    // Execute query with population
+    const submissions = await FormSubmission.find(query)
+      .populate({
+        path: "formTemplateId",
+        select: "formTypeName questions",
+        populate: {
+          path: "formTypeId",
+          select: "formName formCode",
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Form submissions retrieved successfully",
+      data: {
+        submissions,
+        pagination: {
+          total: submissions.length,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching form submissions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching form submissions",
       error: error.message,
     });
   }

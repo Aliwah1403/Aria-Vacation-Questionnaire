@@ -9,6 +9,7 @@ import {
   EllipsisIcon,
   PencilIcon,
   BellRingIcon,
+  LoaderIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -140,7 +141,7 @@ export const overviewColumns = [
               aria-hidden="true"
             />
           ) : status === "pending" ? (
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            <LoaderIcon className="size-1.5 text-amber-500" />
           ) : (
             <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
           )}

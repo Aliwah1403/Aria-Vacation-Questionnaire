@@ -1,22 +1,5 @@
-import {
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getExpandedRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  useReactTable,
-} from "@tanstack/react-table";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -31,10 +14,14 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -42,51 +29,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import {
-  ChevronDownIcon,
+  PlusCircle,
+  Pencil,
+  Trash2,
+  XCircle,
   ChevronFirstIcon,
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CheckIcon,
-  XIcon,
-  ChevronUpIcon,
-  CircleAlertIcon,
-  CircleXIcon,
-  Columns3Icon,
-  EllipsisIcon,
-  FilterIcon,
-  ListFilterIcon,
-  XCircle,
-  InfoIcon,
-  PlusIcon,
-  TrashIcon,
 } from "lucide-react";
-import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getExpandedRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  useReactTable,
+} from "@tanstack/react-table";
 import FacetedDataFilter from "@/components/faceted-data-filter";
-import { Badge } from "@/components/ui/badge";
+import FormTypeForm from "./add-formtype-form";
 
-export function QuestionnairesOverviewTable({ columns, data }) {
+export function FormTypeTable({ columns, data }) {
   const tableId = useId();
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -94,19 +79,18 @@ export function QuestionnairesOverviewTable({ columns, data }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const inputRef = useRef(null);
 
   const table = useReactTable({
     data,
     columns,
-    getRowCanExpand: (row) =>
-      row.original.status === "completed" && row.original.responses?.length > 0,
-    getExpandedRowModel: getExpandedRowModel(),
+
     state: {
       pagination,
       columnFilters,
-      globalFilter,
+      //   globalFilter,
     },
     pageCount: Math.ceil(data.length / pagination.pageSize),
     onPaginationChange: setPagination,
@@ -121,14 +105,39 @@ export function QuestionnairesOverviewTable({ columns, data }) {
 
   const isFiltered = table.getState().columnFilters.length > 0;
 
+  const handleFormSubmit = async (formData) => {
+    try {
+      // Add your API call here
+      console.log("Form submitted:", formData);
+
+      // Close the sheet after successful submission
+      setSheetOpen(false);
+
+      // Optionally refresh the table data
+      // await refetchData();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
         {/* Filters */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Filter by Name or MemberId */}
-            <div className="relative">
+            {/* Filter input field */}
+            <Input
+              placeholder="Filter by Form Name..."
+              className="max-w-sm h-8"
+              value={table.getColumn("formName")?.getFilterValue() ?? ""}
+              onChange={(e) => {
+                table.getColumn("formName")?.setFilterValue(e.target.value);
+              }}
+            />
+
+            {/* Filter by Form Name */}
+            {/* <div className="relative">
               <Input
                 id={`${tableId}-input`}
                 ref={inputRef}
@@ -159,12 +168,13 @@ export function QuestionnairesOverviewTable({ columns, data }) {
                   <CircleXIcon size={16} aria-hidden="true" />
                 </button>
               )}
-            </div>
+            </div> */}
+
             {/* Filter by Status */}
-            <FacetedDataFilter
-              column={table.getColumn("status")}
-              title="Status"
-            />
+            {/* /* <FacetedDataFilter
+                    column={table.getColumn("isActive")}
+                    title="Status"
+                  /> */}
             {isFiltered && (
               <Button
                 aria-label="Reset filters"
@@ -177,6 +187,45 @@ export function QuestionnairesOverviewTable({ columns, data }) {
               </Button>
             )}
           </div>
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
+                <PlusCircle />
+                Create New Form Type
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Create New Form Type</SheetTitle>
+                <SheetDescription>
+                  Add a new form type to the system. Fill in the required
+                  details below.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="p-4">
+                {" "}
+                <FormTypeForm onSubmit={handleFormSubmit} />
+              </div>
+
+              <SheetFooter>
+                <div className="flex items-center justify-end space-x-2">
+                  {" "}
+                  <SheetClose asChild>
+                    <Button variant="outline" type="button">
+                      Cancel
+                    </Button>
+                  </SheetClose>
+                  <Button
+                    type="submit"
+                    form="add-form-type"
+                    className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                  >
+                    Save changes
+                  </Button>
+                </div>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
         </div>
       </CardHeader>
       <CardContent>
@@ -215,63 +264,6 @@ export function QuestionnairesOverviewTable({ columns, data }) {
                         </TableCell>
                       ))}
                     </TableRow>
-                    {row.getIsExpanded() && (
-                      <TableRow>
-                        <TableCell colSpan={row.getVisibleCells().length}>
-                          <div className="space-y-4 py-2">
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                              {row.original.responses.map((response, index) => (
-                                <div
-                                  key={index}
-                                  className="space-y-2 rounded-lg border p-4 text-wrap"
-                                >
-                                  <p className="text-sm font-medium overflow-hidden text-wrap">
-                                    {index + 1}. {response.question}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {response.response}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                            {row.original.additionalComments && (
-                              <div className="rounded-lg border p-4">
-                                <div className="flex justify-between items-start mb-1">
-                                  <p className="text-sm font-medium">
-                                    Additional Comments
-                                  </p>
-
-                                  {row.original.testimonialConsent === true && (
-                                    <Badge variant="outline" className="gap-1">
-                                      <CheckIcon
-                                        className="text-emerald-500"
-                                        size={12}
-                                        aria-hidden="true"
-                                      />
-                                      Approved For Testimonials
-                                    </Badge>
-                                  )}
-                                  {row.original.testimonialConsent ===
-                                    false && (
-                                    <Badge variant="outline" className="gap-1">
-                                      <XIcon
-                                        className="text-red-500"
-                                        size={12}
-                                        aria-hidden="true"
-                                      />
-                                      Not Approved For Testimonials
-                                    </Badge>
-                                  )}
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                  {row.original.additionalComments}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
                   </Fragment>
                 ))
               ) : (

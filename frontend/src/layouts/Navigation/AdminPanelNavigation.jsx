@@ -50,6 +50,20 @@ const AdminPanelNavigation = () => {
                   Questionnaires
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  to="/admin/questionnaire-setup"
+                  className={({ isActive }) =>
+                    `text-sm font-medium ${
+                      isActive
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary/80"
+                    }`
+                  }
+                >
+                  Setup
+                </NavLink>
+              </li>
             </ul>
           </nav>
         </div>

@@ -1,28 +1,9 @@
-import {
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getExpandedRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  useReactTable,
-} from "@tanstack/react-table";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Fragment, useId, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
   CardFooter,
 } from "@/components/ui/card";
 import {
@@ -31,10 +12,14 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -42,71 +27,75 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import {
-  ChevronDownIcon,
+  PlusCircle,
+  XCircle,
   ChevronFirstIcon,
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CheckIcon,
-  XIcon,
-  ChevronUpIcon,
-  CircleAlertIcon,
-  CircleXIcon,
-  Columns3Icon,
-  EllipsisIcon,
-  FilterIcon,
-  ListFilterIcon,
-  XCircle,
-  InfoIcon,
-  PlusIcon,
-  TrashIcon,
 } from "lucide-react";
-import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
-import FacetedDataFilter from "@/components/faceted-data-filter";
-import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getFacetedUniqueValues,
+  useReactTable,
+} from "@tanstack/react-table";
+import { QuestionBuilder } from "./question-builder";
 
-export function QuestionnairesOverviewTable({ columns, data }) {
+const formTypeDetails = {
+  "stay-experience": {
+    name: "Stay Experience Survey",
+    description:
+      "Gather feedback about members' resort experience, including room quality, cleanliness, and overall satisfaction.",
+  },
+  amenities: {
+    name: "Amenities Feedback",
+    description:
+      "Collect feedback on resort amenities such as pools, restaurants, spa services, and recreational activities.",
+  },
+  "customer-service": {
+    name: "Customer Service Rating",
+    description:
+      "Rate the quality of customer service provided by staff members during the guest's stay.",
+  },
+};
+
+export function FormTemplateTable({ columns, data }) {
+  // 1. Declare ALL hooks at the top of component
   const tableId = useId();
+  const inputRef = useRef(null);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedFormType, setSelectedFormType] = useState(null);
+  const [templateName, setTemplateName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showQuestionBuilder, setShowQuestionBuilder] = useState(false);
 
-  const inputRef = useRef(null);
-
+  // 2. Initialize table after all hooks
   const table = useReactTable({
     data,
     columns,
-    getRowCanExpand: (row) =>
-      row.original.status === "completed" && row.original.responses?.length > 0,
-    getExpandedRowModel: getExpandedRowModel(),
     state: {
       pagination,
       columnFilters,
-      globalFilter,
     },
     pageCount: Math.ceil(data.length / pagination.pageSize),
     onPaginationChange: setPagination,
@@ -119,52 +108,85 @@ export function QuestionnairesOverviewTable({ columns, data }) {
     manualPagination: false,
   });
 
-  const isFiltered = table.getState().columnFilters.length > 0;
+  // 3. Handler functions after hooks and table initialization
+  const handleContinueToQuestions = () => {
+    setIsLoading(true);
+    setIsCreateDialogOpen(false);
 
+    // Simulate loading delay
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowQuestionBuilder(true);
+    }, 1000);
+  };
+
+  const handleSaveTemplate = (templateData) => {
+    console.log("Saving template:", {
+      name: templateName || formTypeDetails[selectedFormType]?.name,
+      formType: selectedFormType,
+      ...templateData,
+    });
+
+    // Reset states
+    setShowQuestionBuilder(false);
+    setSelectedFormType(null);
+    setTemplateName("");
+    setIsCreateDialogOpen(false);
+  };
+
+  const handleCancel = () => {
+    // Reset all states when cancelling
+    setShowQuestionBuilder(false);
+    setSelectedFormType(null);
+    setTemplateName("");
+    setIsCreateDialogOpen(false);
+  };
+
+  // 4. Render conditions AFTER all hooks and initialization
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-lg">Preparing question builder...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (showQuestionBuilder) {
+    return (
+      <QuestionBuilder
+        formTypeDetails={formTypeDetails}
+        selectedFormType={selectedFormType}
+        templateName={templateName}
+        onSave={handleSaveTemplate}
+        onCancel={handleCancel}
+      />
+    );
+  }
+  const isFiltered = table.getState().columnFilters.length > 0;
+  // 5. Main return
   return (
     <Card>
       <CardHeader>
         {/* Filters */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Filter by Name or MemberId */}
-            <div className="relative">
-              <Input
-                id={`${tableId}-input`}
-                ref={inputRef}
-                className={cn(
-                  "peer min-w-80 ps-9",
-                  Boolean(globalFilter) && "pe-9"
-                )}
-                value={globalFilter ?? ""}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                placeholder="Filter by Name, Email or Member ID..."
-                type="text"
-                aria-label="Filter by Name, Email or Member ID"
-              />
-              <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                <ListFilterIcon size={16} aria-hidden="true" />
-              </div>
-              {Boolean(globalFilter) && (
-                <button
-                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="Clear filter"
-                  onClick={() => {
-                    setGlobalFilter("");
-                    if (inputRef.current) {
-                      inputRef.current.focus();
-                    }
-                  }}
-                >
-                  <CircleXIcon size={16} aria-hidden="true" />
-                </button>
-              )}
-            </div>
-            {/* Filter by Status */}
-            <FacetedDataFilter
-              column={table.getColumn("status")}
-              title="Status"
+            {/* Filter input field */}
+            <Input
+              placeholder="Filter by Template Name..."
+              className="max-w-sm h-8"
+              value={
+                table.getColumn("formTemplateName")?.getFilterValue() ?? ""
+              }
+              onChange={(e) => {
+                table
+                  .getColumn("formTemplateName")
+                  ?.setFilterValue(e.target.value);
+              }}
             />
+
             {isFiltered && (
               <Button
                 aria-label="Reset filters"
@@ -177,6 +199,71 @@ export function QuestionnairesOverviewTable({ columns, data }) {
               </Button>
             )}
           </div>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
+                <PlusCircle />
+                Create Form Template
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+              <DialogHeader>
+                <DialogTitle>Create Form Template</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="form-type">Form Type</Label>
+                  <Select onValueChange={(value) => setSelectedFormType(value)}>
+                    <SelectTrigger id="form-type">
+                      <SelectValue placeholder="Select form type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="stay-experience">
+                        Stay Experience Survey
+                      </SelectItem>
+                      <SelectItem value="amenities">
+                        Amenities Feedback
+                      </SelectItem>
+                      <SelectItem value="customer-service">
+                        Customer Service Rating
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="template-name">
+                    Template Name (Optional)
+                  </Label>
+                  <Input
+                    id="template-name"
+                    placeholder="Custom template name"
+                    onChange={(e) => setTemplateName(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    If left blank, the form type name will be used.
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                  onClick={handleContinueToQuestions}
+                  disabled={!selectedFormType}
+                >
+                  Continue to Questions
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </CardHeader>
       <CardContent>
@@ -215,63 +302,6 @@ export function QuestionnairesOverviewTable({ columns, data }) {
                         </TableCell>
                       ))}
                     </TableRow>
-                    {row.getIsExpanded() && (
-                      <TableRow>
-                        <TableCell colSpan={row.getVisibleCells().length}>
-                          <div className="space-y-4 py-2">
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                              {row.original.responses.map((response, index) => (
-                                <div
-                                  key={index}
-                                  className="space-y-2 rounded-lg border p-4 text-wrap"
-                                >
-                                  <p className="text-sm font-medium overflow-hidden text-wrap">
-                                    {index + 1}. {response.question}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {response.response}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                            {row.original.additionalComments && (
-                              <div className="rounded-lg border p-4">
-                                <div className="flex justify-between items-start mb-1">
-                                  <p className="text-sm font-medium">
-                                    Additional Comments
-                                  </p>
-
-                                  {row.original.testimonialConsent === true && (
-                                    <Badge variant="outline" className="gap-1">
-                                      <CheckIcon
-                                        className="text-emerald-500"
-                                        size={12}
-                                        aria-hidden="true"
-                                      />
-                                      Approved For Testimonials
-                                    </Badge>
-                                  )}
-                                  {row.original.testimonialConsent ===
-                                    false && (
-                                    <Badge variant="outline" className="gap-1">
-                                      <XIcon
-                                        className="text-red-500"
-                                        size={12}
-                                        aria-hidden="true"
-                                      />
-                                      Not Approved For Testimonials
-                                    </Badge>
-                                  )}
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                  {row.original.additionalComments}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
                   </Fragment>
                 ))
               ) : (
