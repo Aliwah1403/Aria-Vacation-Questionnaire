@@ -38,19 +38,21 @@ import { formSubmissionApi } from "@/api/formSubmissions";
 
 const QuestionnairesOverview = () => {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
+  const [selectedFormCode, setSelectedFormCode] = useState(null);
 
   const {
     data: formSubmissionData,
     isPending,
     error,
   } = useQuery({
-    queryKey: ["formSubmissions"],
-    queryFn: formSubmissionApi.getAll,
+    queryKey: ["formSubmissions", selectedFormCode],
+    queryFn: () =>
+      formSubmissionApi.getAll({
+        formCode: selectedFormCode,
+      }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 2, // 2 minutes
   });
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
@@ -99,88 +101,7 @@ const QuestionnairesOverview = () => {
 
       {/* Content Area */}
       <div className="p-4 md:p-6">
-        {/* <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="questions">Questions</TabsTrigger>
-            <TabsTrigger value="recipients">Recipients</TabsTrigger>
-            <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
-          </TabsList>
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Responses
-                  </CardTitle>
-                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">245</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Response Rate
-                  </CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">75%</div>
-                  <p className="text-xs text-muted-foreground">
-                    +5% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Pending Responses
-                  </CardTitle>
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">82</div>
-                  <p className="text-xs text-muted-foreground">
-                    Sent in last 7 days
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Average Rating
-                  </CardTitle>
-                  <Settings className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">4.8/5</div>
-                  <p className="text-xs text-muted-foreground">
-                    Based on latest responses
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Responses</CardTitle>
-                <CardDescription>
-                  Latest feedback received from resort members
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RecentQuestionnairesOverviewTable columns={columns} data={data} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs> */}
-
-        <Tabs defaultValue="overview">
+        {/* <Tabs defaultValue="overview">
           <TabsList className="h-auto rounded-none border-b bg-transparent p-0">
             <TabsTrigger
               value="overview"
@@ -209,20 +130,17 @@ const QuestionnairesOverview = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            {/* From every questionnaire */}
             <QuestionnairesOverviewTable
               columns={overviewColumns}
               data={formSubmissionData || []}
             />
           </TabsContent>
           <TabsContent value="stay-experience">
-            {/* From stay experience questionnaire */}
             <p className="text-muted-foreground p-4 text-center text-xs">
               Stay Experience Questionnaire Data Table
             </p>
           </TabsContent>
           <TabsContent value="amenities">
-            {/* From amenities questionnaire */}
             <p className="text-muted-foreground p-4 text-center text-xs">
               Amenities Questionnaire Data Table
             </p>
@@ -231,6 +149,44 @@ const QuestionnairesOverview = () => {
             <p className="text-muted-foreground p-4 text-center text-xs">
               Customer Service Questionnaire Data Table
             </p>
+          </TabsContent>
+        </Tabs> */}
+
+        <Tabs
+          value={selectedFormCode} // Controlled value
+          onValueChange={setSelectedFormCode}
+          defaultValue={null}
+        >
+          <TabsList className="h-auto rounded-none border-b bg-transparent p-0">
+            <TabsTrigger
+              value={null}
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="testing-survey"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Testing Survey Experience
+            </TabsTrigger>
+            <TabsTrigger
+              value="test-filter"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Filter Experience
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value={selectedFormCode} className="mt-0">
+            {isPending ? (
+              <div>Loading...</div>
+            ) : (
+              <QuestionnairesOverviewTable
+                columns={overviewColumns}
+                data={formSubmissionData || []}
+              />
+            )}
           </TabsContent>
         </Tabs>
       </div>
