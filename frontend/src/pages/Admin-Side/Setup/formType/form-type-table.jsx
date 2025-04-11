@@ -70,7 +70,7 @@ import {
 } from "@tanstack/react-table";
 import FacetedDataFilter from "@/components/faceted-data-filter";
 import FormTypeForm from "./add-formtype-form";
-import { useCreateFormType } from "@/mutations/formTypeMutations";
+import { useCreateFormType } from "@/mutations/formType/formTypeMutations";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/ui/loading-button";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
