@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formTemplateApi } from "@/api/formTemplates";
 
-export const useCreateFormTeplate = () => {
+export const useCreateFormTemplate = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
