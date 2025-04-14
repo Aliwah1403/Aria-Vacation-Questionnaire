@@ -41,6 +41,9 @@ import {
 import StepperComponent from "@/components/stepper-component";
 import { LoadingButton } from "@/components/ui/loading-button";
 import CheckInOutDatePicker from "@/components/check-in-out-date-picker";
+import { useCreateFormSubmission } from "@/mutations/formSubmission/formSubmissionMutation";
+import { toast } from "sonner";
+
 // Form schemas
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
@@ -59,19 +62,23 @@ const stayDetailsSchema = z.object({
 });
 
 const questionnaireTypeSchema = z.object({
-  type: z.string().min(1, "Questionnaire type is required"),
+  formTemplateId: z.string().min(1, "Questionnaire type is required"),
   emailSubject: z.string().min(1, "Email subject is required"),
   emailBody: z.string().min(1, "Email body is required"),
 });
 
 const URL = import.meta.env.VITE_URL;
 
-const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
+const MultiStepQuestionnaireForm = ({
+  setStayDetailsDialog,
+  formTemplates,
+}) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [generatedLink, setGeneratedLink] = useState("");
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const createSubmission = useCreateFormSubmission();
 
   // Form for step 1 - Stay Details
   const stayDetailsForm = useForm({
@@ -89,7 +96,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
   const questionnaireTypeForm = useForm({
     resolver: zodResolver(questionnaireTypeSchema),
     defaultValues: {
-      type: "stay-experience",
+      formTemplateId: "",
       emailSubject: "Your Stay Experience Feedback",
       emailBody:
         "We value your feedback on your recent stay. Please take a moment to complete our survey.",
@@ -118,24 +125,42 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
   const onQuestionnaireTypeSubmit = async (values) => {
     try {
       setLoading(true);
-      const completeFormData = { ...formData, ...values };
 
-      // Simulate API call with setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Get the stay details from step 1
+      const submissionData = {
+        formTemplateId: values.formTemplateId,
+        memberId: formData.memberId,
+        memberName: formData.name,
+        memberEmail: formData.email,
+        resort: formData.resort,
+        unitNo: `BR${formData.unitNo}`,
+        checkIn: formData.checkIn,
+        checkOut: formData.checkOut,
+      };
 
-      // Update form data
-      setFormData(completeFormData);
+      const result = await createSubmission.mutateAsync(submissionData);
 
-      // Generate a unique link (simulate API response)
-      const uniqueId = Math.random().toString(36).substring(2, 10);
-      const link = `${URL}/feedback/testID`;
-      // const link = `https://yourdomain.com/feedback/${uniqueId}`;
-      setGeneratedLink(link);
+      // Update form data and generated link from API response
+      setFormData({ ...formData, ...values });
+      setGeneratedLink(result.feedbackUrl);
+
+      // Update form data with the selected template info
+      const selectedTemplate = formTemplates.find(
+        (t) => t._id === values.formTemplateId
+      );
+      setFormData({
+        ...formData,
+        ...values,
+        formTypeName: selectedTemplate?.formTypeName, // Add this to show in the summary
+      });
 
       setStep(3);
+      toast.success("Questionnaire created successfully");
+      // Add a success toast message
     } catch (error) {
-      console.error("Error generating questionnaire:", error);
-      //show an error toast/alert
+      toast.error(
+        error.response?.data?.message || "Failed to create form submission"
+      );
     } finally {
       setLoading(false);
     }
@@ -340,7 +365,7 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                         {...field}
                       />
                       <span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
-                       BR
+                        BR
                       </span>
                     </div>
                   </FormControl>
@@ -378,49 +403,54 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
           >
             <FormField
               control={questionnaireTypeForm.control}
-              name="type"
+              name="formTemplateId"
               render={({ field }) => (
                 <FormItem className="space-y-4">
-                  <FormLabel>Questionnaire Type</FormLabel>
+                  <FormLabel>Select Form Template</FormLabel>
                   <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                    }}
-                    defaultValue={field.value || "stay-experience"}
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select questionnaire type" />
+                        <SelectValue placeholder="Select a form template" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="stay-experience">
-                        Stay Experience
-                      </SelectItem>
-                      <SelectItem value="amenities">Amenities</SelectItem>
-                      <SelectItem value="customer-service">
-                        Customer Service
-                      </SelectItem>
+                      {formTemplates?.map((template) => (
+                        <SelectItem key={template._id} value={template._id}>
+                          {template.formTypeName}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
 
-                  {/* Description Section */}
-                  <div className=" border rounded-md p-4">
-                    <h3 className="font-medium mb-2">
-                      {questionnaireTypes[field.value]?.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {questionnaireTypes[field.value]?.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge variant="outline" className="bg-gray-100">
-                        {questionnaireTypes[field.value]?.questions}
-                      </Badge>
-                      <Badge variant="outline" className="bg-gray-100">
-                        {questionnaireTypes[field.value]?.duration}
-                      </Badge>
+                  {/* Template Description Section */}
+                  {field.value && (
+                    <div className="border rounded-md p-4">
+                      <h3 className="font-medium mb-2">
+                        {
+                          formTemplates.find((t) => t._id === field.value)
+                            ?.formTypeName
+                        }
+                      </h3>
+                      {/* <p className="text-sm text-muted-foreground mb-2">
+                        {
+                          formTemplates.find((t) => t._id === field.value)
+                            ?.formTypeDescription
+                        }
+                      </p> */}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <Badge variant="outline" className="bg-gray-100">
+                          {
+                            formTemplates.find((t) => t._id === field.value)
+                              ?.questions.length
+                          }{" "}
+                          questions
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -463,17 +493,17 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
                 type="button"
                 variant="outline"
                 onClick={() => setStep(1)}
-                disabled={loading} // Disable back button while loading
+                disabled={createSubmission.isPending}
               >
                 Back
               </Button>
               <LoadingButton
                 type="submit"
-                loading={loading}
-                disabled={loading} // Explicitly disable while loading
+                loading={createSubmission.isPending}
+                disabled={createSubmission.isPending}
                 className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
               >
-                {loading ? "Generating..." : "Generate Link"}
+                {createSubmission.isPending ? "Creating..." : "Create Form"}
               </LoadingButton>
             </div>
           </form>
@@ -514,12 +544,12 @@ const MultiStepQuestionnaireForm = ({ setStayDetailsDialog }) => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Unit Number</span>
-                <span className="text-sm uppercase">{formData.unitNo}</span>
+                <span className="text-sm uppercase">BR{formData.unitNo}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Questionnaire Type</span>
                 <span className="text-sm capitalize">
-                  {formData.type?.replace(/-/g, " ")}
+                  {formData.formTypeName || "N/A"}
                 </span>
               </div>
             </div>

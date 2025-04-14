@@ -39,7 +39,7 @@ export const formSubmissionApi = {
 
   // Submit responses for a form
   submitResponses: async (id, responseData) => {
-    const { data } = await apiClient.post(
+    const { data } = await apiClient.put(
       `/api/v1/form-submission/respond/${id}`,
       responseData
     );
