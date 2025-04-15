@@ -65,20 +65,23 @@ const FeedbackFromDB = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // If form is already completed, redirect to success page
-  // if (formData?.status === "completed") {
-  //   navigate(`/feedback/${formType}/${id}/success`);
-  //   return null;
-  // }
+  // Add these debug logs
+  console.log("Full form data:", formData);
+  console.log("Form status:", formData?.data?.status);
+  console.log("Form data structure:", {
+    status: formData?.data?.status,
+    formDetails: formData?.data?.formDetails,
+    responses: formData?.data?.responses,
+  });
 
-  const questions = formData?.formDetails?.questions || [];
-  const ratingOptions = formData?.formDetails?.ratingOptions || [];
+  const questions = formData?.data?.formDetails?.questions || [];
+  const ratingOptions = formData?.data?.formDetails?.ratingOptions || [];
 
   const form = useForm({
     resolver: zodResolver(createFeedbackSchema(questions)),
     defaultValues: {
       answers:
-        formData?.responses?.map((response) => ({
+        formData?.data?.responses?.map((response) => ({
           questionId: response.questionId,
           answer: "",
         })) || [],
@@ -128,8 +131,8 @@ const FeedbackFromDB = () => {
       setLoading(true);
       const responseData = {
         responses: data.answers.map((answer, index) => ({
-          questionId: formData.responses[index].questionId,
-          question: formData.responses[index].question,
+          questionId: formData.data.responses[index].questionId,
+          question: formData.data.responses[index].question,
           response: answer.answer,
         })),
         testimonialConsent: data.testimonialConsent,
