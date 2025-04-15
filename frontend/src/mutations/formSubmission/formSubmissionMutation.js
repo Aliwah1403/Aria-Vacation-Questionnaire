@@ -5,6 +5,7 @@ export const useCreateFormSubmission = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ["submitFormResponses"],
     mutationFn: formSubmissionApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries(["formSubmissions"]);
@@ -20,7 +21,7 @@ export const useSubmitFormResponses = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // mutationKey: ["submitFormResponses"],
+    mutationKey: ["submitFormResponses"],
     mutationFn: ({ id, responseData }) =>
       formSubmissionApi.submitResponses(id, responseData),
     onSuccess: () => {

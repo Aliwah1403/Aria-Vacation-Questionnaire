@@ -1,14 +1,81 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams, useNavigate } from "react-router";
-import Navbar from "./Navigation/Navbar";
-import { ClockIcon, User2Icon, TrendingUp, CheckCircle2 } from "lucide-react";
+import { useParams, useNavigate } from "react-router";
+import {
+  ClockIcon,
+  User2Icon,
+  TrendingUp,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { localesList } from "@/i18n";
+import { useQuery } from "@tanstack/react-query";
+import { formSubmissionApi } from "@/api/formSubmissions";
 
 const MemberHomepage = () => {
   const { t } = useTranslation();
+  const { formType, id } = useParams();
+  const navigate = useNavigate();
+
+  const {
+    data: formData,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["formSubmission", id],
+    queryFn: () => formSubmissionApi.getById(id),
+    enabled: !!id,
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  //  Check if form is completed (either from 403 response or regular response)
+  const isCompleted =
+    !formData.success || formData?.data?.status === "completed";
+
+  if (isCompleted) {
+    return (
+      <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
+        <div className="text-center space-y-4 p-6 rounded-lg border border-gray-100 bg-gray-50">
+          <div className="mx-auto w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
+            <AlertCircle className="w-6 h-6 text-fountain-blue-600" />
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Form Already Submitted
+          </h2>
+          <div className="space-y-2">
+            <p className="text-gray-600 max-w-md mx-auto">
+              {formData.message ||
+                "You have already completed this feedback form. Thank you for your response!"}
+            </p>
+            {formData.data?.completedAt && (
+              <p className="text-sm text-gray-500">
+                Completed on:{" "}
+                {new Date(formData.data.completedAt).toLocaleDateString()}
+              </p>
+            )}
+            {formData.data?.memberName && (
+              <p className="text-sm text-gray-500">
+                Submitted by: {formData.data.memberName}
+              </p>
+            )}
+            {formData.data?.resort && (
+              <p className="text-sm text-gray-500">
+                Resort: {formData.data.resort}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const features = [
     {
@@ -69,7 +136,7 @@ const MemberHomepage = () => {
           className="bg-[#2FA5AF] hover:bg-[#2FA5AF]/90"
         >
           <Link
-            to="/feedback/testID/questionnaire"
+            to={`/feedback/${formType}/${id}/questionnaire`}
             className="inline-flex items-center"
           >
             {t("startQuestionnaire")}

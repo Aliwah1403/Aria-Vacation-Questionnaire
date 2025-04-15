@@ -294,6 +294,8 @@ export const formSubmissionResponses = async (req, res) => {
       populate: { path: "formTypeId" },
     });
 
+    console.log(updatedSubmission)
+
     res.status(200).json({
       success: true,
       message:

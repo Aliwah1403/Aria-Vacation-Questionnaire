@@ -16,6 +16,7 @@ import MemberSideLayout from "./layouts/MemberSideLayout";
 import QuestionnairesOverview from "./pages/Admin-Side/Questionnaires/Overview/Overview";
 import QuestionnaireSetup from "./pages/Admin-Side/Setup";
 import ReactQueryProvider from "./providers/ReactQueryProviuder";
+import FeedbackFromDB from "./pages/Member-Side/Feedback/FeedbackFromDB";
 
 const router = createBrowserRouter([
   {
@@ -39,15 +40,19 @@ const router = createBrowserRouter([
     element: <MemberSideLayout />,
     children: [
       {
-        path: "/feedback/testID", //will replace with actual ID and form type
+        path: "/feedback/:formType/:id",
         element: <MemberHomepage />,
       },
       {
-        path: "/feedback/testID/questionnaire", //will replace with actual ID and form type
-        element: <Feedback />,
+        path: "/feedback/:formType/:id/questionnaire",
+        element: <FeedbackFromDB />,
       },
+      // {
+      //   path: "/feedback/testID/questionnaire", //will replace with actual ID and form type
+      //   element: <Feedback />,
+      // },
       {
-        path: "/feedback/testID/success",
+        path: "/feedback/:formType/:id/success",
         element: <Success />,
       },
     ],
@@ -66,8 +71,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-  <ReactQueryProvider>  
-    <RouterProvider router={router} />
-  </ReactQueryProvider>
+    <ReactQueryProvider>
+      <RouterProvider router={router} />
+    </ReactQueryProvider>
   </React.StrictMode>
 );
