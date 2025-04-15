@@ -70,8 +70,15 @@ import {
 } from "@tanstack/react-table";
 import FacetedDataFilter from "@/components/faceted-data-filter";
 import FormTypeForm from "./add-formtype-form";
+import { useCreateFormType } from "@/mutations/formType/formTypeMutations";
+import { toast } from "sonner";
+import { LoadingButton } from "@/components/ui/loading-button";
+// import { useMutation, useQueryClient } from "@tanstack/react-query";
+// import { formTypeApi } from "@/api/formTypes";
 
 export function FormTypeTable({ columns, data }) {
+  // const queryClient = useQueryClient();
+
   const tableId = useId();
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -104,20 +111,42 @@ export function FormTypeTable({ columns, data }) {
   });
 
   const isFiltered = table.getState().columnFilters.length > 0;
+  const mutation = useCreateFormType();
+
+  // const createFormType = useMutation({
+  //   mutationFn: formTypeApi.create,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(["formTypes"]);
+  //     setSheetOpen(false);
+  //   },
+  //   onError: () => {
+  //     console.log("Failed to post");
+  //   },
+  // });
 
   const handleFormSubmit = async (formData) => {
-    try {
-      // Add your API call here
-      console.log("Form submitted:", formData);
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        setSheetOpen(false);
+        toast.success("Form Type created successfully");
+      },
+      onError: () => {
+        toast.error("Failed to add Form Type. Please try again");
+      },
+    });
 
-      // Close the sheet after successful submission
-      setSheetOpen(false);
+    // try {
+    //   // Add your API call here
+    //   console.log("Form submitted:", formData);
 
-      // Optionally refresh the table data
-      // await refetchData();
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
+    //   // Close the sheet after successful submission
+    //   setSheetOpen(false);
+
+    //   // Optionally refresh the table data
+    //   // await refetchData();
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    // }
   };
 
   return (
@@ -215,13 +244,15 @@ export function FormTypeTable({ columns, data }) {
                       Cancel
                     </Button>
                   </SheetClose>
-                  <Button
+                  <LoadingButton
+                    loading={mutation.isPending}
+                    disabled={mutation.isPending}
                     type="submit"
                     form="add-form-type"
                     className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                   >
-                    Save changes
-                  </Button>
+                    {mutation.isPending ? "Saving" : " Save changes"}
+                  </LoadingButton>
                 </div>
               </SheetFooter>
             </SheetContent>

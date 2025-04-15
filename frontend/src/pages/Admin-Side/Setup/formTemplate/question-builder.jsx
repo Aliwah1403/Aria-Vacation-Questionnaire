@@ -23,6 +23,7 @@ import {
   MessageSquare,
   Type,
 } from "lucide-react";
+import { LoadingButton } from "@/components/ui/loading-button";
 
 const defaultEmojiMappings = [
   { score: 5, value: "", emoji: "1f603" }, // 😃
@@ -50,6 +51,7 @@ const emojiCodeToEmoji = (unified) => {
 
 export function QuestionBuilder({
   formTypeDetails,
+  mutation,
   selectedFormType,
   templateName,
   onSave,
@@ -151,17 +153,20 @@ export function QuestionBuilder({
     if (questions.length === 0) return;
 
     const templateData = {
+      formCode: selectedFormType,
       questions: questions.map((q) => ({
         questionText: q.questionText,
         questionType: q.questionType,
         required: q.required,
         order: q.order,
       })),
-      ratingOptions: ratingOptions.map((option) => ({
-        value: option.value,
-        score: option.score,
-        emoji: option.emoji,
-      })),
+      ratingOptions: questions.some((q) => q.questionType === "emoji")
+        ? ratingOptions.map((option) => ({
+            value: option.value,
+            score: option.score,
+            emoji: option.emoji,
+          }))
+        : undefined,
     };
 
     onSave(templateData);
@@ -220,10 +225,10 @@ export function QuestionBuilder({
                 <FileText className="h-6 w-6 text-primary" />
               </div>
               <h2 className="text-2xl font-bold mb-2">
-                {formTypeDetails[selectedFormType]?.name}
+                {formTypeDetails[selectedFormType]?.formName}
               </h2>
               <p className="text-muted-foreground">
-                {formTypeDetails[selectedFormType]?.description}
+                {formTypeDetails[selectedFormType]?.formDescription}
               </p>
             </div>
 
@@ -244,14 +249,15 @@ export function QuestionBuilder({
             </div>
 
             <div className="space-y-4 mt-8">
-              <Button
+              <LoadingButton
+                loading={mutation.isPending}
                 className="w-full justify-start"
                 variant="outline"
                 onClick={handleSave}
                 disabled={questions.length === 0}
               >
-                Save Template
-              </Button>
+                {mutation.isPending ? "Saving" : "Save Template"}
+              </LoadingButton>
 
               <Button
                 className="w-full justify-start"

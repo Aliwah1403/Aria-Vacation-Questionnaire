@@ -35,10 +35,16 @@ import { data } from "./dummyData";
 import MultiStepQuestionnaireForm from "../../Member-Details/multi-step-questionnaire-form";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
+import { formTemplateApi } from "@/api/formTemplates";
 
 const QuestionnairesOverview = () => {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
   const [selectedFormCode, setSelectedFormCode] = useState(null);
+
+  const { data: formTemplateData } = useQuery({
+    queryKey: ["formTemplates"],
+    queryFn: formTemplateApi.getAll,
+  });
 
   const {
     data: formSubmissionData,
@@ -62,7 +68,7 @@ const QuestionnairesOverview = () => {
     <>
       {/* Project Header */}
       <AdminPageHeader
-        header="Stay Experience Survey"
+        header="Aria Vacation Club Feedback Surveys"
         description="  Manage and send questionnaires to gather feedback about members'
               resort experience."
         action={
@@ -83,7 +89,7 @@ const QuestionnairesOverview = () => {
                   Send Questionnaires
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-xl">
+              <DialogContent className="max-w-[700px]">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-semibold">
                     Send Questionnaire
@@ -92,6 +98,7 @@ const QuestionnairesOverview = () => {
                 {/* <StayDetailsForm setStayDetailsDialog={setStayDetailsDialog} /> */}
                 <MultiStepQuestionnaireForm
                   setStayDetailsDialog={setStayDetailsDialog}
+                  formTemplates={formTemplateData}
                 />
               </DialogContent>
             </Dialog>
@@ -165,6 +172,12 @@ const QuestionnairesOverview = () => {
               Overview
             </TabsTrigger>
             <TabsTrigger
+              value="stay-experience-survey"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Stay Experience Experience
+            </TabsTrigger>
+            <TabsTrigger
               value="testing-survey"
               className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
@@ -175,6 +188,12 @@ const QuestionnairesOverview = () => {
               className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
               Filter Experience
+            </TabsTrigger>
+            <TabsTrigger
+              value="form-submission-survey"
+              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Form Submission Survey
             </TabsTrigger>
           </TabsList>
 

@@ -1,4 +1,5 @@
-import { useState, useId } from "react";
+import { useState } from "react";
+import { useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
@@ -6,13 +7,13 @@ import { useCharacterLimit } from "@/hooks/use-character-limit";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { questions } from "./Questions/Questions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { feedbackSchema } from "./schemas/feedback-schema";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useTranslation } from "react-i18next";
+import * as z from "zod";
+import { useQuery } from "@tanstack/react-query";
+import { formSubmissionApi } from "@/api/formSubmissions";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -22,11 +23,69 @@ const emojiOptions = [
   { emoji: "1f614", label: "Very Dissatisfied" },
 ];
 
-const Feedback = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+// Dynamic schema based on questions
+const createFeedbackSchema = (questions) => {
+  return z.object({
+    answers: z.array(
+      z.object({
+        questionId: z.string(),
+        answer: z.string().min(1, "Please provide an answer"),
+      })
+    ),
+    testimonialConsent: z.boolean(),
+  });
+};
 
-  // Emojis
+const FeedbackFromDB = () => {
+  const { formType, id } = useParams();
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const maxLength = 4000;
+  const { value, characterCount, handleChange } = useCharacterLimit({
+    maxLength,
+  });
+
+  // Fetch form submission data which includes the template details
+  const {
+    data: formData,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["formSubmission", id],
+    queryFn: () => formSubmissionApi.getById(id),
+    enabled: !!id,
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  // If form is already completed, redirect to success page
+  // if (formData?.status === "completed") {
+  //   navigate(`/feedback/${formType}/${id}/success`);
+  //   return null;
+  // }
+
+  const questions = formData?.formDetails?.questions || [];
+  const ratingOptions = formData?.formDetails?.ratingOptions || [];
+
+  const form = useForm({
+    resolver: zodResolver(createFeedbackSchema(questions)),
+    defaultValues: {
+      answers:
+        formData?.responses?.map((response) => ({
+          questionId: response.questionId,
+          answer: "",
+        })) || [],
+      testimonialConsent: false,
+    },
+  });
+
   const renderEmoji = (unified) => {
     return (
       <img
@@ -36,23 +95,6 @@ const Feedback = () => {
       />
     );
   };
-
-  // Stepper
-  const [currentStep, setCurrentStep] = useState(1);
-  const [answers, setAnswers] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [testimonialConsent, setTestimonialConsent] = useState(false);
-
-  const form = useForm({
-    resolver: zodResolver(feedbackSchema),
-    defaultValues: {
-      answers: questions.map((q) => ({
-        questionId: q.id,
-        answer: "",
-      })),
-      testimonialConsent: false,
-    },
-  });
 
   const handleNext = async () => {
     const currentAnswer = form.getValues(`answers.${currentStep - 1}.answer`);
@@ -84,40 +126,31 @@ const Feedback = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
+      const responseData = {
+        responses: data.answers.map((answer, index) => ({
+          questionId: formData.responses[index].questionId,
+          question: formData.responses[index].question,
+          response: answer.answer,
+        })),
+        testimonialConsent: data.testimonialConsent,
+      };
 
-      const formattedAnswers = data.answers.map((answer, index) => ({
-        questionId: questions[index].id,
-        questionText: questions[index].text,
-        answer: answer.answer,
-      }));
-
-      console.log("Feedback Answers:", formattedAnswers);
-      console.log("Testimonial Consent:", data.testimonialConsent);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate("/feedback/testID/success");
+      console.log("Submitting responses:", responseData);
+      await formSubmissionApi.submitResponses(id, responseData);
+      navigate(`/feedback/${formType}/${id}/success`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("There was an error submitting your feedback. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  //Textarea character limit
-  const id = useId();
-  const maxLength = 4000;
-  const {
-    value,
-    characterCount,
-    handleChange,
-    maxLength: limit,
-  } = useCharacterLimit({ maxLength });
-
+  // QuestionStepper component
   const QuestionStepper = ({ currentStep, totalSteps }) => (
     <div className="flex flex-col w-full">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-gray-600">
-          {t("question")} {currentStep} {t("of")} {totalSteps}
+          Question {currentStep} of {totalSteps}
         </span>
       </div>
       <div className="flex gap-1">
@@ -158,20 +191,20 @@ const Feedback = () => {
                 render={({ field }) => (
                   <FormItem>
                     <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
-                      {t("question")} {currentStep}
+                      Question {currentStep}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
-                      {questions[currentStep - 1].text}
+                      {questions[currentStep - 1].questionText}
                     </h2>
 
-                    {questions[currentStep - 1].type === "emoji" ? (
+                    {questions[currentStep - 1].questionType === "emoji" ? (
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-5 sm:gap-4">
-                        {emojiOptions.map((option, index) => {
-                          const isSelected = field.value === option.label;
+                        {ratingOptions.map((option) => {
+                          const isSelected = field.value === option.value;
                           return (
                             <motion.button
                               type="button"
-                              key={index}
+                              key={option._id}
                               className={`relative flex flex-row sm:flex-col items-center p-2 sm:p-4 rounded-lg ${
                                 isSelected
                                   ? "bg-[#F0FBFA] border-2 border-fountain-blue-400"
@@ -179,7 +212,7 @@ const Feedback = () => {
                               }`}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              onClick={() => handleAnswer(option.label)}
+                              onClick={() => handleAnswer(option.value)}
                             >
                               {isSelected && (
                                 <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-fountain-blue-400 rounded-full flex items-center justify-center">
@@ -190,7 +223,7 @@ const Feedback = () => {
                                 {renderEmoji(option.emoji)}
                               </span>
                               <span className="text-xs sm:text-sm text-gray-600 flex-1 sm:flex-none text-left sm:text-center">
-                                {option.label}
+                                {option.value}
                               </span>
                             </motion.button>
                           );
@@ -198,20 +231,14 @@ const Feedback = () => {
                       </div>
                     ) : (
                       <div>
-                        <p
-                          id={`${id}-description`}
-                          className="text-muted-foreground mb-2 text-right text-xs"
-                          role="status"
-                          aria-live="polite"
-                        >
+                        <p className="text-muted-foreground mb-2 text-right text-xs">
                           <span className="tabular-nums">
-                            {limit - characterCount}
+                            {maxLength - characterCount}
                           </span>{" "}
                           characters left
                         </p>
                         <Textarea
                           {...field}
-                          id={id}
                           value={value}
                           maxLength={maxLength}
                           onChange={(e) => {
@@ -219,37 +246,39 @@ const Feedback = () => {
                             handleAnswer(e.target.value);
                             field.onChange(e);
                           }}
-                          aria-describedby={`${id}-description`}
                           className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base p-3 sm:p-4 [resize:none]"
                           placeholder="Share your thoughts with us... "
                         />
 
-                        {/* Testimonial Consent Checkbox */}
-                        <FormField
-                          control={form.control}
-                          name="testimonialConsent"
-                          render={({ field }) => (
-                            <div className="flex items-start space-x-2 mt-4">
-                              <Checkbox
-                                id="testimonialConsent"
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                className="mt-1"
-                              />
-                              <div className="grid gap-1.5 leading-none">
-                                <label
-                                  htmlFor="testimonialConsent"
-                                  className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                >
-                                  {t("testimonialConsent")}
-                                </label>
-                                <p className="text-xs text-muted-foreground">
-                                  {t("testimonialDisclaimer")}
-                                </p>
+                        {currentStep === questions.length && (
+                          <FormField
+                            control={form.control}
+                            name="testimonialConsent"
+                            render={({ field }) => (
+                              <div className="flex items-start space-x-2 mt-4">
+                                <Checkbox
+                                  id="testimonialConsent"
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  className="mt-1"
+                                />
+                                <div className="grid gap-1.5 leading-none">
+                                  <label
+                                    htmlFor="testimonialConsent"
+                                    className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  >
+                                    Allow us to use your feedback as a
+                                    testimonial
+                                  </label>
+                                  <p className="text-xs text-muted-foreground">
+                                    By checking this box, you agree to let us
+                                    use your feedback for marketing purposes.
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        />
+                            )}
+                          />
+                        )}
                       </div>
                     )}
                     <FormMessage />
@@ -267,7 +296,7 @@ const Feedback = () => {
               disabled={currentStep === 1}
               className="cursor-pointer capitalize px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-200 hover:border-gray-300 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
-              {t("previous")}
+              Previous
             </Button>
             {currentStep === questions.length ? (
               <LoadingButton
@@ -276,7 +305,7 @@ const Feedback = () => {
                 size="default"
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-                {t("submit")}
+                Submit
               </LoadingButton>
             ) : (
               <Button
@@ -285,7 +314,7 @@ const Feedback = () => {
                 onClick={handleNext}
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-                {t("continue")}
+                Continue
               </Button>
             )}
           </div>
@@ -295,4 +324,4 @@ const Feedback = () => {
   );
 };
 
-export default Feedback;
+export default FeedbackFromDB;

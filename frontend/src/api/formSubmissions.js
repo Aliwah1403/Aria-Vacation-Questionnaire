@@ -24,8 +24,16 @@ export const formSubmissionApi = {
 
   // Get single submission by ID
   getById: async (id) => {
-    const { data } = await apiClient.get(`/api/v1/form-submission/get/${id}`);
-    return data.data;
+    try {
+      const { data } = await apiClient.get(`/api/v1/form-submission/get/${id}`);
+      return data;
+    } catch (error) {
+      if (error.response?.status === 403) {
+        // Return the error response data for completed forms
+        return error.response.data;
+      }
+      throw error; // Re-throw other errors
+    }
   },
 
   // Create new submission
@@ -39,8 +47,8 @@ export const formSubmissionApi = {
 
   // Submit responses for a form
   submitResponses: async (id, responseData) => {
-    const { data } = await apiClient.post(
-      `/api/v1/form-submission/respond/${id}`,
+    const { data } = await apiClient.put(
+      `/api/v1/form-submission/response/${id}`,
       responseData
     );
     return data;

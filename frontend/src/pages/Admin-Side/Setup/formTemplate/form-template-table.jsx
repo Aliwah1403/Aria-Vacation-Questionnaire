@@ -54,26 +54,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { QuestionBuilder } from "./question-builder";
+import { useCreateFormTemplate } from "@/mutations/formTemplate/formTemplateMutations";
+import { toast } from "sonner";
 
-const formTypeDetails = {
-  "stay-experience": {
-    name: "Stay Experience Survey",
-    description:
-      "Gather feedback about members' resort experience, including room quality, cleanliness, and overall satisfaction.",
-  },
-  amenities: {
-    name: "Amenities Feedback",
-    description:
-      "Collect feedback on resort amenities such as pools, restaurants, spa services, and recreational activities.",
-  },
-  "customer-service": {
-    name: "Customer Service Rating",
-    description:
-      "Rate the quality of customer service provided by staff members during the guest's stay.",
-  },
-};
-
-export function FormTemplateTable({ columns, data }) {
+export function FormTemplateTable({ columns, data, formTypes }) {
   // 1. Declare ALL hooks at the top of component
   const tableId = useId();
   const inputRef = useRef(null);
@@ -88,6 +72,8 @@ export function FormTemplateTable({ columns, data }) {
   const [templateName, setTemplateName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showQuestionBuilder, setShowQuestionBuilder] = useState(false);
+
+  const createMutation = useCreateFormTemplate();
 
   // 2. Initialize table after all hooks
   const table = useReactTable({
@@ -110,10 +96,11 @@ export function FormTemplateTable({ columns, data }) {
 
   // 3. Handler functions after hooks and table initialization
   const handleContinueToQuestions = () => {
+    if (!selectedFormType) return;
+
     setIsLoading(true);
     setIsCreateDialogOpen(false);
 
-    // Simulate loading delay
     setTimeout(() => {
       setIsLoading(false);
       setShowQuestionBuilder(true);
@@ -121,17 +108,19 @@ export function FormTemplateTable({ columns, data }) {
   };
 
   const handleSaveTemplate = (templateData) => {
-    console.log("Saving template:", {
-      name: templateName || formTypeDetails[selectedFormType]?.name,
-      formType: selectedFormType,
-      ...templateData,
+    createMutation.mutate(templateData, {
+      onSuccess: () => {
+        // Reset states
+        setShowQuestionBuilder(false);
+        setSelectedFormType(null);
+        setTemplateName("");
+        setIsCreateDialogOpen(false);
+        toast.success("Form template created successfully");
+      },
+      onError: () => {
+        toast.error("Failed to create form template. Please try again");
+      },
     });
-
-    // Reset states
-    setShowQuestionBuilder(false);
-    setSelectedFormType(null);
-    setTemplateName("");
-    setIsCreateDialogOpen(false);
   };
 
   const handleCancel = () => {
@@ -157,7 +146,12 @@ export function FormTemplateTable({ columns, data }) {
   if (showQuestionBuilder) {
     return (
       <QuestionBuilder
-        formTypeDetails={formTypeDetails}
+        formTypeDetails={{
+          [selectedFormType]: formTypes.find(
+            (ft) => ft.formCode === selectedFormType
+          ),
+        }}
+        mutation={createMutation}
         selectedFormType={selectedFormType}
         templateName={templateName}
         onSave={handleSaveTemplate}
@@ -221,15 +215,14 @@ export function FormTemplateTable({ columns, data }) {
                       <SelectValue placeholder="Select form type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="stay-experience">
-                        Stay Experience Survey
-                      </SelectItem>
-                      <SelectItem value="amenities">
-                        Amenities Feedback
-                      </SelectItem>
-                      <SelectItem value="customer-service">
-                        Customer Service Rating
-                      </SelectItem>
+                      {formTypes.map((formType) => (
+                        <SelectItem
+                          key={formType._id}
+                          value={formType.formCode}
+                        >
+                          {formType.formName}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
