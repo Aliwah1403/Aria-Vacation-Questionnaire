@@ -10,6 +10,8 @@ import { FormTemplateTable } from "./formTemplate/form-template-table";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { formTypeApi } from "@/api/formTypes";
 import { formTemplateApi } from "@/api/formTemplates";
+import { EmailTemplateTable } from "./Email Contents/email-template-table";
+import { emailTemplateColumns } from "./Email Contents/columns";
 
 const formTemplates = [
   {
@@ -43,6 +45,21 @@ const formTemplates = [
     questions: 15,
     updatedAt: "08/04/2024",
     isActive: false,
+  },
+];
+
+const emailTemplates = [
+  {
+    id: 1,
+    formTypeName: "Stay Experience Survey",
+    emailTemplateName: "Stay Experience Email",
+    emailSubjectLine: "Your Stay Experience Feedback",
+    isHtml: false,
+    isActive: true,
+    createdAt: "08/04/2024",
+    updatedAt: "08/04/2024",
+    emailContent:
+      "We value your feedback on your recent stay. Please take a moment to complete our survey",
   },
 ];
 
@@ -136,7 +153,10 @@ const QuestionnaireSetup = () => {
           </TabsContent>
 
           <TabsContent value="email-content" className="mt-0">
-            {/* <EmailContentList />  */} EmailContent
+            <EmailTemplateTable
+              columns={emailTemplateColumns}
+              data={emailTemplates}
+            />
           </TabsContent>
         </Tabs>
       </div>
