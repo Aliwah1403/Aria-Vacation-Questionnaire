@@ -73,6 +73,7 @@ import FacetedDataFilter from "@/components/faceted-data-filter";
 import { useCreateFormType } from "@/mutations/formType/formTypeMutations";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/ui/loading-button";
+import CreateEmailDialog from "./create-template-dialog";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import { formTypeApi } from "@/api/formTypes";
 
@@ -184,10 +185,9 @@ export function EmailTemplateTable({ columns, data }) {
               </Button>
             )}
           </div>
-          <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
-            <PlusCircle />
-            Create New Email Template
-          </Button>
+          <CreateEmailDialog />
+
+        
         </div>
       </CardHeader>
       <CardContent>
