@@ -156,6 +156,7 @@ const QuestionnaireSetup = () => {
             <EmailTemplateTable
               columns={emailTemplateColumns}
               data={emailTemplates}
+              formTypes={formTypeData || []}
             />
           </TabsContent>
         </Tabs>

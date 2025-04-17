@@ -50,9 +50,9 @@ const availableVariables = [
   { name: "name", description: "Member's full name" },
   { name: "memberId", description: "Member's unique ID" },
   { name: "email", description: "Member's email address" },
-//   { name: "check-in-date", description: "Current date" },
+  //   { name: "check-in-date", description: "Current date" },
   { name: "companyName", description: "Company name" },
-  {name: "feedback-url", description: "Link to the feedback page"}
+  { name: "feedback-url", description: "Link to the feedback page" },
 ];
 
 // Define the form validation schema with Zod
@@ -82,8 +82,9 @@ const formSchema = z
     }
   );
 
-const CreateEmailDialog = () => {
+const CreateEmailDialog = ({ formTypes }) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedFormType, setSelectedFormType] = useState(null);
   const [contentType, setContentType] = useState("text");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -221,18 +222,17 @@ const CreateEmailDialog = () => {
                   <FormLabel className="text-right">Form Type</FormLabel>
                   <div className="col-span-3">
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => setSelectedFormType(value)}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger id="form-type">
                           <SelectValue placeholder="Select a form type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {formTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>
-                            {type.name}
+                          <SelectItem key={type.id} value={type.formCode}>
+                            {type.formName}
                           </SelectItem>
                         ))}
                       </SelectContent>

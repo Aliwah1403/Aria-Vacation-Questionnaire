@@ -77,7 +77,7 @@ import CreateEmailDialog from "./create-template-dialog";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import { formTypeApi } from "@/api/formTypes";
 
-export function EmailTemplateTable({ columns, data }) {
+export function EmailTemplateTable({ columns, data, formTypes }) {
   // const queryClient = useQueryClient();
 
   const tableId = useId();
@@ -185,9 +185,7 @@ export function EmailTemplateTable({ columns, data }) {
               </Button>
             )}
           </div>
-          <CreateEmailDialog />
-
-        
+          <CreateEmailDialog formTypes={formTypes} />
         </div>
       </CardHeader>
       <CardContent>
