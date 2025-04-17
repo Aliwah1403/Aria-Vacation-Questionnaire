@@ -47,11 +47,12 @@ const formTypes = [
 
 // Available variables
 const availableVariables = [
-  { name: "name", description: "Customer's full name" },
+  { name: "name", description: "Member's full name" },
   { name: "memberId", description: "Member's unique ID" },
-  { name: "email", description: "Customer's email address" },
-  { name: "date", description: "Current date" },
+  { name: "email", description: "Member's email address" },
+//   { name: "check-in-date", description: "Current date" },
   { name: "companyName", description: "Company name" },
+  {name: "feedback-url", description: "Link to the feedback page"}
 ];
 
 // Define the form validation schema with Zod
@@ -348,7 +349,11 @@ const CreateEmailDialog = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
