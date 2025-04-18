@@ -71,3 +71,30 @@ export const addEmailTemplate = async (req, res) => {
     });
   }
 };
+
+export const getEmailTemplate = async (req, res) => {
+  try {
+    const templates = await EmailTemplate.find().sort({ createdAt: -1 });
+
+    if (!templates.length) {
+      return res.status(400).json({
+        success: false,
+        message: "No email templates found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Email templates retrieved successfully",
+      count: templates.length,
+      data: templates,
+    });
+  } catch (error) {
+    console.log("Error retrieving email templates: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving email templates",
+      error: error.message,
+    });
+  }
+};
