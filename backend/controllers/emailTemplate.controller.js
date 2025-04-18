@@ -98,3 +98,31 @@ export const getEmailTemplate = async (req, res) => {
     });
   }
 };
+
+export const deleteEmailTemplate = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existingTemplate = await EmailTemplate.findById(id);
+    if (!existingTemplate) {
+      return res.status(400).json({
+        success: false,
+        message: "Email template not found",
+      });
+    }
+
+    await EmailTemplate.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Email template deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting email template", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error deleting email template",
+      error: error.message,
+    });
+  }
+};
