@@ -40,7 +40,7 @@ export const emailTemplateColumns = [
     header: "Template name",
   },
   {
-    accessorKey: "emailSubjectLine",
+    accessorKey: "emailSubject",
     header: "Email Subject",
   },
   {

@@ -12,6 +12,7 @@ import { formTypeApi } from "@/api/formTypes";
 import { formTemplateApi } from "@/api/formTemplates";
 import { EmailTemplateTable } from "./Email Contents/email-template-table";
 import { emailTemplateColumns } from "./Email Contents/columns";
+import { emailTemplateApi } from "@/api/emailTemplates";
 
 const formTemplates = [
   {
@@ -86,20 +87,35 @@ const QuestionnaireSetup = () => {
     queryFn: formTemplateApi.getAll,
   });
 
+  // Email templates query
+  const {
+    data: emailTemplateData,
+    isPending: isLoadingEmailTemplates,
+    error: emailTemplateError,
+  } = useQuery({
+    queryKey: ["emailTemplates"],
+    queryFn: emailTemplateApi.getAll,
+  });
+
   // Show loading state if either query is loading
-  if (isLoadingFormTypes || isLoadingFormTemplates) {
+  if (isLoadingFormTypes || isLoadingFormTemplates || isLoadingEmailTemplates) {
     return <div>Loading...</div>;
   }
 
   // Show any errors that occur
-  if (formTypeError || formTemplateError) {
+  if (formTypeError || formTemplateError || emailTemplateError) {
     return (
       <div>
         {formTypeError && (
           <div>Error fetching form types: {formTypeError.message}</div>
         )}
         {formTemplateError && (
-          <div>Error fetching templates: {formTemplateError.message}</div>
+          <div>Error fetching form templates: {formTemplateError.message}</div>
+        )}
+        {emailTemplateError && (
+          <div>
+            Error fetching email templates: {emailTemplateError.message}
+          </div>
         )}
       </div>
     );
@@ -155,7 +171,7 @@ const QuestionnaireSetup = () => {
           <TabsContent value="email-content" className="mt-0">
             <EmailTemplateTable
               columns={emailTemplateColumns}
-              data={emailTemplates}
+              data={emailTemplateData || []}
               formTypes={formTypeData || []}
             />
           </TabsContent>
