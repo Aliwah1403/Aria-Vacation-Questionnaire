@@ -5,4 +5,11 @@ export const emailTemplateApi = {
     const { data } = await apiClient.get("/api/v1/email-template/get");
     return data.data;
   },
+  create: async (templateData) => {
+    const { data } = await apiClient.post(
+      "/api/v1/email-template/add",
+      templateData
+    );
+    return data;
+  },
 };

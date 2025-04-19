@@ -36,6 +36,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useCreateEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
+import { LoadingButton } from "@/components/ui/loading-button";
 
 // Mock form types data
 const formTypes = [
@@ -90,6 +92,8 @@ const CreateEmailDialog = ({ formTypes }) => {
 
   const textareaRef = useRef(null);
   const htmlEditorRef = useRef(null);
+
+  const createMutation = useCreateEmailTemplate();
 
   // Initialize React Hook Form with Zod validation
   const form = useForm({
@@ -162,35 +166,33 @@ const CreateEmailDialog = ({ formTypes }) => {
   };
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
+    // Log the form data
+    const templateData = {
+      formCode: selectedFormType,
+      emailTemplateName: data.templateName,
+      emailSubject: data.emailSubject,
+      contentType: data.contentType,
+      textContent: data.contentType === "text" ? data.textContent : undefined,
+      htmlContent: data.contentType === "html" ? data.htmlContent : undefined,
+      variables: availableVariables,
+    };
 
-    try {
-      // Simulate API call with a 2-second delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log(templateData);
 
-      // Log the form data
-      console.log({
-        formType: data.formType,
-        templateName: data.templateName,
-        emailSubject: data.emailSubject,
-        contentType: data.contentType,
-        content:
-          data.contentType === "text" ? data.textContent : data.htmlContent,
-      });
+    createMutation.mutate(templateData, {
+      onSuccess: () => {
+        // Close the modal and reset form
+        setIsCreateDialogOpen(false);
+        form.reset();
+        setContentType("text");
 
-      // Success toast
-      toast.success("Email template created successfully");
-
-      // Close the modal and reset form
-      setIsCreateDialogOpen(false);
-      form.reset();
-      setContentType("text");
-    } catch (error) {
-      // Error toast
-      toast.error(error.message || "Failed to create email template");
-    } finally {
-      setIsSubmitting(false);
-    }
+        // Success toast
+        toast.success("Email template created successfully");
+      },
+      onError: () => {
+        toast.error("Failed to create email template. Please try again");
+      },
+    });
   };
 
   return (
@@ -349,20 +351,14 @@ const CreateEmailDialog = ({ formTypes }) => {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 type="submit"
+                loading={createMutation.isPending}
                 disabled={isSubmitting}
                 className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create Template"
-                )}
-              </Button>
+                {createMutation.isPending ? "Creating..." : "Create Template"}
+              </LoadingButton>
             </DialogFooter>
           </form>
         </Form>
