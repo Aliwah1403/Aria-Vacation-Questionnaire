@@ -12,4 +12,10 @@ export const emailTemplateApi = {
     );
     return data;
   },
+  delete: async (id) => {
+    const { data } = await apiClient.delete(
+      `/api/v1/email-template/delete/${id}`
+    );
+    return data;
+  },
 };

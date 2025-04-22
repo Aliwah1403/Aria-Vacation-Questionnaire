@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
   PlusCircle,
@@ -29,6 +30,85 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDeleteEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
+import { toast } from "sonner";
+
+const EmailTemplateActions = ({ row }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const mutation = useDeleteEmailTemplate();
+  const emailTemplate = row.original;
+
+  const handleEmailTemplateDelete = () => {
+    mutation.mutate(emailTemplate._id, {
+      onSuccess: () => {
+        setDialogOpen(false);
+        setDropdownOpen(false);
+        toast.success("Email Template deleted successfully");
+      },
+      onError: () => {
+        toast.error("Failed to delete Email Template");
+      },
+    });
+  };
+
+  return (
+    <>
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="size-8 p-0">
+            <EllipsisIcon className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="middle">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Pencil className="size-4" />
+            Edit email template
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            className="text-red-500"
+            onClick={() => {
+              setDropdownOpen(false);
+              setDialogOpen(true);
+            }}
+          >
+            <Trash2 className="size-4 text-red-500" />
+            Delete email template
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              <p>Confirm Email Template Deletion</p>
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              `You are about to delete this Email Template (
+              {emailTemplate.emailTemplateName}) from your data. Do you want to
+              proceed?`
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <LoadingButton
+              variant="destructive"
+              onClick={handleEmailTemplateDelete}
+              loading={mutation.isPending}
+            >
+              {mutation.isPending ? "Deleting..." : "Delete"}
+            </LoadingButton>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+};
 
 export const emailTemplateColumns = [
   {
@@ -71,57 +151,6 @@ export const emailTemplateColumns = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <EllipsisIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="middle">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Pencil className="size-4" />
-                Edit email template
-              </DropdownMenuItem>
-              {/* Confirmation Dialog */}
-              <AlertDialogTrigger>
-                <DropdownMenuItem>
-                  <Trash2 className="size-4 text-red-500" />
-                  Delete email template
-                </DropdownMenuItem>
-              </AlertDialogTrigger>
-              {/* Confirmation Dialog End */}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                <p>Confirm Email Template Deletion</p>
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                You are about to delete this Email Template from your data. Do
-                you want to proceed?
-                {/* Proceeding will change the driver's status to inactive. Their
-                data will be preserved, but they won't be available for trips. */}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <LoadingButton
-                variant="destructive"
-                // className={cn("bg-tiber-950 hover:bg-tiber-950/90 text-white")}
-                // onClick={() => toggleDriverStatus(driver._id)}
-              >
-                Proceed
-              </LoadingButton>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      );
-    },
+    cell: ({ row }) => <EmailTemplateActions row={row} />,
   },
 ];

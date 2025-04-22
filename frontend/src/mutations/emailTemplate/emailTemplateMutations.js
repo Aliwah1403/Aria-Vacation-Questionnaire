@@ -14,3 +14,17 @@ export const useCreateEmailTemplate = () => {
     },
   });
 };
+
+export const useDeleteEmailTemplate = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: emailTemplateApi.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["emailTemplates"]);
+    },
+    onError: (error) => {
+      console.error("Failed to delete email template: ", error);
+    },
+  });
+};
