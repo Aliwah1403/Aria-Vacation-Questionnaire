@@ -37,16 +37,18 @@ import { toast } from "sonner";
 
 // First create a separate component for actions
 const FormTypeActions = ({ row }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const mutation = useDeleteFormType();
+  const deletemutation = useDeleteFormType();
+  // const statusMutation = useEmailTemplateStatus()
+
   const formType = row.original;
 
   const handleFormTypeDelete = () => {
-    mutation.mutate(formType._id, {
+    deletemutation.mutate(formType._id, {
       onSuccess: () => {
-        setDialogOpen(false);
+        setDialogType(null);
         setDropdownOpen(false);
         toast.success("Form type deleted successfully");
       },
@@ -56,109 +58,7 @@ const FormTypeActions = ({ row }) => {
     });
   };
 
-  // return (
-  //   <AlertDialog>
-  //     <DropdownMenu>
-  //       <DropdownMenuTrigger asChild>
-  //         <Button variant="ghost" className="h-8 w-8 p-0">
-  //           <EllipsisIcon className="h-4 w-4" />
-  //         </Button>
-  //       </DropdownMenuTrigger>
-  //       <DropdownMenuContent align="middle">
-  //         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //         <DropdownMenuSeparator />
-  //         <DropdownMenuItem>
-  //           <Pencil className="size-4" />
-  //           Edit form type
-  //         </DropdownMenuItem>
-  //         {/* Confirmation Dialog */}
-  //         <AlertDialogTrigger>
-  //           <DropdownMenuItem>
-  //             <BanIcon className="size-4" />
-  //             Disable form type
-  //           </DropdownMenuItem>
-  //           <DropdownMenuItem>
-  //             <Trash2 className="size-4 text-red-500" />
-  //             Delete form type
-  //           </DropdownMenuItem>
-  //         </AlertDialogTrigger>
-  //         {/* Confirmation Dialog End */}
-  //       </DropdownMenuContent>
-  //     </DropdownMenu>
-  //     <AlertDialogContent>
-  //       <AlertDialogHeader>
-  //         <AlertDialogTitle>
-  //           <p>Confirm Form Type Deletion</p>
-  //         </AlertDialogTitle>
-  //         <AlertDialogDescription>
-  //           You are about to delete this Form Type from your data. Do you
-  //           want to proceed?
-  //           {/* Proceeding will change the driver's status to inactive. Their
-  //           data will be preserved, but they won't be available for trips. */}
-  //         </AlertDialogDescription>
-  //       </AlertDialogHeader>
-  //       <AlertDialogFooter>
-  //         <AlertDialogCancel>Cancel</AlertDialogCancel>
-  //         <LoadingButton
-  //           variant="destructive"
-  //           // className={cn("bg-tiber-950 hover:bg-tiber-950/90 text-white")}
-  //           // onClick={() => toggleDriverStatus(driver._id)}
-  //         >
-  //           Proceed
-  //         </LoadingButton>
-  //       </AlertDialogFooter>
-  //     </AlertDialogContent>
-  //   </AlertDialog>
-  // );
-
   return (
-    // <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-    //   <DropdownMenu>
-    //     <DropdownMenuTrigger asChild>
-    //       <Button variant="ghost" className="h-8 w-8 p-0">
-    //         <EllipsisIcon className="h-4 w-4" />
-    //       </Button>
-    //     </DropdownMenuTrigger>
-    //     <DropdownMenuContent align="middle">
-    //       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-    //       <DropdownMenuSeparator />
-    //       {/* Add a disable/inactive action button - will trigger loading sonner to show its making this inactive/active */}
-    //       <DropdownMenuItem>
-    //         <Pencil className="size-4" />
-    //         Edit form type
-    //       </DropdownMenuItem>
-    //       <AlertDialogTrigger asChild>
-    //         <DropdownMenuItem className="text-red-600">
-    //           <Trash2 className="size-4" />
-    //           Delete form type
-    //         </DropdownMenuItem>
-    //       </AlertDialogTrigger>
-    //     </DropdownMenuContent>
-    //   </DropdownMenu>
-
-    //   <AlertDialogContent>
-    //     <AlertDialogHeader>
-    //       <AlertDialogTitle>Confirm Form Type Deletion</AlertDialogTitle>
-    //       <AlertDialogDescription>
-    //         You are about to delete this Form Type from your data. Do you want
-    //         to proceed?
-    //       </AlertDialogDescription>
-    //     </AlertDialogHeader>
-    //     <AlertDialogFooter>
-    //       <AlertDialogCancel onClick={() => setDialogOpen(false)}>
-    //         Cancel
-    //       </AlertDialogCancel>
-    //       <LoadingButton
-    //         variant="destructive"
-    //         onClick={handleFormTypeDelete}
-    //         loading={mutation.isPending}
-    //       >
-    //         {mutation.isPending ? "Deleting" : "Delete"}
-    //       </LoadingButton>
-    //     </AlertDialogFooter>
-    //   </AlertDialogContent>
-    // </AlertDialog>
-
     <>
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
@@ -173,20 +73,34 @@ const FormTypeActions = ({ row }) => {
             <Pencil className="size-4" />
             Edit form type
           </DropdownMenuItem>
+
           <DropdownMenuItem
-            className="text-red-600"
             onClick={() => {
               setDropdownOpen(false);
-              setDialogOpen(true);
+              setDialogType("disable");
             }}
           >
-            <Trash2 className="size-4" />
+            <BanIcon className="size-4" />
+            {formType.isActive ? "Disable" : "Enable"} Form Type
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            className="text-red-500"
+            onClick={() => {
+              setDropdownOpen(false);
+              setDialogType("delete");
+            }}
+          >
+            <Trash2 className="size-4 text-red-500" />
             Delete form type
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <AlertDialog
+        open={dialogType === "delete"}
+        onOpenChange={() => setDialogType(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Form Type Deletion</AlertDialogTitle>
@@ -199,9 +113,41 @@ const FormTypeActions = ({ row }) => {
             <LoadingButton
               variant="destructive"
               onClick={handleFormTypeDelete}
-              loading={mutation.isPending}
+              loading={deletemutation.isPending}
             >
-              {mutation.isPending ? "Deleting..." : "Delete"}
+              {deletemutation.isPending ? "Deleting..." : "Delete"}
+            </LoadingButton>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog
+        open={dialogType === "disable"}
+        onOpenChange={() => setDialogType(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {formType.isActive ? "Disable" : "Enable"} Form Type
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {formType.isActive
+                ? "This form type will no longer be available for use after disabling."
+                : "This form type will be available for use after enabling."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <LoadingButton
+              variant={formType.isActive ? "destructive" : "default"}
+              // onClick={handleStatusToggle}
+              // loading={toggleStatusMutation.isPending}
+            >
+              Proceed
+              {/* {toggleStatusMutation.isPending
+                ? "Processing..."
+                : emailTemplate.isActive
+                ? "Disable"
+                : "Enable"} */}
             </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>

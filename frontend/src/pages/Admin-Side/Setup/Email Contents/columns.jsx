@@ -34,16 +34,17 @@ import { useDeleteEmailTemplate } from "@/mutations/emailTemplate/emailTemplateM
 import { toast } from "sonner";
 
 const EmailTemplateActions = ({ row }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const mutation = useDeleteEmailTemplate();
+  const deleteMutation = useDeleteEmailTemplate();
+  // const toggleStatusMutation = useToggleEmailTemplateStatus();
   const emailTemplate = row.original;
 
   const handleEmailTemplateDelete = () => {
-    mutation.mutate(emailTemplate._id, {
+    deleteMutation.mutate(emailTemplate._id, {
       onSuccess: () => {
-        setDialogOpen(false);
+        setDialogType(null);
         setDropdownOpen(false);
         toast.success("Email Template deleted successfully");
       },
@@ -52,6 +53,23 @@ const EmailTemplateActions = ({ row }) => {
       },
     });
   };
+
+  // const handleStatusToggle = () => {
+  //   toggleStatusMutation.mutate(emailTemplate._id, {
+  //     onSuccess: () => {
+  //       setDialogType(null);
+  //       setDropdownOpen(false);
+  //       toast.success(
+  //         `Email Template ${
+  //           emailTemplate.isActive ? "disabled" : "enabled"
+  //         } successfully`
+  //       );
+  //     },
+  //     onError: () => {
+  //       toast.error("Failed to update Email Template status");
+  //     },
+  //   });
+  // };
 
   return (
     <>
@@ -68,12 +86,20 @@ const EmailTemplateActions = ({ row }) => {
             <Pencil className="size-4" />
             Edit email template
           </DropdownMenuItem>
-
+          <DropdownMenuItem
+            onClick={() => {
+              setDropdownOpen(false);
+              setDialogType("disable");
+            }}
+          >
+            <BanIcon className="size-4" />
+            {emailTemplate.isActive ? "Disable" : "Enable"} template
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="text-red-500"
             onClick={() => {
               setDropdownOpen(false);
-              setDialogOpen(true);
+              setDialogType("delete");
             }}
           >
             <Trash2 className="size-4 text-red-500" />
@@ -82,16 +108,16 @@ const EmailTemplateActions = ({ row }) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <AlertDialog
+        open={dialogType === "delete"}
+        onOpenChange={() => setDialogType(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              <p>Confirm Email Template Deletion</p>
-            </AlertDialogTitle>
+            <AlertDialogTitle>Confirm Email Template Deletion</AlertDialogTitle>
             <AlertDialogDescription>
-              `You are about to delete this Email Template (
-              {emailTemplate.emailTemplateName}) from your data. Do you want to
-              proceed?`
+              You are about to delete {emailTemplate.emailTemplateName}. This
+              action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -99,9 +125,42 @@ const EmailTemplateActions = ({ row }) => {
             <LoadingButton
               variant="destructive"
               onClick={handleEmailTemplateDelete}
-              loading={mutation.isPending}
+              loading={deleteMutation.isPending}
             >
-              {mutation.isPending ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </LoadingButton>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={dialogType === "disable"}
+        onOpenChange={() => setDialogType(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {emailTemplate.isActive ? "Disable" : "Enable"} Email Template
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {emailTemplate.isActive
+                ? "This template will no longer be available for use after disabling."
+                : "This template will be available for use after enabling."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <LoadingButton
+              variant={emailTemplate.isActive ? "destructive" : "default"}
+              onClick={()=>{console.log("toggle")}}
+              // loading={toggleStatusMutation.isPending}
+            >
+              Proceed
+              {/* {toggleStatusMutation.isPending
+                ? "Processing..."
+                : emailTemplate.isActive
+                ? "Disable"
+                : "Enable"} */}
             </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>
