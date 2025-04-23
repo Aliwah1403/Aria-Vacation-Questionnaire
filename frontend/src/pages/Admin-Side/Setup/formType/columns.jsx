@@ -40,13 +40,13 @@ const FormTypeActions = ({ row }) => {
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const deletemutation = useDeleteFormType();
+  const deleteMutation = useDeleteFormType();
   // const statusMutation = useEmailTemplateStatus()
 
   const formType = row.original;
 
   const handleFormTypeDelete = () => {
-    deletemutation.mutate(formType._id, {
+    deleteMutation.mutate(formType._id, {
       onSuccess: () => {
         setDialogType(null);
         setDropdownOpen(false);
@@ -113,13 +113,14 @@ const FormTypeActions = ({ row }) => {
             <LoadingButton
               variant="destructive"
               onClick={handleFormTypeDelete}
-              loading={deletemutation.isPending}
+              loading={deleteMutation.isPending}
             >
-              {deletemutation.isPending ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       <AlertDialog
         open={dialogType === "disable"}
         onOpenChange={() => setDialogType(null)}
