@@ -10,7 +10,7 @@ export const addFormTemplate = async (req, res) => {
     if (!formType) {
       return res.status(404).json({
         success: false,
-        message: "Active form type not found with this code",
+        message: "No active form type with this code was found",
       });
     }
 

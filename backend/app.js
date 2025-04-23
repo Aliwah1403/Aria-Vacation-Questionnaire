@@ -4,6 +4,7 @@ import formTypeRouter from "./routes/formType.routes.js";
 import connectToDb from "./database/mongoDb.js";
 import formTemplateRouter from "./routes/formTemplate.routes.js";
 import formSubmissionRouter from "./routes/formSubmission.routes.js";
+import emailTemplateRouter from "./routes/emailTemplate.routes.js";
 import cors from "cors";
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/v1/form-type", formTypeRouter);
 app.use("/api/v1/form-template", formTemplateRouter);
 app.use("/api/v1/form-submission", formSubmissionRouter);
+app.use("/api/v1/email-template", emailTemplateRouter);
 
 const server = () => {
   app.listen(PORT, async () => {
