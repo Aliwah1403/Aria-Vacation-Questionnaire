@@ -65,6 +65,10 @@ export const overviewColumns = [
   {
     accessorKey: "memberName",
     header: "Name",
+    cell: ({ row }) => {
+      const name = row.getValue("memberName");
+      return <div className="capitalize">{name}</div>;
+    },
     filterFn: multiColumnFilterFn,
   },
   {
@@ -75,6 +79,10 @@ export const overviewColumns = [
   {
     accessorKey: "resort",
     header: "Resort",
+    cell: ({ row }) => {
+      const resort = row.getValue("resort");
+      return <div className="capitalize">{resort}</div>;
+    },
   },
   {
     accessorKey: "unitNo",

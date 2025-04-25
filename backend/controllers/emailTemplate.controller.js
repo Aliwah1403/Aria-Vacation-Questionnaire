@@ -74,18 +74,30 @@ export const addEmailTemplate = async (req, res) => {
 
 export const getEmailTemplate = async (req, res) => {
   try {
-    const templates = await EmailTemplate.find().sort({ createdAt: -1 });
+    const { formCode } = req.query;
+    let query = {};
 
-    if (!templates.length) {
-      return res.status(400).json({
-        success: false,
-        message: "No email templates found",
-      });
+    if (formCode) {
+      const formType = await FormType.findOne({ formCode });
+      if (!formType) {
+        return res.status(404).json({
+          success: false,
+          message: "Form type not found",
+        });
+      }
+      query.formTypeId = formType._id;
     }
+
+    const templates = await EmailTemplate.find(query)
+      .populate("formTypeId", "formName formCode formDescription")
+      .lean()
+      .sort({ createdAt: -1 });
+
+  
 
     res.status(200).json({
       success: true,
-      message: "Email templates retrieved successfully",
+      message: templates.length ? "Email templates retrieved successfully" : "No email templates found",
       count: templates.length,
       data: templates,
     });
