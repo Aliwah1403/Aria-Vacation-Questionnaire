@@ -36,10 +36,16 @@ import MultiStepQuestionnaireForm from "../../Member-Details/multi-step-question
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { formTemplateApi } from "@/api/formTemplates";
+import { formTypeApi } from "@/api/formTypes";
 
 const QuestionnairesOverview = () => {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
   const [selectedFormCode, setSelectedFormCode] = useState(null);
+
+  const { data: formTypeData } = useQuery({
+    queryKey: ["formTypes"],
+    queryFn: formTypeApi.getAll,
+  });
 
   const { data: formTemplateData } = useQuery({
     queryKey: ["formTemplates"],
@@ -98,6 +104,7 @@ const QuestionnairesOverview = () => {
                 {/* <StayDetailsForm setStayDetailsDialog={setStayDetailsDialog} /> */}
                 <MultiStepQuestionnaireForm
                   setStayDetailsDialog={setStayDetailsDialog}
+                  formTypes={formTypeData}
                   formTemplates={formTemplateData}
                 />
               </DialogContent>

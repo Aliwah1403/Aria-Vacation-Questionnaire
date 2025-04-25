@@ -11,6 +11,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
@@ -20,6 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -28,7 +37,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Copy, Check, LinkIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  Copy,
+  Check,
+  LinkIcon,
+  ChevronsUpDown,
+  PlusCircleIcon,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,6 +59,21 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import CheckInOutDatePicker from "@/components/check-in-out-date-picker";
 import { useCreateFormSubmission } from "@/mutations/formSubmission/formSubmissionMutation";
 import { toast } from "sonner";
+import { emailTemplateApi } from "@/api/emailTemplates";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
+
+const emailTemplates = [
+  { label: "Tester Survey Email Template", value: "tester-survey" },
+  { label: "Post Feedback Request", value: "post-feedback" },
+  { label: "Pre-Arrival Feedback Request", value: "pre-arrival" },
+  { label: "Post-Departure Feedback Request", value: "post-departure" },
+  { label: "Post-Stay Feedback Request", value: "post-stay" },
+  { label: "Pre-Stay Feedback Request", value: "pre-stay" },
+  { label: "Pre-Check-In Feedback Request", value: "pre-check-in" },
+  { label: "Post-Check-Out Feedback Request", value: "post-check-out" },
+  { label: "Pre-Check-Out Feedback Request", value: "pre-check-out" },
+];
 
 // Form schemas
 const stayDetailsSchema = z.object({
@@ -63,6 +94,7 @@ const stayDetailsSchema = z.object({
 
 const questionnaireTypeSchema = z.object({
   formTemplateId: z.string().min(1, "Questionnaire type is required"),
+  emailTemplates: z.string().min(1, "Email template is required"),
   emailSubject: z.string().min(1, "Email subject is required"),
   emailBody: z.string().min(1, "Email body is required"),
 });
@@ -71,6 +103,7 @@ const URL = import.meta.env.VITE_URL;
 
 const MultiStepQuestionnaireForm = ({
   setStayDetailsDialog,
+  formTypes,
   formTemplates,
 }) => {
   const [step, setStep] = useState(1);
@@ -79,6 +112,8 @@ const MultiStepQuestionnaireForm = ({
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const createSubmission = useCreateFormSubmission();
+
+  const navigate = useNavigate();
 
   // Form for step 1 - Stay Details
   const stayDetailsForm = useForm({
@@ -97,6 +132,7 @@ const MultiStepQuestionnaireForm = ({
     resolver: zodResolver(questionnaireTypeSchema),
     defaultValues: {
       formTemplateId: "",
+      emailTemplates: "",
       emailSubject: "Your Stay Experience Feedback",
       emailBody:
         "We value your feedback on your recent stay. Please take a moment to complete our survey.",
@@ -120,6 +156,8 @@ const MultiStepQuestionnaireForm = ({
     setFormData({ ...formData, ...values });
     setStep(2);
   }
+
+ 
 
   // Handle step 2 submission
   const onQuestionnaireTypeSubmit = async (values) => {
@@ -173,21 +211,82 @@ const MultiStepQuestionnaireForm = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Fetching email templates based on form template chosen
+  const { data: emailTemplateData } = useQuery({
+    queryKey: ["emailTemplates", questionnaireTypeForm.watch("formTemplateId")],
+    queryFn: async () => {
+      const selectedTemplate = formTemplates.find(
+        (t) => t._id === questionnaireTypeForm.watch("formTemplateId")
+      );
+      if (!selectedTemplate?.formTypeId?.formCode) return [];
+      return emailTemplateApi.getByFormType(
+        selectedTemplate.formTypeId.formCode
+      );
+    },
+    enabled: !!questionnaireTypeForm.watch("formTemplateId"),
+  });
+
   // Send email
   const handleEmailSend = async () => {
-    setLoading(true);
-
     try {
-      // Simulate API call with setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setLoading(true);
 
-      // Show success toast/alert
-      alert("Email sent successfully!");
+      const selectedEmailTemplate = emailTemplateData?.find(
+        (template) =>
+          template._id === questionnaireTypeForm.getValues("emailTemplates")
+      );
+
+      // Prepare email data with template variables replaced
+      const emailData = {
+        to: formData.email,
+        subject: questionnaireTypeForm.getValues("emailSubject"),
+        body: questionnaireTypeForm.getValues("emailBody"),
+        templateData: {
+          name: formData.name,
+          companyName: "Aria Vacation Club",
+          "feedback-url": generatedLink,
+          // Add any other template variables you need
+        },
+        template: selectedEmailTemplate,
+      };
+
+      console.log("Email Data to be sent:", {
+        recipientName: formData.name,
+        recipientEmail: formData.email,
+        subject: emailData.subject,
+        body: emailData.body,
+        templateUsed: selectedEmailTemplate?.emailTemplateName,
+        templateVariables: emailData.templateData,
+        feedbackLink: generatedLink,
+      });
+
+      toast.success(
+        "Email data logged successfully (Email sending not implemented yet)"
+      );
+
+      // Simulate API call with setTimeout
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // setStayDetailsDialog(false);
     } catch (error) {
-      console.log(error.message);
+      console.error("Error preparing email:", error);
+      toast.error("Failed to prepare email data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTemplateSelect = (templateId) => {
+    const selectedTemplate = emailTemplateData?.find(
+      (t) => t._id === templateId
+    );
+    if (selectedTemplate) {
+      questionnaireTypeForm.setValue("emailTemplates", templateId);
+      questionnaireTypeForm.setValue(
+        "emailSubject",
+        selectedTemplate.emailSubject
+      );
+      questionnaireTypeForm.setValue("emailBody", selectedTemplate.textContent);
     }
   };
 
@@ -458,6 +557,90 @@ const MultiStepQuestionnaireForm = ({
 
             <FormField
               control={questionnaireTypeForm.control}
+              name="emailTemplates"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Select Email Template</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                          disabled={
+                            !questionnaireTypeForm.watch("formTemplateId")
+                          }
+                        >
+                          {field.value
+                            ? emailTemplateData.find(
+                                (template) => template._id === field.value
+                              )?.emailTemplateName
+                            : "Select email template"}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className=" p-0" align="start">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search email template..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>
+                            <span>No email template found.</span>
+                            <Button
+                              size="sm"
+                              className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/admin/questionnaire-setup");
+                                setStayDetailsDialog(false);
+                              }}
+                            >
+                              Create new template
+                              <PlusCircleIcon className="size-4" />
+                            </Button>
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {emailTemplateData?.map((template) => (
+                              <CommandItem
+                                value={template._id}
+                                key={template.emailTemplateName}
+                                onSelect={() =>
+                                  handleTemplateSelect(template._id)
+                                }
+                              >
+                                {template.emailTemplateName}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    template._id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    This is the email content that will be sent to the member.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* <FormField
+              control={questionnaireTypeForm.control}
               name="emailSubject"
               render={({ field }) => (
                 <FormItem>
@@ -468,9 +651,9 @@ const MultiStepQuestionnaireForm = ({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
-            <FormField
+            {/* <FormField
               control={questionnaireTypeForm.control}
               name="emailBody"
               render={({ field }) => (
@@ -486,7 +669,7 @@ const MultiStepQuestionnaireForm = ({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <div className="flex justify-between">
               <Button
