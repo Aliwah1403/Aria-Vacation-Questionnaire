@@ -95,8 +95,6 @@ const stayDetailsSchema = z.object({
 const questionnaireTypeSchema = z.object({
   formTemplateId: z.string().min(1, "Questionnaire type is required"),
   emailTemplates: z.string().min(1, "Email template is required"),
-  emailSubject: z.string().min(1, "Email subject is required"),
-  emailBody: z.string().min(1, "Email body is required"),
 });
 
 const URL = import.meta.env.VITE_URL;
@@ -133,9 +131,6 @@ const MultiStepQuestionnaireForm = ({
     defaultValues: {
       formTemplateId: "",
       emailTemplates: "",
-      emailSubject: "Your Stay Experience Feedback",
-      emailBody:
-        "We value your feedback on your recent stay. Please take a moment to complete our survey.",
     },
   });
 
@@ -156,8 +151,6 @@ const MultiStepQuestionnaireForm = ({
     setFormData({ ...formData, ...values });
     setStep(2);
   }
-
- 
 
   // Handle step 2 submission
   const onQuestionnaireTypeSubmit = async (values) => {
@@ -236,38 +229,39 @@ const MultiStepQuestionnaireForm = ({
           template._id === questionnaireTypeForm.getValues("emailTemplates")
       );
 
-      // Prepare email data with template variables replaced
-      const emailData = {
-        to: formData.email,
-        subject: questionnaireTypeForm.getValues("emailSubject"),
-        body: questionnaireTypeForm.getValues("emailBody"),
-        templateData: {
-          name: formData.name,
-          companyName: "Aria Vacation Club",
-          "feedback-url": generatedLink,
-          // Add any other template variables you need
-        },
-        template: selectedEmailTemplate,
+      if (!selectedEmailTemplate) {
+        throw new Error("No email template selected");
+      }
+
+      // Prepare template variables
+      const templateVariables = {
+        name: formData.name,
+        memberId: formData.memberId,
+        email: formData.email,
+        companyName: "Aria Vacation Club",
+        "feedback-url": generatedLink,
       };
+
+      // Get the appropriate content based on type
+      const emailContent =
+        selectedEmailTemplate.contentType === "html"
+          ? selectedEmailTemplate.htmlContent
+          : selectedEmailTemplate.textContent;
 
       console.log("Email Data to be sent:", {
         recipientName: formData.name,
         recipientEmail: formData.email,
-        subject: emailData.subject,
-        body: emailData.body,
-        templateUsed: selectedEmailTemplate?.emailTemplateName,
-        templateVariables: emailData.templateData,
+        subject: selectedEmailTemplate.emailSubject,
+        contentType: selectedEmailTemplate.contentType,
+        rawContent: emailContent,
+        templateName: selectedEmailTemplate.emailTemplateName,
+        templateVariables,
         feedbackLink: generatedLink,
       });
 
       toast.success(
         "Email data logged successfully (Email sending not implemented yet)"
       );
-
-      // Simulate API call with setTimeout
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // setStayDetailsDialog(false);
     } catch (error) {
       console.error("Error preparing email:", error);
       toast.error("Failed to prepare email data");
@@ -282,11 +276,6 @@ const MultiStepQuestionnaireForm = ({
     );
     if (selectedTemplate) {
       questionnaireTypeForm.setValue("emailTemplates", templateId);
-      questionnaireTypeForm.setValue(
-        "emailSubject",
-        selectedTemplate.emailSubject
-      );
-      questionnaireTypeForm.setValue("emailBody", selectedTemplate.textContent);
     }
   };
 
