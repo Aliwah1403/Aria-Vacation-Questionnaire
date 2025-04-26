@@ -6,6 +6,7 @@ import formTemplateRouter from "./routes/formTemplate.routes.js";
 import formSubmissionRouter from "./routes/formSubmission.routes.js";
 import emailTemplateRouter from "./routes/emailTemplate.routes.js";
 import cors from "cors";
+import emailRouter from "./routes/email.routes.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/v1/form-type", formTypeRouter);
 app.use("/api/v1/form-template", formTemplateRouter);
 app.use("/api/v1/form-submission", formSubmissionRouter);
 app.use("/api/v1/email-template", emailTemplateRouter);
+app.use("/api/v1/email-send", emailRouter);
 
 const server = () => {
   app.listen(PORT, async () => {

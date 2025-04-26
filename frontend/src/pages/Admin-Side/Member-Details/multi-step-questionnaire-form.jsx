@@ -62,6 +62,7 @@ import { toast } from "sonner";
 import { emailTemplateApi } from "@/api/emailTemplates";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
+import { emailSendApi } from "@/api/emailSend";
 
 const emailTemplates = [
   { label: "Tester Survey Email Template", value: "tester-survey" },
@@ -233,38 +234,56 @@ const MultiStepQuestionnaireForm = ({
         throw new Error("No email template selected");
       }
 
-      // Prepare template variables
-      const templateVariables = {
-        name: formData.name,
-        memberId: formData.memberId,
-        email: formData.email,
-        companyName: "Aria Vacation Club",
-        "feedback-url": generatedLink,
-      };
-
-      // Get the appropriate content based on type
-      const emailContent =
-        selectedEmailTemplate.contentType === "html"
-          ? selectedEmailTemplate.htmlContent
-          : selectedEmailTemplate.textContent;
-
-      console.log("Email Data to be sent:", {
-        recipientName: formData.name,
-        recipientEmail: formData.email,
+      const emailData = {
+        recepientEmail: formData.email,
+        recepientName: formData.name,
         subject: selectedEmailTemplate.emailSubject,
         contentType: selectedEmailTemplate.contentType,
-        rawContent: emailContent,
-        templateName: selectedEmailTemplate.emailTemplateName,
-        templateVariables,
-        feedbackLink: generatedLink,
-      });
+        rawContent:
+          selectedEmailTemplate.contentType === "html"
+            ? selectedEmailTemplate.htmlContent
+            : selectedEmailTemplate.textContent,
+        templateVariables: {
+          name: formData.name,
+          memberId: formData.memberId,
+          email: formData.email,
+          companyName: "Aria Vacation Club",
+          "feedback-url": generatedLink,
+        },
+      };
 
-      toast.success(
-        "Email data logged successfully (Email sending not implemented yet)"
-      );
+      // // Prepare template variables
+      // const templateVariables = {
+      //   name: formData.name,
+      //   memberId: formData.memberId,
+      //   email: formData.email,
+      //   companyName: "Aria Vacation Club",
+      //   "feedback-url": generatedLink,
+      // };
+
+      // // Get the appropriate content based on type
+      // const emailContent =
+      //   selectedEmailTemplate.contentType === "html"
+      //     ? selectedEmailTemplate.htmlContent
+      //     : selectedEmailTemplate.textContent;
+
+      // console.log("Email Data to be sent:", {
+      //   recipientName: formData.name,
+      //   recipientEmail: formData.email,
+      //   subject: selectedEmailTemplate.emailSubject,
+      //   contentType: selectedEmailTemplate.contentType,
+      //   rawContent: emailContent,
+      //   templateName: selectedEmailTemplate.emailTemplateName,
+      //   templateVariables,
+      //   feedbackLink: generatedLink,
+      // });
+
+      await emailSendApi.sendFeedbackEmail(emailData);
+
+      toast.success("Email sent successfully!");
     } catch (error) {
       console.error("Error preparing email:", error);
-      toast.error("Failed to prepare email data");
+      toast.error("Failed to send email ");
     } finally {
       setLoading(false);
     }
