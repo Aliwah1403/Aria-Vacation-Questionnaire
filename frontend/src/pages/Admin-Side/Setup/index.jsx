@@ -13,6 +13,7 @@ import { formTemplateApi } from "@/api/formTemplates";
 import { EmailTemplateTable } from "./Email Contents/email-template-table";
 import { emailTemplateColumns } from "./Email Contents/columns";
 import { emailTemplateApi } from "@/api/emailTemplates";
+import { LoaderComponent } from "@/components/data-loader";
 
 const formTemplates = [
   {
@@ -99,7 +100,7 @@ const QuestionnaireSetup = () => {
 
   // Show loading state if either query is loading
   if (isLoadingFormTypes || isLoadingFormTemplates || isLoadingEmailTemplates) {
-    return <div>Loading...</div>;
+    return <LoaderComponent />;
   }
 
   // Show any errors that occur

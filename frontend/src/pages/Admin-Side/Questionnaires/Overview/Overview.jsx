@@ -37,6 +37,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { formTemplateApi } from "@/api/formTemplates";
 import { formTypeApi } from "@/api/formTypes";
+import { LoaderComponent } from "@/components/data-loader";
 
 const QuestionnairesOverview = () => {
   const [stayDetailsDialog, setStayDetailsDialog] = useState(false);
@@ -206,7 +207,7 @@ const QuestionnairesOverview = () => {
 
           <TabsContent value={selectedFormCode} className="mt-0">
             {isPending ? (
-              <div>Loading...</div>
+              <LoaderComponent />
             ) : (
               <QuestionnairesOverviewTable
                 columns={overviewColumns}
