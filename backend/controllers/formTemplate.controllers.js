@@ -84,15 +84,6 @@ export const getFormTemplate = async (req, res) => {
       .select("-__v")
       .sort({ createdAt: -1 });
 
-    if (!templates.length) {
-      return res.status(404).json({
-        success: false,
-        message: formCode
-          ? `No templates found for form type: ${formCode}`
-          : "No templates found",
-      });
-    }
-
     res.status(200).json({
       success: true,
       message: "Form templates retrieved successfully",
