@@ -1,9 +1,9 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -26,37 +26,59 @@ const formSchema = z.object({
   formCode: z.string(),
 });
 
-const FormTypeForm = ({ onSubmit, onCancel }) => {
+const FormTypeForm = ({ onSubmit, onCancel, initialData }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      formName: "",
-      formDescription: "",
-      formCode: "",
+      formName: initialData?.formName || "",
+      formDescription: initialData?.formDescription || "",
+      formCode: initialData?.formCode || "",
     },
   });
 
-  const [formName, setFormName] = useState("");
-  const [formCode, setFormCode] = useState("");
+  const [formName, setFormName] = useState(initialData?.formName || "");
+  const [formCode, setFormCode] = useState(initialData?.formCode || "");
 
+  // Initialize form with initial data if provided
   useEffect(() => {
-    const formatted = formName
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
-      .replace(/-+/g, "-")
-      .trim();
+    if (initialData) {
+      setFormName(initialData.formName || "");
+      setFormCode(initialData.formCode || "");
+      form.reset({
+        formName: initialData.formName || "",
+        formDescription: initialData.formDescription || "",
+        formCode: initialData.formCode || "",
+      });
+    }
+  }, [initialData, form]);
 
-    setFormCode(formatted);
-    form.setValue("formCode", formatted);
-  }, [formName, form]);
+  // Generate form code from form name if not editing
+  useEffect(() => {
+    if (!initialData) {
+      const formatted = formName
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .trim();
+
+      setFormCode(formatted);
+      form.setValue("formCode", formatted);
+    }
+  }, [formName, form, initialData]);
 
   const handleSubmit = async (values) => {
     try {
-      await onSubmit(values);
-      form.reset();
-      setFormName("");
-      setFormCode("");
+      await onSubmit({
+        formName: values.formName,
+        formDescription: values.formDescription,
+        formCode: values.formCode,
+      });
+      if (!initialData) {
+        form.reset();
+        setFormName("");
+        setFormCode("");
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -102,11 +124,19 @@ const FormTypeForm = ({ onSubmit, onCancel }) => {
                 <Input
                   {...field}
                   value={formCode}
-                  disabled
-                  className="bg-gray-50"
+                  disabled={true}
+                  onChange={(e) => {
+                    setFormCode(e.target.value);
+                    field.onChange(e);
+                  }}
+                  className={initialData ? "" : "bg-gray-50"}
                 />
               </FormControl>
-              <FormDescription>Auto-generated from form name</FormDescription>
+              <FormDescription>
+                {initialData
+                  ? "You can edit the form code when updating"
+                  : "Auto-generated from form name"}
+              </FormDescription>
             </FormItem>
           )}
         />
@@ -129,16 +159,6 @@ const FormTypeForm = ({ onSubmit, onCancel }) => {
             </FormItem>
           )}
         />
-
-        {/* <div className="flex items-center justify-end space-x-2">
-          <Button variant="outline">Cancel</Button>
-          <Button
-            type="submit"
-            className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
-          >
-            Submit
-          </Button>
-        </div> */}
       </form>
     </Form>
   );

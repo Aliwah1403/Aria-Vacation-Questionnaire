@@ -1,17 +1,17 @@
+"use client";
+
 /* eslint-disable react-refresh/only-export-components */
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { multiSelectFilter } from "@/lib/utils";
 import {
-  PlusCircle,
   BanIcon,
   Pencil,
   Trash2,
@@ -34,11 +33,13 @@ import {
 import { LoadingButton } from "@/components/ui/loading-button";
 import { useDeleteFormType } from "@/mutations/formType/formTypeMutations";
 import { toast } from "sonner";
+import { FormTypeContext } from "./form-type-table";
 
 // First create a separate component for actions
 const FormTypeActions = ({ row }) => {
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { setEditingFormType, setSheetOpen } = useContext(FormTypeContext);
 
   const deleteMutation = useDeleteFormType();
   // const statusMutation = useEmailTemplateStatus()
@@ -58,6 +59,12 @@ const FormTypeActions = ({ row }) => {
     });
   };
 
+  const handleEditClick = () => {
+    setEditingFormType(formType);
+    setSheetOpen(true);
+    setDropdownOpen(false);
+  };
+
   return (
     <>
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
@@ -69,7 +76,7 @@ const FormTypeActions = ({ row }) => {
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleEditClick}>
             <Pencil className="size-4" />
             Edit form type
           </DropdownMenuItem>

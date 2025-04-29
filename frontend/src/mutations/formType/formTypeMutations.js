@@ -19,9 +19,9 @@ export const useUpdateFormType = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: formTypeApi.update,
+    mutationFn: ({ id, ...data }) => formTypeApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["formTypes"]);
+      queryClient.invalidateQueries({ queryKey: ["formTypes"] });
     },
     onError: (error) => {
       console.error("Failed to update form type:", error);
