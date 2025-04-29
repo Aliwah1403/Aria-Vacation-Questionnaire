@@ -93,11 +93,11 @@ export const getEmailTemplate = async (req, res) => {
       .lean()
       .sort({ createdAt: -1 });
 
-  
-
     res.status(200).json({
       success: true,
-      message: templates.length ? "Email templates retrieved successfully" : "No email templates found",
+      message: templates.length
+        ? "Email templates retrieved successfully"
+        : "No email templates found",
       count: templates.length,
       data: templates,
     });
@@ -106,6 +106,111 @@ export const getEmailTemplate = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error retrieving email templates",
+      error: error.message,
+    });
+  }
+};
+
+export const updateEmailTemplate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      emailTemplateName,
+      emailSubject,
+      contentType,
+      textContent,
+      htmlContent,
+      variables,
+    } = req.body;
+
+    const existingTemplate = await EmailTemplate.findById(id);
+    if (!existingTemplate) {
+      return res.status(404).json({
+        success: false,
+        message: "Email template not found",
+      });
+    }
+
+    // Check for name conflicts if name is being updated
+    if (
+      emailTemplateName &&
+      emailTemplateName !== existingTemplate.emailTemplateName
+    ) {
+      const nameExists = await EmailTemplate.findOne({
+        emailTemplateName,
+        _id: { $ne: id },
+      });
+      if (nameExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Template with this name already exists",
+        });
+      }
+    }
+
+    // Validate content based on contentType if being updated
+    if (contentType === "text" && textContent === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Text content cannot be empty for text templates",
+      });
+    }
+
+    if (contentType === "html" && htmlContent === "") {
+      return res.status(400).json({
+        success: false,
+        message: "HTML content cannot be empty for HTML templates",
+      });
+    }
+
+    // Prepare update object with only changed fields
+    const updateData = {};
+    if (emailTemplateName) updateData.emailTemplateName = emailTemplateName;
+    if (emailSubject) updateData.emailSubject = emailSubject;
+    if (contentType) {
+      updateData.contentType = contentType;
+      // Reset content fields based on new content type
+      if (contentType === "text") {
+        updateData.textContent = textContent;
+        updateData.htmlContent = undefined;
+      } else {
+        updateData.htmlContent = htmlContent;
+        updateData.textContent = undefined;
+      }
+    } else {
+      // Update content without changing type
+      if (
+        textContent !== undefined &&
+        existingTemplate.contentType === "text"
+      ) {
+        updateData.textContent = textContent;
+      }
+      if (
+        htmlContent !== undefined &&
+        existingTemplate.contentType === "html"
+      ) {
+        updateData.htmlContent = htmlContent;
+      }
+    }
+    if (variables) updateData.variables = variables;
+
+    // Update the template
+    const updatedTemplate = await EmailTemplate.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    ).populate("formTypeId", "formName formCode formDescription");
+
+    return res.status(200).json({
+      success: true,
+      message: "Email template updated successfully",
+      data: updatedTemplate,
+    });
+  } catch (error) {
+    console.error("Error updating email template: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating email template",
       error: error.message,
     });
   }
