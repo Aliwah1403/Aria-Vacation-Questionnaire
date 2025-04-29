@@ -18,6 +18,13 @@ export const emailTemplateApi = {
     );
     return data;
   },
+  update: async (id, templateData) => {
+    const { data } = await apiClient.patch(
+      `/api/v1/email-template/update/${id}`,
+      templateData
+    );
+    return data;
+  },
   delete: async (id) => {
     const { data } = await apiClient.delete(
       `/api/v1/email-template/delete/${id}`
