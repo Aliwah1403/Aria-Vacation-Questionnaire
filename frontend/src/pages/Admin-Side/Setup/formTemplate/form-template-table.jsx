@@ -134,15 +134,7 @@ export function FormTemplateTable({ columns, data, formTypes }) {
 
   // 4. Render conditions AFTER all hooks and initialization
   if (isLoading) {
-    return (
-      <LoaderComponent text="Preparing question builder" />
-      // <div className="fixed inset-0 flex items-center justify-center bg-white">
-      //   <div className="text-center">
-      //     <div className="w-16 h-16 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mx-auto"></div>
-      //     <p className="mt-4 text-lg">Preparing question builder...</p>
-      //   </div>
-      // </div>
-    );
+    return <LoaderComponent text="Preparing question builder" />;
   }
 
   if (showQuestionBuilder) {

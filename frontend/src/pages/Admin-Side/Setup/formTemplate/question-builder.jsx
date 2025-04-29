@@ -540,7 +540,7 @@ export function QuestionBuilder({
                     <Button
                       onClick={handleUpdateQuestion}
                       disabled={!newQuestion.questionText}
-                      className="bg-fountain-blue-400"
+                      className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                     >
                       <Check className="h-4 w-4 mr-2" />
                       Update question
@@ -549,7 +549,7 @@ export function QuestionBuilder({
                     <Button
                       onClick={handleAddQuestion}
                       disabled={!newQuestion.questionText}
-                      className="bg-fountain-blue-400"
+                      className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add question

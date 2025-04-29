@@ -773,7 +773,7 @@ const MultiStepQuestionnaireForm = ({
             </p>
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-end">
             {/* <Button type="button" variant="outline" onClick={() => setStep(2)}>
               Back
             </Button> */}
