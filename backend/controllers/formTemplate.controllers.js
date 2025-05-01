@@ -3,7 +3,7 @@ import FormType from "../models/formType.model.js";
 
 export const addFormTemplate = async (req, res) => {
   try {
-    const { formCode, questions, ratingOptions } = req.body;
+    const { formCode, formTemplateName, questions, ratingOptions } = req.body;
 
     // Find form type by code
     const formType = await FormType.findOne({ formCode, isActive: true });
@@ -37,6 +37,7 @@ export const addFormTemplate = async (req, res) => {
     const newFormTemplate = await FormTemplate.create({
       formTypeId: formType._id,
       formTypeName: formType.formName,
+      formTemplateName: formTemplateName || formType.formName,
       questions,
       ratingOptions,
     });
@@ -83,15 +84,6 @@ export const getFormTemplate = async (req, res) => {
       .populate("formTypeId", "formName formCode formDescription")
       .select("-__v")
       .sort({ createdAt: -1 });
-
-    if (!templates.length) {
-      return res.status(404).json({
-        success: false,
-        message: formCode
-          ? `No templates found for form type: ${formCode}`
-          : "No templates found",
-      });
-    }
 
     res.status(200).json({
       success: true,

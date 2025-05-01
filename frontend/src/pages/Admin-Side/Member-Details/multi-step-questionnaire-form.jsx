@@ -773,10 +773,10 @@ const MultiStepQuestionnaireForm = ({
             </p>
           </div>
 
-          <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={() => setStep(2)}>
+          <div className="flex justify-end">
+            {/* <Button type="button" variant="outline" onClick={() => setStep(2)}>
               Back
-            </Button>
+            </Button> */}
             <div className="space-x-2">
               <LoadingButton
                 loading={loading}

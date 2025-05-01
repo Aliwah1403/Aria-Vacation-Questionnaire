@@ -16,6 +16,11 @@ const formTemplateSchema = new mongoose.Schema(
       ref: "FormType",
       required: true,
     },
+    formTemplateName: {
+      type: String,
+      // required: true,
+      trim: true,
+    },
     formTypeName: {
       type: String,
       required: true,

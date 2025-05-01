@@ -15,6 +15,20 @@ export const useCreateEmailTemplate = () => {
   });
 };
 
+export const useUpdateEmailTemplate = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ...data }) => emailTemplateApi.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["emailTemplates"]);
+    },
+    onError: (error) => {
+      console.error("Failed to update email template: ", error);
+    },
+  });
+};
+
 export const useDeleteEmailTemplate = () => {
   const queryClient = useQueryClient();
 

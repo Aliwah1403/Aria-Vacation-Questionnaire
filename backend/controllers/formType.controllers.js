@@ -41,13 +41,6 @@ export const getFormType = async (req, res) => {
       .sort({ createdAt: -1 })
       .select("-__v"); // Exclude version key
 
-    if (!formTypes.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No form types found",
-      });
-    }
-
     res.status(200).json({
       success: true,
       message: "Form types retrieved successfully",
@@ -162,26 +155,26 @@ export const deleteFormType = async (req, res) => {
 export const getActiveFormTypes = async (req, res) => {
   try {
     const formTypes = await FormType.find({ isActive: true })
-      .select('formName formCode formDescription')
+      .select("formName formCode formDescription")
       .sort({ createdAt: -1 });
 
     if (!formTypes.length) {
       return res.status(404).json({
         success: false,
-        message: "No active form types found"
+        message: "No active form types found",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: formTypes
+      data: formTypes,
     });
   } catch (error) {
     console.error("Error fetching active form types:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching form types",
-      error: error.message
+      error: error.message,
     });
   }
 };

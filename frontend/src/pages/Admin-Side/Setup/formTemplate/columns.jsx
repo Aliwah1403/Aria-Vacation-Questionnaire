@@ -132,14 +132,14 @@ const FormTemplateActions = ({ row }) => {
 };
 
 export const formTemplateColumns = [
-  // {
-  //   accessorKey: "formTemplateName",
-  //   header: "Template Name",
-  // },
   {
-    accessorKey: "formTypeName",
+    accessorKey: "formTemplateName",
     header: "Template Name",
   },
+  // {
+  //   accessorKey: "formTypeName",
+  //   header: "Template Name",
+  // },
   {
     accessorKey: "formTypeName",
     header: "Form Type",
