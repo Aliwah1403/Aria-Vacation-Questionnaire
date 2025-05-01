@@ -22,15 +22,16 @@ import {
   Smile,
   MessageSquare,
   Type,
+  Globe,
 } from "lucide-react";
 import { LoadingButton } from "@/components/ui/loading-button";
 
 const defaultEmojiMappings = [
-  { score: 5, value: "", emoji: "1f603" }, // 😃
-  { score: 4, value: "", emoji: "1f642" }, // 🙂
-  { score: 3, value: "", emoji: "1f610" }, // 😐
-  { score: 2, value: "", emoji: "1f641" }, // 🙁
-  { score: 1, value: "", emoji: "1f614" }, // 😔
+  { score: 5, value: { en: "", fr: "", ar: "", ru: "" }, emoji: "1f603" }, // 😃
+  { score: 4, value: { en: "", fr: "", ar: "", ru: "" }, emoji: "1f642" }, // 🙂
+  { score: 3, value: { en: "", fr: "", ar: "", ru: "" }, emoji: "1f610" }, // 😐
+  { score: 2, value: { en: "", fr: "", ar: "", ru: "" }, emoji: "1f641" }, // 🙁
+  { score: 1, value: { en: "", fr: "", ar: "", ru: "" }, emoji: "1f614" }, // 😔
 ];
 
 const emojiCodeToEmoji = (unified) => {
@@ -60,16 +61,24 @@ export function QuestionBuilder({
   const [questions, setQuestions] = useState([]);
   const [ratingOptions, setRatingOptions] = useState([...defaultEmojiMappings]);
   const [newQuestion, setNewQuestion] = useState({
-    questionText: "",
+    questionText: { en: "", fr: "", ar: "", ru: "" },
     questionType: "emoji",
     required: true,
     order: 1,
   });
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
   const [editingQuestion, setEditingQuestion] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState("en");
+
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "fr", name: "French" },
+    { code: "ar", name: "Arabic" },
+    { code: "ru", name: "Russian" },
+  ];
 
   const handleAddQuestion = () => {
-    if (newQuestion.questionText) {
+    if (newQuestion.questionText[activeLanguage]) {
       // Find the highest order and add 1
       const highestOrder =
         questions.length > 0
@@ -85,7 +94,7 @@ export function QuestionBuilder({
       ]);
 
       setNewQuestion({
-        questionText: "",
+        questionText: { en: "", fr: "", ar: "", ru: "" },
         questionType: "emoji",
         required: true,
         order: highestOrder + 2,
@@ -100,7 +109,10 @@ export function QuestionBuilder({
   };
 
   const handleUpdateQuestion = () => {
-    if (newQuestion.questionText && currentQuestionIndex !== null) {
+    if (
+      newQuestion.questionText[activeLanguage] &&
+      currentQuestionIndex !== null
+    ) {
       const updatedQuestions = [...questions];
       updatedQuestions[currentQuestionIndex] = { ...newQuestion };
       setQuestions(updatedQuestions);
@@ -110,7 +122,7 @@ export function QuestionBuilder({
         ...updatedQuestions.map((q) => q.order || 0)
       );
       setNewQuestion({
-        questionText: "",
+        questionText: { en: "", fr: "", ar: "", ru: "" },
         questionType: "emoji",
         required: true,
         order: highestOrder + 1,
@@ -124,7 +136,7 @@ export function QuestionBuilder({
     setEditingQuestion(false);
     setCurrentQuestionIndex(null);
     setNewQuestion({
-      questionText: "",
+      questionText: { en: "", fr: "", ar: "", ru: "" },
       questionType: "emoji",
       required: true,
       order:
@@ -141,7 +153,7 @@ export function QuestionBuilder({
     setEditingQuestion(false);
     setCurrentQuestionIndex(null);
     setNewQuestion({
-      questionText: "",
+      questionText: { en: "", fr: "", ar: "", ru: "" },
       questionType: "emoji",
       required: true,
       order: 1,
@@ -196,6 +208,10 @@ export function QuestionBuilder({
       default:
         return null;
     }
+  };
+
+  const getIncompleteLanguages = (questionText) => {
+    return languages.filter((lang) => !questionText[lang.code]?.trim());
   };
 
   // Return the same JSX structure
@@ -297,7 +313,8 @@ export function QuestionBuilder({
                         <div className="flex-grow">
                           <div className="flex items-center justify-between">
                             <h3 className="font-medium text-lg">
-                              {question.questionText}
+                              {question.questionText[activeLanguage] ||
+                                question.questionText.en}
                             </h3>
                             <div className="flex items-center text-sm text-muted-foreground">
                               {getQuestionTypeIcon(question.questionType)}
@@ -354,7 +371,8 @@ export function QuestionBuilder({
                           : 1}
                       </div>
                       <h3 className="font-medium text-lg">
-                        {newQuestion.questionText || "New Question"}
+                        {newQuestion.questionText[activeLanguage] ||
+                          "New Question"}
                       </h3>
                     </div>
                     <div className="text-sm font-medium">
@@ -364,17 +382,91 @@ export function QuestionBuilder({
 
                   <div className="space-y-6">
                     <div>
-                      <Label htmlFor="question-text" className="mb-2 block">
-                        Question
-                      </Label>
+                      <div className="flex items-center justify-between mb-2">
+                        <Label htmlFor="question-text" className="mb-2 block">
+                          Question
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Globe className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">
+                            {newQuestion.questionText &&
+                            getIncompleteLanguages(newQuestion.questionText)
+                              .length > 0
+                              ? `${
+                                  getIncompleteLanguages(
+                                    newQuestion.questionText
+                                  ).length
+                                } language(s) missing`
+                              : "All languages complete"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 mb-2">
+                        <Select
+                          value={activeLanguage}
+                          onValueChange={setActiveLanguage}
+                        >
+                          <SelectTrigger className="w-[200px]">
+                            <SelectValue>
+                              {activeLanguage && (
+                                <div className="flex items-center">
+                                  {
+                                    languages.find(
+                                      (l) => l.code === activeLanguage
+                                    )?.name
+                                  }
+                                  {newQuestion.questionText &&
+                                    !newQuestion.questionText[
+                                      activeLanguage
+                                    ]?.trim() && (
+                                      <span className="ml-2 h-2 w-2 bg-amber-500 rounded-full" />
+                                    )}
+                                </div>
+                              )}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {languages.map((lang) => (
+                              <SelectItem key={lang.code} value={lang.code}>
+                                <div className="flex items-center">
+                                  {lang.name}
+                                  {newQuestion.questionText &&
+                                    !newQuestion.questionText[
+                                      lang.code
+                                    ]?.trim() && (
+                                      <span className="ml-2 h-2 w-2 bg-amber-500 rounded-full" />
+                                    )}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <span className="inline-flex h-2 w-2 bg-amber-500 rounded-full"></span>
+                          <span>
+                            {newQuestion.questionText &&
+                              getIncompleteLanguages(newQuestion.questionText)
+                                .length}{" "}
+                            incomplete
+                          </span>
+                        </div>
+                      </div>
+
                       <Input
                         id="question-text"
-                        placeholder="Enter your question"
-                        value={newQuestion.questionText}
+                        placeholder={`Enter your question in ${
+                          languages.find((l) => l.code === activeLanguage)?.name
+                        }`}
+                        value={newQuestion.questionText[activeLanguage] || ""}
                         onChange={(e) =>
                           setNewQuestion({
                             ...newQuestion,
-                            questionText: e.target.value,
+                            questionText: {
+                              ...newQuestion.questionText,
+                              [activeLanguage]: e.target.value,
+                            },
                           })
                         }
                         className="text-base"
@@ -462,7 +554,7 @@ export function QuestionBuilder({
                                   {emojiCodeToEmoji(option.emoji)}
                                 </div>
                                 <span className="text-sm mt-1">
-                                  {option.value}
+                                  {option.value[activeLanguage] || ""}
                                 </span>
                               </div>
                             ))}
@@ -495,7 +587,20 @@ export function QuestionBuilder({
 
                         {newQuestion.questionType === "emoji" && (
                           <div className="mt-4 border-t pt-4">
-                            <h4 className="font-medium mb-3">Rating Options</h4>
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-medium">Rating Options</h4>
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Globe className="h-4 w-4" />
+                                <span>
+                                  Showing labels for{" "}
+                                  {
+                                    languages.find(
+                                      (l) => l.code === activeLanguage
+                                    )?.name
+                                  }
+                                </span>
+                              </div>
+                            </div>
                             <div className="space-y-3">
                               {ratingOptions.map((option, index) => (
                                 <div
@@ -507,14 +612,20 @@ export function QuestionBuilder({
                                   </div>
                                   <div className="flex-grow">
                                     <Input
-                                      value={option.value}
+                                      value={option.value[activeLanguage] || ""}
                                       onChange={(e) => {
                                         const newOptions = [...ratingOptions];
-                                        newOptions[index].value =
-                                          e.target.value;
+                                        newOptions[index].value = {
+                                          ...newOptions[index].value,
+                                          [activeLanguage]: e.target.value,
+                                        };
                                         setRatingOptions(newOptions);
                                       }}
-                                      placeholder="Rating label"
+                                      placeholder={`Rating label in ${
+                                        languages.find(
+                                          (l) => l.code === activeLanguage
+                                        )?.name
+                                      }`}
                                       className="text-sm"
                                     />
                                   </div>
