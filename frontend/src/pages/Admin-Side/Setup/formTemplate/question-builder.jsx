@@ -25,6 +25,7 @@ import {
   Globe,
 } from "lucide-react";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { toast } from "sonner";
 
 const defaultEmojiMappings = [
   { score: 5, value: { en: "", fr: "", ar: "", ru: "" }, emoji: "1f603" }, // 😃
@@ -164,22 +165,79 @@ export function QuestionBuilder({
   const handleSave = () => {
     if (questions.length === 0) return;
 
+    // Validate that all questions have a questionText in the active language
+    const incompleteQuestions = questions.filter(
+      (q) => getIncompleteLanguages(q.questionText).length > 0
+    );
+
+    if (incompleteQuestions.length > 0) {
+      // All questions must have translations in the various languages
+      toast.error(
+        `Please complete the question text in ${
+          languages.find((l) => l.code === activeLanguage)?.name
+        } for all questions.`
+      );
+      return;
+    }
+
+    // For emoji questions, validate rating options have complete translations
+    if (questions.some((q) => q.questionType === "emoji")) {
+      const incompleteRatings = ratingOptions.filter(
+        (option) => getIncompleteLanguages(option.value).length > 0
+      );
+
+      if (incompleteRatings.length > 0) {
+        toast.error(
+          "All rating options must have translations in all languages"
+        );
+        return;
+      }
+    }
+
     const templateData = {
       formCode: selectedFormType,
+      formTemplateName: templateName,
       questions: questions.map((q) => ({
-        questionText: q.questionText,
+        questionText: {
+          en: q.questionText.en?.trim(),
+          fr: q.questionText.fr?.trim(),
+          ar: q.questionText.ar?.trim(),
+          ru: q.questionText.ru?.trim(),
+        },
         questionType: q.questionType,
         required: q.required,
         order: q.order,
       })),
-      ratingOptions: questions.some((q) => q.questionType === "emoji")
-        ? ratingOptions.map((option) => ({
-            value: option.value,
-            score: option.score,
-            emoji: option.emoji,
-          }))
-        : undefined,
+      // Only include ratingOptions if there are emoji questions
+      ...(questions.some((q) => q.questionType === "emoji") && {
+        ratingOptions: ratingOptions.map((option) => ({
+          value: {
+            en: option.value.en?.trim(),
+            fr: option.value.fr?.trim(),
+            ar: option.value.ar?.trim(),
+            ru: option.value.ru?.trim(),
+          },
+          score: option.score,
+          emoji: option.emoji,
+        })),
+      }),
+      // ratingOptions: questions.some((q) => q.questionType === "emoji")
+      //   ? ratingOptions.map((option) => ({
+      //       value: option.value,
+      //       score: option.score,
+      //       emoji: option.emoji,
+      //     }))
+      //   : undefined,
     };
+
+    // Log the data being sent
+    console.group("Form Template Data");
+    console.log("Template Data:", templateData);
+    console.log("Questions:", templateData.questions);
+    if (templateData.ratingOptions) {
+      console.log("Rating Options:", templateData.ratingOptions);
+    }
+    console.groupEnd();
 
     onSave(templateData);
   };
