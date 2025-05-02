@@ -27,7 +27,7 @@ export const addFormSubmission = async (req, res) => {
     // Initialize responses based on template questions
     const responses = template.questions.map((q) => ({
       questionId: q._id,
-      question: q.questionText,
+      question: q.questionText.en,
       response: "", // Placeholder, will be updated later
     }));
 
@@ -79,8 +79,9 @@ export const addFormSubmission = async (req, res) => {
 export const getFormSubmission = async (req, res) => {
   try {
     const { id } = req.params;
+    const { lang = "en" } = req.query; // Default to English if no language specified
 
-    // populate template details
+    // Populate template details
     const submission = await FormSubmission.findById(id).populate({
       path: "formTemplateId",
       select: "questions ratingOptions formTypeName",
@@ -119,6 +120,30 @@ export const getFormSubmission = async (req, res) => {
       await submission.save();
     }
 
+    // Transform questions and rating options to use specified language
+    const localizedQuestions = submission.formTemplateId.questions.map((q) => ({
+      ...q.toObject(),
+      questionText: q.questionText[lang] || q.questionText.en, // Fallback to English
+    }));
+
+    const localizedRatingOptions = submission.formTemplateId.ratingOptions?.map(
+      (option) => ({
+        ...option.toObject(),
+        value: option.value[lang] || option.value.en, // Fallback to English
+      })
+    );
+
+    // Update responses with localized questions
+    const localizedResponses = submission.responses.map((response) => {
+      const question = localizedQuestions.find(
+        (q) => q._id.toString() === response.questionId.toString()
+      );
+      return {
+        ...response.toObject(),
+        question: question?.questionText || response.question,
+      };
+    });
+
     const responseData = {
       memberDetails: {
         name: submission.memberName,
@@ -131,11 +156,12 @@ export const getFormSubmission = async (req, res) => {
       },
       formDetails: {
         formType: submission.formTemplateId.formTypeName,
-        questions: submission.formTemplateId.questions,
-        ratingOptions: submission.formTemplateId.ratingOptions,
+        questions: localizedQuestions,
+        ratingOptions: localizedRatingOptions,
       },
       status: submission.status,
-      responses: submission.responses,
+      responses: localizedResponses,
+      language: lang,
     };
 
     res.status(200).json({
@@ -294,7 +320,7 @@ export const formSubmissionResponses = async (req, res) => {
       populate: { path: "formTypeId" },
     });
 
-    console.log(updatedSubmission)
+    console.log(updatedSubmission);
 
     res.status(200).json({
       success: true,
