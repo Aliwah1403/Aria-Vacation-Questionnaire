@@ -1,9 +1,48 @@
 import FormTemplate from "../models/formTemplate.model.js";
 import FormType from "../models/formType.model.js";
 
+const validateMultilingualContent = (content, fieldName) => {
+  const requiredLanguages = ["en", "fr", "ar", "ru"];
+  const missingLanguages = requiredLanguages.filter(
+    (lang) => !content[lang]?.trim()
+  );
+
+  if (missingLanguages.length > 0) {
+    throw new Error(
+      `${fieldName} is missing translations for: ${missingLanguages.join(", ")}`
+    );
+  }
+};
+
 export const addFormTemplate = async (req, res) => {
   try {
     const { formCode, formTemplateName, questions, ratingOptions } = req.body;
+
+    // Validate questions content
+    questions.forEach((question, index) => {
+      try {
+        validateMultilingualContent(
+          question.questionText,
+          `Question ${index + 1} text`
+        );
+      } catch (error) {
+        throw new Error(`Question ${index + 1}: ${error.message}`);
+      }
+    });
+
+    // Validate rating options if emoji questions exist
+    if (questions.some((q) => q.questionType === "emoji")) {
+      ratingOptions?.forEach((option, index) => {
+        try {
+          validateMultilingualContent(
+            option.value,
+            `Rating option ${index + 1}`
+          );
+        } catch (error) {
+          throw new Error(`Rating option ${index + 1}: ${error.message}`);
+        }
+      });
+    }
 
     // Find form type by code
     const formType = await FormType.findOne({ formCode, isActive: true });
@@ -57,7 +96,6 @@ export const addFormTemplate = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error creating form template",
-      error: error.message,
     });
   }
 };
