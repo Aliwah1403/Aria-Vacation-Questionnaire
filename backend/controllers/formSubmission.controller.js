@@ -79,7 +79,7 @@ export const addFormSubmission = async (req, res) => {
 export const getFormSubmission = async (req, res) => {
   try {
     const { id } = req.params;
-    const { lang = "en" } = req.query; // Default to English if no language specified
+    const { lng = "en" } = req.query; // Default to English if no language specified
 
     // Populate template details
     const submission = await FormSubmission.findById(id).populate({
@@ -123,13 +123,13 @@ export const getFormSubmission = async (req, res) => {
     // Transform questions and rating options to use specified language
     const localizedQuestions = submission.formTemplateId.questions.map((q) => ({
       ...q.toObject(),
-      questionText: q.questionText[lang] || q.questionText.en, // Fallback to English
+      questionText: q.questionText[lng] || q.questionText.en, // Fallback to English
     }));
 
     const localizedRatingOptions = submission.formTemplateId.ratingOptions?.map(
       (option) => ({
         ...option.toObject(),
-        value: option.value[lang] || option.value.en, // Fallback to English
+        value: option.value[lng] || option.value.en, // Fallback to English
       })
     );
 
@@ -161,7 +161,7 @@ export const getFormSubmission = async (req, res) => {
       },
       status: submission.status,
       responses: localizedResponses,
-      language: lang,
+      language: lng,
     };
 
     res.status(200).json({
