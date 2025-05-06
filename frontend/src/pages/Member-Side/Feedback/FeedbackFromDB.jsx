@@ -74,20 +74,31 @@ const FeedbackFromDB = () => {
     },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      await formSubmissionApi.submitResponses(id, {
-        ...data,
-        language: currentLang,
-      });
-      navigate(`/feedback/${formType}/${id}/success?lng=${currentLang}`);
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const onSubmit = async (data) => {
+  try {
+    setLoading(true);
+    // Format the responses data correctly
+    const formattedResponses = data.answers.map((answer, index) => ({
+      questionId: questions[index]._id,
+      question: questions[index].questionText,
+      response: answer.answer,
+    }));
+
+    const submissionData = {
+      responses: formattedResponses,
+      testimonialConsent: data.testimonialConsent,
+      language: currentLang,
+    };
+
+    await formSubmissionApi.submitResponses(id, submissionData);
+    navigate(`/feedback/${formType}/${id}/success?lng=${currentLang}`);
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    // Add error handling here if needed
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (isPending) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
