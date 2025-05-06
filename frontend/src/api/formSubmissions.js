@@ -1,18 +1,6 @@
 import apiClient from "@/lib/axios";
 
 export const formSubmissionApi = {
-  // getAll: async (params = {}) => {
-  //   const { formCode } = params;
-
-  //   const queryParams = new URLSearchParams();
-  //   if (formCode) {
-  //     queryParams.append("formCode", formCode);
-  //   }
-
-  //   const { data } = await apiClient.get("/api/v1/form-submission/get-all");
-  //   return data.data.submissions;
-  // },
-
   getAll: async ({ formCode } = {}) => {
     let url = "/api/v1/form-submission/get-all";
     if (formCode && formCode !== "all") {
@@ -23,9 +11,14 @@ export const formSubmissionApi = {
   },
 
   // Get single submission by ID
-  getById: async (id) => {
+  getById: async (id, lang = "en") => {
     try {
-      const { data } = await apiClient.get(`/api/v1/form-submission/get/${id}`);
+      const { data } = await apiClient.get(
+        `/api/v1/form-submission/get/${id}`,
+        {
+          params: { lng: lang },
+        }
+      );
       return data;
     } catch (error) {
       if (error.response?.status === 403) {

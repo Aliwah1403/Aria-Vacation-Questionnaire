@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useSearchParams } from "react-router";
 import {
   ClockIcon,
   User2Icon,
@@ -14,17 +14,20 @@ import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 
 const MemberHomepage = () => {
-  const { t } = useTranslation();
   const { formType, id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const currentLang = searchParams.get("lng") || "en";
 
   const {
     data: formData,
     isPending,
     error,
   } = useQuery({
-    queryKey: ["formSubmission", id],
-    queryFn: () => formSubmissionApi.getById(id),
+    queryKey: ["formSubmission", id, currentLang],
+    queryFn: () => formSubmissionApi.getById(id, currentLang),
     enabled: !!id,
   });
 
@@ -95,6 +98,10 @@ const MemberHomepage = () => {
     },
   ];
 
+  const handleStartClick = () => {
+    navigate(`/feedback/${formType}/${id}/questionnaire?lng=${currentLang}`);
+  };
+
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 max-w-5xl">
       {/* Hero Section */}
@@ -131,16 +138,10 @@ const MemberHomepage = () => {
       {/* Start Button */}
       <div className="text-center">
         <Button
-          asChild
-          size="lg"
+          onClick={handleStartClick}
           className="bg-[#2FA5AF] hover:bg-[#2FA5AF]/90"
         >
-          <Link
-            to={`/feedback/${formType}/${id}/questionnaire`}
-            className="inline-flex items-center"
-          >
-            {t("startQuestionnaire")}
-          </Link>
+          {t("startQuestionnaire")}
         </Button>
       </div>
     </div>
