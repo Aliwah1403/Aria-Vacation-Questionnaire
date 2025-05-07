@@ -15,6 +15,7 @@ import * as z from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -38,6 +39,7 @@ const createFeedbackSchema = (questions) => {
 };
 
 const FeedbackFromDB = () => {
+  const { t } = useTranslation();
   const { formType, id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -74,31 +76,31 @@ const FeedbackFromDB = () => {
     },
   });
 
-const onSubmit = async (data) => {
-  try {
-    setLoading(true);
-    // Format the responses data correctly
-    const formattedResponses = data.answers.map((answer, index) => ({
-      questionId: questions[index]._id,
-      question: questions[index].questionText,
-      response: answer.answer,
-    }));
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      // Format the responses data correctly
+      const formattedResponses = data.answers.map((answer, index) => ({
+        questionId: questions[index]._id,
+        question: questions[index].questionText,
+        response: answer.answer,
+      }));
 
-    const submissionData = {
-      responses: formattedResponses,
-      testimonialConsent: data.testimonialConsent,
-      language: currentLang,
-    };
+      const submissionData = {
+        responses: formattedResponses,
+        testimonialConsent: data.testimonialConsent,
+        language: currentLang,
+      };
 
-    await formSubmissionApi.submitResponses(id, submissionData);
-    navigate(`/feedback/${formType}/${id}/success?lng=${currentLang}`);
-  } catch (error) {
-    console.error("Error submitting feedback:", error);
-    // Add error handling here if needed
-  } finally {
-    setLoading(false);
-  }
-};
+      await formSubmissionApi.submitResponses(id, submissionData);
+      navigate(`/feedback/${formType}/${id}/success?lng=${currentLang}`);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      // Add error handling here if needed
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (isPending) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -132,7 +134,7 @@ const onSubmit = async (data) => {
     if (!currentAnswer) {
       form.setError(`answers.${currentStep - 1}.answer`, {
         type: "manual",
-        message: "Please provide an answer before continuing",
+        message: `${t("pleaseProvideAnswer")}`,
       });
       return;
     }
@@ -158,8 +160,7 @@ const onSubmit = async (data) => {
     <div className="flex flex-col w-full">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-gray-600">
-        {/* Add localization of the word "Question" */}
-          Question {currentStep} of {totalSteps}
+          {t("question")} {currentStep} {t("of")} {totalSteps}
         </span>
       </div>
       <div className="flex gap-1">
@@ -200,8 +201,7 @@ const onSubmit = async (data) => {
                 render={({ field }) => (
                   <FormItem>
                     <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
-                      {/* Add localization of the word "Question" */}
-                      Question {currentStep}
+                      {t("question")} {currentStep}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
                       {questions[currentStep - 1].questionText}
@@ -245,8 +245,7 @@ const onSubmit = async (data) => {
                           <span className="tabular-nums">
                             {maxLength - characterCount}
                           </span>{" "}
-                          {/* Add localization here */}
-                          characters left
+                          {t("charactersLeft")}
                         </p>
                         <Textarea
                           {...field}
@@ -258,7 +257,7 @@ const onSubmit = async (data) => {
                             field.onChange(e);
                           }}
                           className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base p-3 sm:p-4 [resize:none]"
-                          placeholder="Share your thoughts with us... "
+                          placeholder={t("shareThoughts")}
                         />
 
                         {currentStep === questions.length && (
@@ -278,14 +277,10 @@ const onSubmit = async (data) => {
                                     htmlFor="testimonialConsent"
                                     className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                   >
-                                  {/* Add localization */}
-                                    Allow us to use your feedback as a
-                                    testimonial
+                                    {t("testimonialConsent")}
                                   </label>
-                                  {/* Localization */}
                                   <p className="text-xs text-muted-foreground">
-                                    By checking this box, you agree to let us
-                                    use your feedback for marketing purposes.
+                                    {t("testimonialDisclaimer")}
                                   </p>
                                 </div>
                               </div>
@@ -309,8 +304,7 @@ const onSubmit = async (data) => {
               disabled={currentStep === 1}
               className="cursor-pointer capitalize px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-200 hover:border-gray-300 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
-            {/* Localization */}
-              Previous
+              {t("previous")}
             </Button>
             {currentStep === questions.length ? (
               <LoadingButton
@@ -319,8 +313,7 @@ const onSubmit = async (data) => {
                 size="default"
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-              {/* Localization */}
-                Submit
+                {t("submit")}
               </LoadingButton>
             ) : (
               <Button
@@ -329,8 +322,7 @@ const onSubmit = async (data) => {
                 onClick={handleNext}
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-              {/* Localization */}
-                Continue
+                {t("continue")}
               </Button>
             )}
           </div>
