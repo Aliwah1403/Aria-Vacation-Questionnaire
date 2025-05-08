@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format, addDays } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -35,17 +34,14 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
-  CalendarIcon,
   Copy,
   Check,
   LinkIcon,
   ChevronsUpDown,
   PlusCircleIcon,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
   Stepper,
@@ -54,7 +50,6 @@ import {
   StepperSeparator,
   StepperTrigger,
 } from "@/components/ui/stepper";
-import StepperComponent from "@/components/stepper-component";
 import { LoadingButton } from "@/components/ui/loading-button";
 import CheckInOutDatePicker from "@/components/check-in-out-date-picker";
 import { useCreateFormSubmission } from "@/mutations/formSubmission/formSubmissionMutation";
@@ -748,16 +743,18 @@ const MultiStepQuestionnaireForm = ({
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Shareable Link</label>
-            <div className="flex items-center">
-              <div className="flex-1 p-3 h-10 bg-gray-50 rounded-l-md border border-r-0 truncate">
-                <div className="flex items-center h-full">
-                  <LinkIcon className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="text-sm truncate">{generatedLink}</span>
+            <div className="flex items-center w-full">
+              <div className="flex-1 p-3 h-10 bg-gray-50 rounded-l-md border border-r-0 overflow-hidden">
+                <div className="flex items-center h-full w-full">
+                  <LinkIcon className="h-4 w-4 min-w-4 mr-2 text-gray-500" />
+                  <span className="text-sm truncate w-full">
+                    {generatedLink}
+                  </span>
                 </div>
               </div>
               <Button
                 type="button"
-                className="rounded-l-none h-10 bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                className="rounded-l-none h-10 min-w-10 bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
                 onClick={copyToClipboard}
               >
                 {copied ? (
@@ -768,8 +765,7 @@ const MultiStepQuestionnaireForm = ({
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              This link will expire in 7 days. The member will receive an email
-              with this link.
+              The member will receive an email with this link.
             </p>
           </div>
 
