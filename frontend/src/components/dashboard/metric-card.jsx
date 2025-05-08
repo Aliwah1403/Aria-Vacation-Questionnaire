@@ -23,7 +23,7 @@ export function MetricCard() {
   return (
     <div
       className=" *:data-[slot=card]:from-neutral-50
-       *:data-[slot=card]:to-fountain-blue-50/50 grid grid-cols-4 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4"
+       *:data-[slot=card]:to-fountain-blue-50/50 grid grid-cols-4 gap-4  *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs  @xl/main:grid-cols-2 @5xl/main:grid-cols-4"
     >
       <Card>
         <CardHeader>

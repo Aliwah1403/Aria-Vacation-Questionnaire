@@ -7,6 +7,8 @@ import { FeedbackCategories } from "@/components/dashboard/feedback-categories";
 import { ServiceQualityInsights } from "@/components/dashboard/service-quality-insights";
 
 import RecentFeedbackTable from "@/components/dashboard/recent-feedback-table";
+import ResponseRateChart from "@/components/dashboard/response-rate-chart";
+import SatisfactionDistributionChart from "@/components/dashboard/satisfaction-distribution-chart";
 
 // Question group ratings data
 const questionGroupData = [
@@ -34,9 +36,22 @@ export default function AdminDashboard() {
       />
 
       {/* Layout 2 */}
-      <div className=" flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+      <div className=" flex flex-col gap-4 py-4 lg:px-6 px-4 md:gap-6 md:py-6">
         {/* KPI Cards */}
         <MetricCard />
+
+        {/* Response Rate and Satisfaction Distribution charts */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-2">
+            {/* Response Rate Chart */}
+            <ResponseRateChart />
+          </div>
+          <div>
+            {" "}
+            {/* Satisfaction Distribution Chart */}
+            <SatisfactionDistributionChart />
+          </div>
+        </div>
 
         {/* Question Group Ratings Bar Chart */}
         <FeedbackCategories />
