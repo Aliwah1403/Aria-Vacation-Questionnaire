@@ -42,7 +42,7 @@ const ResponseRateChart = () => {
         <CardDescription>Monthly response rate percentage</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="max-h-[440px]">
           <LineChart
             accessibilityLayer
             data={chartData}
