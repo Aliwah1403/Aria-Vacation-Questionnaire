@@ -33,9 +33,10 @@ const formTemplateSchema = new mongoose.Schema(
     questions: [
       {
         questionText: {
-          type: String,
-          required: true,
-          trim: true,
+          en: { type: String, required: true, trim: true },
+          fr: { type: String, required: true, trim: true },
+          ar: { type: String, required: true, trim: true },
+          ru: { type: String, required: true, trim: true },
         },
         questionType: {
           type: String,
@@ -56,9 +57,10 @@ const formTemplateSchema = new mongoose.Schema(
     ratingOptions: [
       {
         value: {
-          type: String,
-          required: true,
-          trim: true,
+          en: { type: String, required: true, trim: true },
+          fr: { type: String, required: true, trim: true },
+          ar: { type: String, required: true, trim: true },
+          ru: { type: String, required: true, trim: true },
         },
         score: {
           type: Number,

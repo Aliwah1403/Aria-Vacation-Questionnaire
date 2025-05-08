@@ -116,59 +116,8 @@ const QuestionnairesOverview = () => {
 
       {/* Content Area */}
       <div className="p-4 md:p-6">
-        {/* <Tabs defaultValue="overview">
-          <TabsList className="h-auto rounded-none border-b bg-transparent p-0">
-            <TabsTrigger
-              value="overview"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Overview
-            </TabsTrigger>
-            <TabsTrigger
-              value="stay-experience"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Stay Experience
-            </TabsTrigger>
-            <TabsTrigger
-              value="amenities"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Amenities
-            </TabsTrigger>
-            <TabsTrigger
-              value="customer-service"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Customer Service
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview">
-            <QuestionnairesOverviewTable
-              columns={overviewColumns}
-              data={formSubmissionData || []}
-            />
-          </TabsContent>
-          <TabsContent value="stay-experience">
-            <p className="text-muted-foreground p-4 text-center text-xs">
-              Stay Experience Questionnaire Data Table
-            </p>
-          </TabsContent>
-          <TabsContent value="amenities">
-            <p className="text-muted-foreground p-4 text-center text-xs">
-              Amenities Questionnaire Data Table
-            </p>
-          </TabsContent>
-          <TabsContent value="customer-service">
-            <p className="text-muted-foreground p-4 text-center text-xs">
-              Customer Service Questionnaire Data Table
-            </p>
-          </TabsContent>
-        </Tabs> */}
-
         <Tabs
-          value={selectedFormCode} // Controlled value
+          value={selectedFormCode}
           onValueChange={setSelectedFormCode}
           defaultValue={null}
         >
@@ -179,30 +128,15 @@ const QuestionnairesOverview = () => {
             >
               Overview
             </TabsTrigger>
-            <TabsTrigger
-              value="stay-experience-survey"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Stay Experience Experience
-            </TabsTrigger>
-            <TabsTrigger
-              value="testing-survey"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Testing Survey Experience
-            </TabsTrigger>
-            <TabsTrigger
-              value="test-filter"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Filter Experience
-            </TabsTrigger>
-            <TabsTrigger
-              value="form-submission-survey"
-              className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Form Submission Survey
-            </TabsTrigger>
+            {formTypeData?.map((formType) => (
+              <TabsTrigger
+                key={formType._id}
+                value={formType.formCode}
+                className="data-[state=active]:after:bg-fountain-blue-400 relative rounded-none py-2 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                {formType.formName}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value={selectedFormCode} className="mt-0">

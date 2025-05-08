@@ -27,7 +27,7 @@ export const addFormSubmission = async (req, res) => {
     // Initialize responses based on template questions
     const responses = template.questions.map((q) => ({
       questionId: q._id,
-      question: q.questionText,
+      question: q.questionText.en,
       response: "", // Placeholder, will be updated later
     }));
 
@@ -79,8 +79,9 @@ export const addFormSubmission = async (req, res) => {
 export const getFormSubmission = async (req, res) => {
   try {
     const { id } = req.params;
+    const { lng = "en" } = req.query; // Default to English if no language specified
 
-    // populate template details
+    // Populate template details
     const submission = await FormSubmission.findById(id).populate({
       path: "formTemplateId",
       select: "questions ratingOptions formTypeName",
@@ -119,6 +120,30 @@ export const getFormSubmission = async (req, res) => {
       await submission.save();
     }
 
+    // Transform questions and rating options to use specified language
+    const localizedQuestions = submission.formTemplateId.questions.map((q) => ({
+      ...q.toObject(),
+      questionText: q.questionText[lng] || q.questionText.en, // Fallback to English
+    }));
+
+    const localizedRatingOptions = submission.formTemplateId.ratingOptions?.map(
+      (option) => ({
+        ...option.toObject(),
+        value: option.value[lng] || option.value.en, // Fallback to English
+      })
+    );
+
+    // Update responses with localized questions
+    const localizedResponses = submission.responses.map((response) => {
+      const question = localizedQuestions.find(
+        (q) => q._id.toString() === response.questionId.toString()
+      );
+      return {
+        ...response.toObject(),
+        question: question?.questionText || response.question,
+      };
+    });
+
     const responseData = {
       memberDetails: {
         name: submission.memberName,
@@ -131,11 +156,12 @@ export const getFormSubmission = async (req, res) => {
       },
       formDetails: {
         formType: submission.formTemplateId.formTypeName,
-        questions: submission.formTemplateId.questions,
-        ratingOptions: submission.formTemplateId.ratingOptions,
+        questions: localizedQuestions,
+        ratingOptions: localizedRatingOptions,
       },
       status: submission.status,
-      responses: submission.responses,
+      responses: localizedResponses,
+      language: lng,
     };
 
     res.status(200).json({
@@ -208,9 +234,16 @@ export const getAllFormSubmissions = async (req, res) => {
 export const formSubmissionResponses = async (req, res) => {
   try {
     const { id } = req.params;
-    const { responses, testimonialConsent } = req.body;
+    const { responses, testimonialConsent, language } = req.body;
 
-    // First find submission to verify it exists
+    if (!Array.isArray(responses)) {
+      return res.status(400).json({
+        success: false,
+        message: "Responses must be an array",
+      });
+    }
+
+    // Find submission and validate
     const submission = await FormSubmission.findById(id);
     if (!submission) {
       return res.status(404).json({
@@ -219,12 +252,10 @@ export const formSubmissionResponses = async (req, res) => {
       });
     }
 
-    // Check if already completed
     if (submission.status === "completed") {
       return res.status(403).json({
         success: false,
-        message:
-          "This feedback form has already been submitted. Thank you for your participation.",
+        message: "This feedback form has already been submitted.",
         data: {
           completedAt: submission.completedAt,
           memberName: submission.memberName,
@@ -232,7 +263,7 @@ export const formSubmissionResponses = async (req, res) => {
       });
     }
 
-    // Then find template to verify it exists
+    // Find template
     const template = await FormTemplate.findById(submission.formTemplateId);
     if (!template) {
       return res.status(404).json({
@@ -240,14 +271,6 @@ export const formSubmissionResponses = async (req, res) => {
         message: "Associated form template not found",
       });
     }
-
-    // Check if template has any emoji questions
-    const hasEmojiQuestions = template.questions.some(
-      (q) => q.questionType === "emoji"
-    );
-    const validRatingOptions = hasEmojiQuestions
-      ? template.ratingOptions.map((option) => option.value)
-      : [];
 
     // Validate responses
     for (const response of responses) {
@@ -262,19 +285,21 @@ export const formSubmissionResponses = async (req, res) => {
         });
       }
 
-      // Only validate emoji responses if the question is of type emoji
+      // Handle emoji responses
       if (templateQuestion.questionType === "emoji") {
-        if (!validRatingOptions.includes(response.response)) {
+        const validValues = template.ratingOptions.map(
+          (opt) => opt.value[language] || opt.value.en
+        );
+        if (!validValues.includes(response.response)) {
           return res.status(400).json({
             success: false,
-            message: `Invalid response for question ${
-              response.questionId
-            }. Must be one of: ${validRatingOptions.join(", ")}`,
+            message: `Invalid response for question ${response.questionId}`,
+            validOptions: validValues,
           });
         }
       }
 
-      // Store comments response in additionalComments field if question type is comments
+      // Store comments in additionalComments
       if (templateQuestion.questionType === "comments") {
         submission.additionalComments = response.response;
       }
@@ -282,7 +307,7 @@ export const formSubmissionResponses = async (req, res) => {
 
     // Update submission
     submission.responses = responses;
-    submission.testimonialConsent = testimonialConsent || false;
+    submission.testimonialConsent = testimonialConsent;
     submission.completedAt = new Date();
     submission.status = "completed";
 
@@ -294,17 +319,16 @@ export const formSubmissionResponses = async (req, res) => {
       populate: { path: "formTypeId" },
     });
 
-    console.log(updatedSubmission)
+    console.log(updatedSubmission);
 
     res.status(200).json({
       success: true,
       message:
         "Thank you for your feedback! Your responses have been submitted successfully.",
-      data: updatedSubmission,
+      data: submission,
     });
   } catch (error) {
     console.error("Error updating form submission:", error);
-    console.error("Request body:", JSON.stringify(req.body, null, 2));
     res.status(500).json({
       success: false,
       message: "Error updating form submission",

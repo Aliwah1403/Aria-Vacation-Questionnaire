@@ -1,54 +1,43 @@
-import React, { useState, useEffect } from "react";
-import {
-  Outlet,
-  useSearchParams,
-  useNavigate,
-  useLocation,
-} from "react-router";
-import Navbar from "../pages/Member-Side/Homepage/Navigation/Navbar";
-import { localesList } from "@/i18n";
+import React, { useEffect } from "react";
+import { Outlet, useSearchParams, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import Navbar from "../pages/Member-Side/Homepage/Navigation/Navbar";
 
 const MemberSideLayout = () => {
-  const { i18n } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { i18n } = useTranslation();
 
-  // Handle language changes and URL updates
-  const handleLanguageChange = (value) => {
-    const currentPath = window.location.pathname;
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set("lng", value);
-
-    i18n.changeLanguage(value);
-    navigate(`${currentPath}?${newUrl.searchParams.toString()}`);
-  };
-
-  // Set initial language from URL or browser
+  // Set default language and sync with i18next
   useEffect(() => {
-    const urlLang = searchParams.get("lng");
-    if (urlLang && localesList.some((locale) => locale.locale === urlLang)) {
-      i18n.changeLanguage(urlLang);
-    }
-  }, []);
+    const currentLang = searchParams.get("lng") || "en";
 
-  // Check if current path includes 'success'
-  const isSuccessPage = location.pathname.includes("/success");
+    if (!searchParams.get("lng")) {
+      setSearchParams({ lng: currentLang });
+    }
+
+    // Sync i18next language with URL param
+    i18n.changeLanguage(currentLang);
+  }, [searchParams, setSearchParams, i18n]);
+
+  const handleLanguageChange = (newLang) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("lng", newLang);
+    setSearchParams(newParams);
+
+    // Change i18next language as well
+    i18n.changeLanguage(newLang);
+  };
 
   return (
     <div
-      className={`flex w-full flex-col min-h-screen bg-gray-50 ${
-        i18n.language === "ar" ? "rtl" : "ltr"
-      }`}
+      className="flex w-full flex-col min-h-screen bg-gray-50"
+      dir={i18n.dir()}
     >
-      {/* Only show Navbar if not on success page */}
-      {!isSuccessPage && (
-        <Navbar
-          language={i18n.language}
-          onLanguageChange={handleLanguageChange}
-        />
-      )}
+      <Navbar
+        language={searchParams.get("lng") || "en"}
+        onLanguageChange={handleLanguageChange}
+      />
       <main className="flex-1">
         <Outlet />
       </main>

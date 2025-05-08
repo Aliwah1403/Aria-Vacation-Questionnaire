@@ -14,6 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import * as z from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
+import { useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -37,8 +39,12 @@ const createFeedbackSchema = (questions) => {
 };
 
 const FeedbackFromDB = () => {
+  const { t } = useTranslation();
   const { formType, id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const currentLang = searchParams.get("lng") || "en";
+
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const maxLength = 4000;
@@ -46,39 +52,20 @@ const FeedbackFromDB = () => {
     maxLength,
   });
 
-  // Fetch form submission data which includes the template details
   const {
     data: formData,
     isPending,
     error,
   } = useQuery({
-    queryKey: ["formSubmission", id],
-    queryFn: () => formSubmissionApi.getById(id),
+    queryKey: ["formSubmission", id, currentLang],
+    queryFn: () => formSubmissionApi.getById(id, currentLang),
     enabled: !!id,
   });
 
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  // Add these debug logs
-  console.log("Full form data:", formData);
-  console.log("Form status:", formData?.data?.status);
-  console.log("Form data structure:", {
-    status: formData?.data?.status,
-    formDetails: formData?.data?.formDetails,
-    responses: formData?.data?.responses,
-  });
-
-  const questions = formData?.data?.formDetails?.questions || [];
-  const ratingOptions = formData?.data?.formDetails?.ratingOptions || [];
-
   const form = useForm({
-    resolver: zodResolver(createFeedbackSchema(questions)),
+    resolver: zodResolver(
+      createFeedbackSchema(formData?.data?.formDetails?.questions || [])
+    ),
     defaultValues: {
       answers:
         formData?.data?.responses?.map((response) => ({
@@ -88,6 +75,48 @@ const FeedbackFromDB = () => {
       testimonialConsent: false,
     },
   });
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      // Format the responses data correctly
+      const formattedResponses = data.answers.map((answer, index) => ({
+        questionId: questions[index]._id,
+        question: questions[index].questionText,
+        response: answer.answer,
+      }));
+
+      const submissionData = {
+        responses: formattedResponses,
+        testimonialConsent: data.testimonialConsent,
+        language: currentLang,
+      };
+
+      await formSubmissionApi.submitResponses(id, submissionData);
+      navigate(`/feedback/${formType}/${id}/success?lng=${currentLang}`);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      // Add error handling here if needed
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isPending) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  // Move these after the loading/error checks
+  const questions = formData?.data?.formDetails?.questions || [];
+  const ratingOptions = formData?.data?.formDetails?.ratingOptions || [];
+
+  // Add these debug logs
+  // console.log("Full form data:", formData);
+  // console.log("Form status:", formData?.data?.status);
+  // console.log("Form data structure:", {
+  //   status: formData?.data?.status,
+  //   formDetails: formData?.data?.formDetails,
+  //   responses: formData?.data?.responses,
+  // });
 
   const renderEmoji = (unified) => {
     return (
@@ -105,7 +134,7 @@ const FeedbackFromDB = () => {
     if (!currentAnswer) {
       form.setError(`answers.${currentStep - 1}.answer`, {
         type: "manual",
-        message: "Please provide an answer before continuing",
+        message: `${t("pleaseProvideAnswer")}`,
       });
       return;
     }
@@ -126,34 +155,12 @@ const FeedbackFromDB = () => {
     form.clearErrors(`answers.${currentStep - 1}.answer`);
   };
 
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      const responseData = {
-        responses: data.answers.map((answer, index) => ({
-          questionId: formData.data.responses[index].questionId,
-          question: formData.data.responses[index].question,
-          response: answer.answer,
-        })),
-        testimonialConsent: data.testimonialConsent,
-      };
-
-      console.log("Submitting responses:", responseData);
-      await formSubmissionApi.submitResponses(id, responseData);
-      navigate(`/feedback/${formType}/${id}/success`);
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // QuestionStepper component
   const QuestionStepper = ({ currentStep, totalSteps }) => (
     <div className="flex flex-col w-full">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-gray-600">
-          Question {currentStep} of {totalSteps}
+          {t("question")} {currentStep} {t("of")} {totalSteps}
         </span>
       </div>
       <div className="flex gap-1">
@@ -194,7 +201,7 @@ const FeedbackFromDB = () => {
                 render={({ field }) => (
                   <FormItem>
                     <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
-                      Question {currentStep}
+                      {t("question")} {currentStep}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
                       {questions[currentStep - 1].questionText}
@@ -238,7 +245,7 @@ const FeedbackFromDB = () => {
                           <span className="tabular-nums">
                             {maxLength - characterCount}
                           </span>{" "}
-                          characters left
+                          {t("charactersLeft")}
                         </p>
                         <Textarea
                           {...field}
@@ -250,7 +257,7 @@ const FeedbackFromDB = () => {
                             field.onChange(e);
                           }}
                           className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base p-3 sm:p-4 [resize:none]"
-                          placeholder="Share your thoughts with us... "
+                          placeholder={t("shareThoughts")}
                         />
 
                         {currentStep === questions.length && (
@@ -270,12 +277,10 @@ const FeedbackFromDB = () => {
                                     htmlFor="testimonialConsent"
                                     className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                   >
-                                    Allow us to use your feedback as a
-                                    testimonial
+                                    {t("testimonialConsent")}
                                   </label>
                                   <p className="text-xs text-muted-foreground">
-                                    By checking this box, you agree to let us
-                                    use your feedback for marketing purposes.
+                                    {t("testimonialDisclaimer")}
                                   </p>
                                 </div>
                               </div>
@@ -299,7 +304,7 @@ const FeedbackFromDB = () => {
               disabled={currentStep === 1}
               className="cursor-pointer capitalize px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-200 hover:border-gray-300 transition-colors min-w-[100px] sm:min-w-[120px]"
             >
-              Previous
+              {t("previous")}
             </Button>
             {currentStep === questions.length ? (
               <LoadingButton
@@ -308,7 +313,7 @@ const FeedbackFromDB = () => {
                 size="default"
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-                Submit
+                {t("submit")}
               </LoadingButton>
             ) : (
               <Button
@@ -317,7 +322,7 @@ const FeedbackFromDB = () => {
                 onClick={handleNext}
                 className="cursor-pointer px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-fountain-blue-400 text-white hover:bg-fountain-blue-400/80 transition-colors min-w-[100px] sm:min-w-[120px]"
               >
-                Continue
+                {t("continue")}
               </Button>
             )}
           </div>

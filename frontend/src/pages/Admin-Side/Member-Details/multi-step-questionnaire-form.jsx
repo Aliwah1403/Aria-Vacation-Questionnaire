@@ -526,7 +526,7 @@ const MultiStepQuestionnaireForm = ({
                     <SelectContent>
                       {formTemplates?.map((template) => (
                         <SelectItem key={template._id} value={template._id}>
-                          {template.formTypeName}
+                          {template.formTemplateName}
                         </SelectItem>
                       ))}
                     </SelectContent>
