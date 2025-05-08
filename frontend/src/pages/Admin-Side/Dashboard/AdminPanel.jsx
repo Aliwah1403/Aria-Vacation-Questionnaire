@@ -34,7 +34,7 @@ export default function AdminDashboard() {
       />
 
       {/* Layout 2 */}
-      <div className=" mx-auto p-4 md:p-6 space-y-6">
+      <div className=" flex flex-col gap-4 py-4 md:gap-6 md:py-6">
         {/* KPI Cards */}
         <MetricCard />
 
