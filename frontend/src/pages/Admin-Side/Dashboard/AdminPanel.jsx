@@ -59,6 +59,7 @@ export default function AdminDashboard() {
   // Recent feedback data
   const recentFeedback =
     formSubmissionData
+      ?.filter((submission) => submission.status === "completed")
       ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       ?.slice(0, 5) || [];
 
