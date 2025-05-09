@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Star, Users } from "lucide-react";
+import { Quote, Star, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Testimonial = React.forwardRef(
@@ -26,7 +26,7 @@ const Testimonial = React.forwardRef(
         {...props}
       >
         <div className="absolute right-6 top-6 text-6xl font-serif text-muted-foreground/20">
-          "
+          <Quote className="stroke-fountain-blue-200/50"/>
         </div>
 
         <div className="flex flex-col gap-4 h-full">

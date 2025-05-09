@@ -10,6 +10,9 @@ import ResponseRateChart from "@/components/dashboard/response-rate-chart";
 import SatisfactionDistributionChart from "@/components/dashboard/satisfaction-distribution-chart";
 import RecentFeedback from "@/components/dashboard/Recent-Feedback-Table/RecentFeedback";
 import RecentComments from "@/components/dashboard/recent-comments";
+import { useQuery } from "@tanstack/react-query";
+import { formSubmissionApi } from "@/api/formSubmissions";
+import { LoaderComponent } from "@/components/data-loader";
 
 // Question group ratings data
 const questionGroupData = [
@@ -29,6 +32,30 @@ const formCompletionData = [
 ];
 
 export default function AdminDashboard() {
+  const {
+    data: formSubmissionData,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["formSubmissions", null],
+    queryFn: () => formSubmissionApi.getAll(),
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+
+  // Filter testimonials data
+  const comments =
+    formSubmissionData
+      ?.filter(
+        (submission) =>
+          submission.additionalComments !== null &&
+          submission.testimonialConsent === true &&
+          submission.status === "completed"
+      )
+      ?.map((submission) => ({
+        name: submission.memberName,
+        comment: submission.additionalComments,
+      })) || [];
+
   return (
     <>
       <AdminPageHeader
@@ -58,12 +85,9 @@ export default function AdminDashboard() {
         <RecentFeedback />
 
         {/* Recent comments */}
-        <RecentComments />
+        <RecentComments comments={comments} />
 
-     
         {/* <FeedbackCategories /> */}
-
-        
       </div>
     </>
   );

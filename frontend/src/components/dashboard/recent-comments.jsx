@@ -110,7 +110,7 @@ const testimonials = [
   },
 ];
 
-const RecentComments = () => {
+const RecentComments = ({ comments }) => {
   return (
     <Card>
       <CardHeader>
@@ -126,13 +126,17 @@ const RecentComments = () => {
               alwaysShow
             />
             <CarouselContent className="-ml-4">
-              {testimonials.map((testimonial) => (
+              {comments.map((testimonial) => (
                 <CarouselItem
                   key={testimonial.name}
                   className="basis-1/3 pl-4 h-full"
                 >
                   <div className="h-full">
-                    <Testimonial {...testimonial} />
+                    <Testimonial
+                      {...testimonial}
+                      name={testimonial.name}
+                      testimonial={testimonial.comment}
+                    />
                   </div>
                 </CarouselItem>
               ))}
