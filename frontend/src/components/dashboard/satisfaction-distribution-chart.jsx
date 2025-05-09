@@ -10,37 +10,52 @@ import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
+  ChartTooltipContent,
+  ChartTooltip,
 } from "@/components/ui/chart";
+
 const chartData = [
-  { browser: "verySatisfied", level: 42, fill: "var(--color-verySatisfied)" },
-  { browser: "satisfied", level: 28, fill: "var(--color-satisfied)" },
-  { browser: "neutral", level: 15, fill: "var(--color-neutral)" },
-  { browser: "dissatisfied", level: 10, fill: "var(--color-dissatisfied)" },
-  { browser: "veryDissatisfied", level: 4, fill: "var(--color-veryDissatisfied)" },
+  {
+    satisfaction: "verySatisfied",
+    level: 42,
+    fill: "var(--color-verySatisfied)",
+  },
+  { satisfaction: "satisfied", level: 28, fill: "var(--color-satisfied)" },
+  { satisfaction: "neutral", level: 15, fill: "var(--color-neutral)" },
+  {
+    satisfaction: "dissatisfied",
+    level: 10,
+    fill: "var(--color-dissatisfied)",
+  },
+  {
+    satisfaction: "veryDissatisfied",
+    level: 4,
+    fill: "var(--color-veryDissatisfied)",
+  },
 ];
 const chartConfig = {
   level: {
-    label: "Satisfaction Level",
+    label: "Members",
   },
   verySatisfied: {
     label: "Very Satisfied",
-    color: "hsl(var(--chart-1))",
+    color: "#22c55eb3",
   },
   satisfied: {
     label: "Satisfied",
-    color: "hsl(var(--chart-2))",
+    color: "#4ade80b3",
   },
   neutral: {
     label: "Neutral",
-    color: "hsl(var(--chart-3))",
+    color: "#facc15b3",
   },
   dissatisfied: {
     label: "Dissatisfied",
-    color: "hsl(var(--chart-4))",
+    color: "#fb923cb3",
   },
   veryDissatisfied: {
     label: "Very Dissatisfied",
-    color: "hsl(var(--chart-5))",
+    color: "#ef4444b3",
   },
 };
 
@@ -54,12 +69,21 @@ const SatisfactionDistributionChart = () => {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[500px]"
+          className="mx-auto aspect-square h-[500px]"
         >
           <PieChart>
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                   nameKey="satisfaction"
+                  indicator="line"
+                />
+              }
+            />
+
             <Pie data={chartData} dataKey="level" />
             <ChartLegend
-              content={<ChartLegendContent nameKey="browser" />}
+              content={<ChartLegendContent nameKey="satisfaction" />}
               className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
             />
           </PieChart>
