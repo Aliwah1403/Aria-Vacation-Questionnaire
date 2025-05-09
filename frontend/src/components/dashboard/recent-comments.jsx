@@ -4,6 +4,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Carousel,
@@ -12,6 +13,9 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { Testimonial } from "../testimonial-card";
+import { Link } from "react-router";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const testimonials = [
   {
@@ -166,14 +170,14 @@ const RecentComments = () => {
           </Carousel>
         </div>
       </CardContent>
-      {/* <CardFooter>
+      <CardFooter>
         <Link to={"/admin/questionnaires"}>
           <Button variant="ghost" className="text-fountain-blue-400">
             View All Feedback Responses
             <ArrowRight className=" size-4" />
           </Button>
         </Link>
-      </CardFooter> */}
+      </CardFooter>
     </Card>
   );
 };
