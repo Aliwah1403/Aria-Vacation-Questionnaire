@@ -6,9 +6,9 @@ import { ResponseRateByForm } from "@/components/dashboard/response-rate-by-form
 import { FeedbackCategories } from "@/components/dashboard/feedback-categories";
 import { ServiceQualityInsights } from "@/components/dashboard/service-quality-insights";
 
-import RecentFeedbackTable from "@/components/dashboard/recent-feedback-table";
 import ResponseRateChart from "@/components/dashboard/response-rate-chart";
 import SatisfactionDistributionChart from "@/components/dashboard/satisfaction-distribution-chart";
+import RecentFeedback from "@/components/dashboard/Recent-Feedback-Table/RecentFeedback";
 
 // Question group ratings data
 const questionGroupData = [
@@ -53,6 +53,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Recent Feedback Table */}
+        <RecentFeedback />
+
         {/* Question Group Ratings Bar Chart */}
         <FeedbackCategories />
 
@@ -64,9 +67,6 @@ export default function AdminDashboard() {
           {/* Completion Overview */}
           {/* <CompletionOverview /> */}
         </div>
-
-        {/* Recent Feedback Table */}
-        <RecentFeedbackTable />
       </div>
     </>
   );
