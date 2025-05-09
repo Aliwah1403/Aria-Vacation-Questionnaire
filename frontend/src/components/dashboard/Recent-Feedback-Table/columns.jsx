@@ -30,17 +30,17 @@ export const recentFeedbackColumns = [
   },
 
   //  Will create Function to calculate the overall rating
-//   {
-//     accessorKey: "overallRating",
-//     header: "Satisfaction",
-//     cell: ({ row }) => {
-//       const rating = row.getValue("overallRating");
-//       return (
-//         <div className="flex items-center gap-1">
-//           <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
-//           {rating}
-//         </div>
-//       );
-//     },
-//   },
+  {
+    accessorKey: "averageRating",
+    header: "Satisfaction",
+    cell: ({ row }) => {
+      const rating = row.getValue("averageRating");
+      return (
+        <div className="flex items-center gap-1">
+          <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
+          {rating}
+        </div>
+      );
+    },
+  },
 ];
