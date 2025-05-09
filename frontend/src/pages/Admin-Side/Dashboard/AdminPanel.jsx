@@ -56,6 +56,15 @@ export default function AdminDashboard() {
         comment: submission.additionalComments,
       })) || [];
 
+  // Recent feedback data
+  const recentFeedback =
+    formSubmissionData
+      ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      ?.slice(0, 5) || [];
+
+  if (isPending) return <LoaderComponent />;
+  if (error) return <div>Error fetching data: {error.message}</div>;
+
   return (
     <>
       <AdminPageHeader
@@ -82,7 +91,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Feedback Table */}
-        <RecentFeedback />
+        <RecentFeedback data={recentFeedback} />
 
         {/* Recent comments */}
         <RecentComments comments={comments} />

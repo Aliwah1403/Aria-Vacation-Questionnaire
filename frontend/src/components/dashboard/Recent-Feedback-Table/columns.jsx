@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 export const recentFeedbackColumns = [
   {
-    accessorKey: "id",
+    accessorKey: "memberId",
     header: "Member ID",
   },
   {
@@ -16,26 +16,31 @@ export const recentFeedbackColumns = [
   {
     accessorKey: "resort",
     header: "Resort",
-  },
-  {
-    accessorKey: "checkOutDate",
-    header: "Check out",
     cell: ({ row }) => {
-      const date = row.getValue("checkOutDate");
-      return <div>{date}</div>;
+      const resort = row.getValue("resort");
+      return <div className="capitalize">{resort}</div>;
     },
   },
   {
-    accessorKey: "overallRating",
-    header: "Satisfaction",
+    accessorKey: "checkOut",
+    header: "Check Out",
     cell: ({ row }) => {
-      const rating = row.getValue("overallRating");
-      return (
-        <div className="flex items-center gap-1">
-        <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400"/>
-          {rating}
-        </div>
-      );
+      return new Date(row.getValue("checkOut")).toLocaleDateString();
     },
   },
+
+  //  Will create Function to calculate the overall rating
+//   {
+//     accessorKey: "overallRating",
+//     header: "Satisfaction",
+//     cell: ({ row }) => {
+//       const rating = row.getValue("overallRating");
+//       return (
+//         <div className="flex items-center gap-1">
+//           <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
+//           {rating}
+//         </div>
+//       );
+//     },
+//   },
 ];

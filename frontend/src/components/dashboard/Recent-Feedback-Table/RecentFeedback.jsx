@@ -58,7 +58,7 @@ const recentFeedbackData = [
   },
 ];
 
-const RecentFeedback = () => {
+const RecentFeedback = ({ data }) => {
   return (
     <Card>
       <CardHeader>
@@ -66,10 +66,7 @@ const RecentFeedback = () => {
         <CardDescription>Latest questionnaire submissions</CardDescription>
       </CardHeader>
       <CardContent>
-        <RecentFeedbackTable
-          columns={recentFeedbackColumns}
-          data={recentFeedbackData}
-        />
+        <RecentFeedbackTable columns={recentFeedbackColumns} data={data} />
       </CardContent>
       <CardFooter>
         <Link to={"/admin/questionnaires"}>
