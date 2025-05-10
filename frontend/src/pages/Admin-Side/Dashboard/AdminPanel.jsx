@@ -63,6 +63,10 @@ export default function AdminDashboard() {
       ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       ?.slice(0, 5) || [];
 
+      // Average rating data
+      const averageRatingData = formSubmissionData
+      ?.filter((submission) => submission.status === "completed")
+
   if (isPending) return <LoaderComponent />;
   if (error) return <div>Error fetching data: {error.message}</div>;
 
@@ -87,7 +91,7 @@ export default function AdminDashboard() {
           <div>
             {" "}
             {/* Satisfaction Distribution Chart */}
-            <SatisfactionDistributionChart />
+            <SatisfactionDistributionChart data={averageRatingData} />
           </div>
         </div>
 

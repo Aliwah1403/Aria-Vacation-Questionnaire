@@ -14,25 +14,6 @@ import {
   ChartTooltip,
 } from "@/components/ui/chart";
 
-const chartData = [
-  {
-    satisfaction: "verySatisfied",
-    level: 42,
-    fill: "var(--color-verySatisfied)",
-  },
-  { satisfaction: "satisfied", level: 28, fill: "var(--color-satisfied)" },
-  { satisfaction: "neutral", level: 15, fill: "var(--color-neutral)" },
-  {
-    satisfaction: "dissatisfied",
-    level: 10,
-    fill: "var(--color-dissatisfied)",
-  },
-  {
-    satisfaction: "veryDissatisfied",
-    level: 4,
-    fill: "var(--color-veryDissatisfied)",
-  },
-];
 const chartConfig = {
   level: {
     label: "Members",
@@ -59,12 +40,54 @@ const chartConfig = {
   },
 };
 
-const SatisfactionDistributionChart = () => {
+const calculateSatisfactionDistribution = (submissions) => {
+  const distribution = {
+    verySatisfied: 0, // rating 5
+    satisfied: 0, // rating 4
+    neutral: 0, // rating 3
+    dissatisfied: 0, // rating 2
+    veryDissatisfied: 0, // rating 1
+  };
+
+  submissions?.forEach((submission) => {
+    if (!submission.averageRating) return;
+
+    const rating = Math.round(submission.averageRating);
+    switch (rating) {
+      case 5:
+        distribution.verySatisfied++;
+        break;
+      case 4:
+        distribution.satisfied++;
+        break;
+      case 3:
+        distribution.neutral++;
+        break;
+      case 2:
+        distribution.dissatisfied++;
+        break;
+      case 1:
+        distribution.veryDissatisfied++;
+        break;
+    }
+  });
+
+  return Object.entries(distribution).map(([satisfaction, count]) => ({
+    satisfaction,
+    level: count,
+    fill: chartConfig[satisfaction].color,
+  }));
+};
+
+const SatisfactionDistributionChart = ({ data }) => {
+  const chartData = calculateSatisfactionDistribution(data);
+  const total = chartData.reduce((sum, item) => sum + item.level, 0);
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Satisfaction Distribution</CardTitle>
-        <CardDescription>Overall satisfaction levels</CardDescription>
+        <CardDescription>{total} Total Responses</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -75,13 +98,24 @@ const SatisfactionDistributionChart = () => {
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                   nameKey="satisfaction"
+                  nameKey="satisfaction"
                   indicator="line"
+                  formatter={(value, name) => [
+                    `${value} members (${((value / total) * 100).toFixed(1)}%)`,
+                    chartConfig[name].label,
+                  ]}
                 />
               }
             />
-
-            <Pie data={chartData} dataKey="level" />
+            <Pie
+              data={chartData}
+              dataKey="level"
+              nameKey="satisfaction"
+              cx="50%"
+              cy="50%"
+              innerRadius="40%"
+              outerRadius="80%"
+            />
             <ChartLegend
               content={<ChartLegendContent nameKey="satisfaction" />}
               className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
