@@ -34,7 +34,7 @@ const chartConfig = {
   },
 };
 
-const ResponseRateChart = () => {
+const ResponseRateChart = ({ data }) => {
   return (
     <Card>
       <CardHeader>
@@ -45,7 +45,7 @@ const ResponseRateChart = () => {
         <ChartContainer config={chartConfig} className="h-[440px] w-full">
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               left: 12,
               right: 12,
@@ -61,7 +61,16 @@ const ResponseRateChart = () => {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  formatter={(value, name, props) => [
+                    `${value}%`,
+                    "Response Rate",
+                    `${props.payload.completed} out of ${props.payload.total} responses`,
+                  ]}
+                />
+              }
             />
             <Line
               dataKey="responseRate"

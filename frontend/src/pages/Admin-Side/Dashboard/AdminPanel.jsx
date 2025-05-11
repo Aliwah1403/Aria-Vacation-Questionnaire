@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import AdminPageHeader from "@/components/admin-page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { SatisfactionByResort } from "@/components/dashboard/satisfaction-by-resort";
@@ -63,9 +64,50 @@ export default function AdminDashboard() {
       ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       ?.slice(0, 5) || [];
 
-      // Average rating data
-      const averageRatingData = formSubmissionData
-      ?.filter((submission) => submission.status === "completed")
+  // Average rating data
+  const averageRatingData = formSubmissionData?.filter(
+    (submission) => submission.status === "completed"
+  );
+
+  // Calculate response rates
+  const responseRatesData = useMemo(() => {
+    if (!formSubmissionData?.length) return [];
+
+    const monthlyData = {};
+
+    formSubmissionData.forEach((submission) => {
+      const date = new Date(submission.createdAt);
+      const monthKey = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`;
+      const monthName = date.toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      });
+
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = {
+          month: monthName,
+          total: 0,
+          completed: 0,
+          responseRate: 0,
+        };
+      }
+
+      monthlyData[monthKey].total++;
+      if (submission.status === "completed") {
+        monthlyData[monthKey].completed++;
+      }
+    });
+
+    // Calculate rates and convert to array
+    return Object.values(monthlyData)
+      .map((data) => ({
+        ...data,
+        responseRate: Math.round((data.completed / data.total) * 100),
+      }))
+      .sort((a, b) => new Date(a.month) - new Date(b.month));
+  }, [formSubmissionData]);
 
   if (isPending) return <LoaderComponent />;
   if (error) return <div>Error fetching data: {error.message}</div>;
@@ -86,7 +128,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-2">
             {/* Response Rate Chart */}
-            <ResponseRateChart />
+            <ResponseRateChart data={responseRatesData} />
           </div>
           <div>
             {" "}
