@@ -10,6 +10,7 @@ import {
   PencilIcon,
   BellRingIcon,
   LoaderIcon,
+  Star,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -110,27 +111,26 @@ export const overviewColumns = [
   //       return date ? new Date(date).toLocaleDateString() : "-";
   //     },
   //   },
-  //   {
-  //     accessorKey: "averageRating",
-  //     header: "Rating",
-  //     cell: ({ row }) => {
-  //       // Calculate average rating from responses
-  //       const responses = row.original.responses;
-  //       const satisfactionMap = {
-  //         "Very Satisfied": 5,
-  //         Satisfied: 4,
-  //         "Somewhat Satisfied": 3,
-  //         "Neither Satisfied nor Dissatisfied": 2,
-  //         Dissatisfied: 1,
-  //       };
-  //       const numericResponses = responses
-  //         .filter((r) => satisfactionMap[r.response])
-  //         .map((r) => satisfactionMap[r.response]);
-  //       const average =
-  //         numericResponses.reduce((a, b) => a + b, 0) / numericResponses.length;
-  //       return <div className="font-medium">{average.toFixed(1)}/5</div>;
-  //     },
-  //   },
+  {
+    accessorKey: "averageRating",
+    header: "Rating",
+    cell: ({ row }) => {
+      const rating = row.getValue("averageRating");
+      const status = row.getValue("status");
+      return (
+        <div className="flex items-center gap-1">
+          {status === "completed" ? (
+            <>
+              <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
+              <span>{rating}</span>
+            </>
+          ) : (
+            <span>N/A</span>
+          )}
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "status",
     header: "Status",
