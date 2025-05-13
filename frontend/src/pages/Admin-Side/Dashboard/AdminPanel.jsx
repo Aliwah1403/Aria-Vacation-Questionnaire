@@ -109,6 +109,32 @@ export default function AdminDashboard() {
       .sort((a, b) => new Date(a.month) - new Date(b.month));
   }, [formSubmissionData]);
 
+  // Calculate overall average satisfaction rating
+  const overallSatisfactionData = useMemo(() => {
+    if (!averageRatingData?.length)
+      return {
+        averageSatisfaction: 0,
+        totalResponses: 0,
+      };
+
+    const validRatings = averageRatingData.filter(
+      (submission) =>
+        submission.averageRating !== null &&
+        submission.averageRating !== undefined
+    );
+
+    const sum = validRatings.reduce(
+      (acc, submission) => acc + submission.averageRating,
+      0
+    );
+
+    return {
+      averageSatisfaction:
+        validRatings.length > 0 ? (sum / validRatings.length).toFixed(1) : 0,
+      totalResponses: validRatings.length,
+    };
+  }, [averageRatingData]);
+
   if (isPending) return <LoaderComponent />;
   if (error) return <div>Error fetching data: {error.message}</div>;
 
@@ -119,10 +145,12 @@ export default function AdminDashboard() {
         description="Monitor and analyze member feedback"
       />
 
-      {/* Layout 2 */}
-      <div className=" flex flex-col gap-4 py-4 lg:px-6 px-4 md:gap-6 md:py-6">
-        {/* KPI Cards */}
-        <MetricCard />
+      <div className="flex flex-col gap-4 py-4 lg:px-6 px-4 md:gap-6 md:py-6">
+        {/* Pass both response rates and satisfaction data to MetricCard */}
+        <MetricCard
+          responseRates={responseRatesData}
+          satisfactionData={overallSatisfactionData}
+        />
 
         {/* Response Rate and Satisfaction Distribution charts */}
         <div className="grid grid-cols-3 gap-4">
