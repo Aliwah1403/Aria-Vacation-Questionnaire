@@ -29,6 +29,8 @@
     "thankYou": "Thank You for Your Feedback!",
     "thankYouComment": "We appreciate you taking the time to share your thoughts with us. Your feedback helps us improve our services.",
     "assistanceAsk": "Need further assistance?",
-    "whatsappChat": "Chat with us on WhatsApp"
+    "whatsappChat": "Chat with us on WhatsApp",
+    "formSubmittedHeader": "Form Already Submitted",
+    "formSubmittedText": "You have already completed this feedback form. Thank you for your response!"
   }
 }

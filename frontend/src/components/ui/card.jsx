@@ -45,6 +45,19 @@ function CardDescription({ className, ...props }) {
   );
 }
 
+function CardAction({ className, ...props }) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 function CardContent({ className, ...props }) {
   return (
     <div
@@ -71,5 +84,6 @@ export {
   CardFooter,
   CardTitle,
   CardDescription,
+  CardAction,
   CardContent,
 };

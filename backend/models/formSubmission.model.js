@@ -87,6 +87,10 @@ const formSubmissionSchema = new mongoose.Schema(
         },
       },
     ],
+    averageRating: {
+      type: Number,
+      default: null,
+    },
     testimonialConsent: {
       type: Boolean,
       required: true,

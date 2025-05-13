@@ -305,7 +305,28 @@ export const formSubmissionResponses = async (req, res) => {
       }
     }
 
-    // Update submission
+    // Calculate average rating from emoji responses
+    const emojiResponses = responses.filter((response) => {
+      const question = template.questions.find(
+        (q) => q._id.toString() === response.questionId
+      );
+      return question?.questionType === "emoji";
+    });
+
+    if (emojiResponses.length > 0) {
+      const scores = emojiResponses.map((response) => {
+        // Find the rating option that matches the response in any language
+        const ratingOption = template.ratingOptions.find((opt) =>
+          Object.values(opt.value).includes(response.response)
+        );
+        return ratingOption?.score || 0;
+      });
+
+      submission.averageRating =
+        scores.reduce((acc, score) => acc + score, 0) / scores.length;
+    }
+
+    // Update submission with responses and calculated rating
     submission.responses = responses;
     submission.testimonialConsent = testimonialConsent;
     submission.completedAt = new Date();

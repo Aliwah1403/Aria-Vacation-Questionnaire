@@ -51,29 +51,12 @@ const MemberHomepage = () => {
             <AlertCircle className="w-6 h-6 text-fountain-blue-600" />
           </div>
           <h2 className="text-2xl font-semibold text-gray-900">
-            Form Already Submitted
+            {t("formSubmittedHeader")}
           </h2>
           <div className="space-y-2">
             <p className="text-gray-600 max-w-md mx-auto">
-              {formData.message ||
-                "You have already completed this feedback form. Thank you for your response!"}
+              {t("formSubmittedText")}
             </p>
-            {formData.data?.completedAt && (
-              <p className="text-sm text-gray-500">
-                Completed on:{" "}
-                {new Date(formData.data.completedAt).toLocaleDateString()}
-              </p>
-            )}
-            {formData.data?.memberName && (
-              <p className="text-sm text-gray-500">
-                Submitted by: {formData.data.memberName}
-              </p>
-            )}
-            {formData.data?.resort && (
-              <p className="text-sm text-gray-500">
-                Resort: {formData.data.resort}
-              </p>
-            )}
           </div>
         </div>
       </div>

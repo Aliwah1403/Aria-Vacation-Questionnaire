@@ -29,6 +29,8 @@
     "thankYou": "Merci pour votre retour !",
     "thankYouComment": "Nous apprécions que vous ayez pris le temps de partager vos réflexions avec nous.",
     "assistanceAsk": "Besoin d'aide supplémentaire ?",
-    "whatsappChat": "Contactez-nous sur WhatsApp"
+    "whatsappChat": "Contactez-nous sur WhatsApp",
+    "formSubmittedHeader": "Formulaire déjà soumis",
+    "formSubmittedText": "Vous avez déjà rempli ce formulaire de retour d'information. Nous vous remercions de votre réponse !"
   }
 }
