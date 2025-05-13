@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import AdminPageHeader from "@/components/admin-page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { SatisfactionByResort } from "@/components/dashboard/satisfaction-by-resort";
@@ -14,25 +14,13 @@ import RecentComments from "@/components/dashboard/recent-comments";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { LoaderComponent } from "@/components/data-loader";
+import DateRangeSelector from "@/components/dashboard/date-range-selector";
 
-// Question group ratings data
-const questionGroupData = [
-  { group: "Service Quality", rating: 85 },
-  { group: "Accommodation", rating: 78 },
-  { group: "Facilities", rating: 82 },
-  { group: "Location & Views", rating: 90 },
-  { group: "Health & Safety", rating: 75 },
-];
 
-// Form completion data
-const formCompletionData = [
-  { formType: "Check-in", completionRate: 68 },
-  { formType: "Mid-Stay", completionRate: 57 },
-  { formType: "Check-out", completionRate: 62 },
-  { formType: "Post-Stay", completionRate: 78 },
-];
 
 export default function AdminDashboard() {
+  const [selectedRange, setSelectedRange] = useState(30);
+
   const {
     data: formSubmissionData,
     isPending,
@@ -40,7 +28,7 @@ export default function AdminDashboard() {
   } = useQuery({
     queryKey: ["formSubmissions", null],
     queryFn: () => formSubmissionApi.getAll(),
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 60 * 2,
   });
 
   // Filter testimonials data
@@ -100,7 +88,6 @@ export default function AdminDashboard() {
       }
     });
 
-    // Calculate rates and convert to array
     return Object.values(monthlyData)
       .map((data) => ({
         ...data,
@@ -143,6 +130,12 @@ export default function AdminDashboard() {
       <AdminPageHeader
         header="Dashboard"
         description="Monitor and analyze member feedback"
+        action={
+          <DateRangeSelector
+            selectedRange={selectedRange}
+            onRangeChange={setSelectedRange}
+          />
+        }
       />
 
       <div className="flex flex-col gap-4 py-4 lg:px-6 px-4 md:gap-6 md:py-6">
