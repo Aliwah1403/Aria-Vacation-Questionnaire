@@ -15,8 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { LoaderComponent } from "@/components/data-loader";
 import DateRangeSelector from "@/components/dashboard/date-range-selector";
-
-
+import DashboardDataExport from "@/components/dashboard/Data-Export/data-export";
 
 export default function AdminDashboard() {
   const [selectedRange, setSelectedRange] = useState(30);
@@ -131,10 +130,13 @@ export default function AdminDashboard() {
         header="Dashboard"
         description="Monitor and analyze member feedback"
         action={
-          <DateRangeSelector
-            selectedRange={selectedRange}
-            onRangeChange={setSelectedRange}
-          />
+          <>
+            <DateRangeSelector
+              selectedRange={selectedRange}
+              onRangeChange={setSelectedRange}
+            />
+            <DashboardDataExport />
+          </>
         }
       />
 
