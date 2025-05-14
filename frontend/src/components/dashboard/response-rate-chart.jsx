@@ -17,7 +17,7 @@ import {
 
 const chartConfig = {
   responseRate: {
-    label: "Rate",
+    label: "Response Rate",
     color: "hsl(var(--chart-1))",
   },
 };
@@ -56,15 +56,23 @@ const ResponseRateChart = ({ data }) => {
               tickFormatter={(value) => `${value}%`}
             />
             <ChartTooltip
+              defaultIndex={1}
               cursor={false}
               content={
                 <ChartTooltipContent
+                  labelKey="responses"
                   hideLabel
-                  formatter={(value, name, props) => [
-                    `${value}%`,
-                    "Response Rate",
-                    `${props.payload.completed} out of ${props.payload.total} responses`,
-                  ]}
+                  formatter={(value, name) => (
+                    <div className="flex min-w-[130px] items-center text-xs text-muted-foreground">
+                      {chartConfig[name]?.label || name}
+                      <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
+                        {value}
+                        <span className="font-normal text-muted-foreground">
+                          %
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 />
               }
             />
