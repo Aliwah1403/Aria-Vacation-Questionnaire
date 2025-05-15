@@ -19,24 +19,51 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export function MetricCard({ responseRates, satisfactionData }) {
-  // Get the most recent month's data
-  const currentMonth = responseRates[responseRates.length - 1] || {};
-  const previousMonth = responseRates[responseRates.length - 2] || {};
+export function MetricCard({
+  responseRates,
+  satisfactionData,
+  previousData,
+  selectedRange,
+}) {
+  // Calculate current period totals
+  const currentTotals = responseRates.reduce(
+    (acc, curr) => ({
+      total: acc.total + curr.total,
+      completed: acc.completed + curr.completed,
+    }),
+    { total: 0, completed: 0 }
+  );
 
-  // Calculate month-over-month change for response rate
-  const responseRateChange =
-    currentMonth.responseRate - (previousMonth.responseRate || 0);
+  // Calculate previous period totals
+  const previousTotals = previousData.reduce(
+    (acc, curr) => ({
+      total: acc.total + curr.total,
+      completed: acc.completed + curr.completed,
+    }),
+    { total: 0, completed: 0 }
+  );
+
+  // Calculate response rates
+  const currentResponseRate = currentTotals.total
+    ? Math.round((currentTotals.completed / currentTotals.total) * 100)
+    : 0;
+  const previousResponseRate = previousTotals.total
+    ? Math.round((previousTotals.completed / previousTotals.total) * 100)
+    : 0;
+
+  // Calculate changes
+  const responseRateChange = currentResponseRate - previousResponseRate;
   const responseRateTrend = responseRateChange >= 0 ? "up" : "down";
 
-  // Calculate total responses and pending
-  const totalSent = currentMonth.total || 0;
-  const completedResponses = currentMonth.completed || 0;
+  // Calculate pending responses
+  const totalSent = currentTotals.total;
+  const completedResponses = currentTotals.completed;
   const pendingResponses = totalSent - completedResponses;
 
-  // Calculate month-over-month change for total sent
-  const previousTotal = previousMonth.total || 0;
-  const totalSentChange = ((totalSent - previousTotal) / previousTotal) * 100;
+  // Calculate total sent change
+  const totalSentChange = previousTotals.total
+    ? ((totalSent - previousTotals.total) / previousTotals.total) * 100
+    : 0;
 
   return (
     <div className="*:data-[slot=card]:from-neutral-50 *:data-[slot=card]:to-fountain-blue-50/50 grid grid-cols-4 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -44,29 +71,41 @@ export function MetricCard({ responseRates, satisfactionData }) {
         <CardHeader>
           <CardDescription className="flex items-center justify-between gap-2">
             Response Rate
-            <CardAction>
-              <Badge variant="outline">
-                {responseRateTrend === "up" ? <TrendingUp /> : <TrendingDown />}
-                {Math.abs(responseRateChange)}%
-              </Badge>
-            </CardAction>
+            {responseRateChange !== 0 && (
+              <CardAction>
+                <Badge variant="outline">
+                  {responseRateTrend === "up" ? (
+                    <TrendingUp />
+                  ) : (
+                    <TrendingDown />
+                  )}
+                  {Math.abs(responseRateChange)}%
+                </Badge>
+              </CardAction>
+            )}
           </CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {currentMonth.responseRate || 0}%
+            {currentResponseRate}%
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {responseRateTrend === "up" ? "Trending up" : "Trending down"} this
-            month
-            {responseRateTrend === "up" ? (
-              <TrendingUp className="size-4" />
+            {responseRateChange !== 0 ? (
+              <>
+                {responseRateTrend === "up" ? "Improved" : "Decreased"} from
+                previous period
+                {responseRateTrend === "up" ? (
+                  <TrendingUp className="size-4" />
+                ) : (
+                  <TrendingDown className="size-4" />
+                )}
+              </>
             ) : (
-              <TrendingDown className="size-4" />
+              "No change from previous period"
             )}
           </div>
           <div className="text-muted-foreground">
-            Based on last month's performance
+            Comparing with previous {selectedRange} days
           </div>
         </CardFooter>
       </Card>

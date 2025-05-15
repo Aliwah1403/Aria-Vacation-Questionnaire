@@ -64,6 +64,7 @@ export default function AdminDashboard() {
           responseRates={responseRates}
           satisfactionData={satisfactionData}
           previousData={previousData}
+          selectedRange={selectedRange}
         />
 
         <div className="grid grid-cols-3 gap-4">
