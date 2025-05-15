@@ -105,6 +105,7 @@ export function useDashboardData(formSubmissionData, selectedRange) {
       .map((submission) => ({
         name: submission.memberName,
         comment: submission.additionalComments,
+        rating: submission.averageRating,
       }))
       .slice(0, 10);
     return {

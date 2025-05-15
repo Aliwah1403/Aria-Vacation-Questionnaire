@@ -4,16 +4,7 @@ import { cn } from "@/lib/utils";
 
 const Testimonial = React.forwardRef(
   (
-    {
-      name,
-      role,
-      company,
-      testimonial,
-      rating = 5,
-      image,
-      className,
-      ...props
-    },
+    { name, role, company, testimonial, rating, image, className, ...props },
     ref
   ) => {
     return (
@@ -26,7 +17,7 @@ const Testimonial = React.forwardRef(
         {...props}
       >
         <div className="absolute right-6 top-6 text-6xl font-serif text-muted-foreground/20">
-          <Quote className="stroke-fountain-blue-200/50"/>
+          <Quote className="stroke-fountain-blue-200/50" />
         </div>
 
         <div className="flex flex-col gap-4 h-full">
