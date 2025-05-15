@@ -54,7 +54,7 @@ export default function AdminDashboard() {
               selectedRange={selectedRange}
               onRangeChange={setSelectedRange}
             />
-            <DashboardDataExport data={currentData} />
+            {/* <DashboardDataExport data={currentData} /> */}
           </>
         }
       />
