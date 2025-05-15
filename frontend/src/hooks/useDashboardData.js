@@ -63,14 +63,14 @@ export function useDashboardData(formSubmissionData, selectedRange) {
     }, {});
 
     // Transform response rates for chart
-    const responseRatesData = Object.entries(responseRates).map(
-      ([date, data]) => ({
+    const responseRatesData = Object.entries(responseRates)
+      .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB)) 
+      .map(([date, data]) => ({
         date,
         total: data.total,
         completed: data.completed,
         responseRate: Math.round((data.completed / data.total) * 100),
-      })
-    );
+      }));
 
     // Calculate satisfaction data
     const completedSubmissions = currentData.filter(
