@@ -99,11 +99,8 @@ const SatisfactionDistributionChart = ({ data }) => {
               content={
                 <ChartTooltipContent
                   nameKey="satisfaction"
+                  labelKey="level"
                   indicator="line"
-                  formatter={(value, name) => [
-                    `${value} members (${((value / total) * 100).toFixed(1)}%)`,
-                    chartConfig[name].label,
-                  ]}
                 />
               }
             />

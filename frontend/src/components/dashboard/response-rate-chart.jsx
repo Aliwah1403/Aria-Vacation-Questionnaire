@@ -17,35 +17,54 @@ import {
 
 const chartConfig = {
   responseRate: {
-    label: "Rate",
+    label: "Response Rate",
     color: "hsl(var(--chart-1))",
   },
 };
 
-const ResponseRateChart = ({ data }) => {
+const ResponseRateChart = ({ data, selectedRange }) => {
+  // Determine x-axis format based on selected range
+  const xAxisTickFormatter = (value) => {
+    if (selectedRange <= 7) {
+      return value; // Show full date for weekly view
+    } else if (selectedRange <= 30) {
+      return value.split(" ")[1]; // Show only day for monthly view
+    }
+    return value.split(" ")[0]; // Show only month for yearly view
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Response Rate Trend</CardTitle>
-        <CardDescription>Monthly response rate percentage</CardDescription>
+        <CardDescription>
+          {selectedRange <= 7
+            ? "Daily"
+            : selectedRange <= 30
+            ? "Weekly"
+            : "Monthly"}{" "}
+          response rate percentage
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[500px] w-full">
           <LineChart
-            accessibilityLayer
             data={data}
             margin={{
+              top: 20,
               left: 12,
               right: 12,
+              bottom: 5,
             }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="date"
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickMargin={16}
+              height={40}
+              tickFormatter={xAxisTickFormatter}
             />
             <YAxis
               dataKey="responseRate"
@@ -56,21 +75,29 @@ const ResponseRateChart = ({ data }) => {
               tickFormatter={(value) => `${value}%`}
             />
             <ChartTooltip
+              defaultIndex={1}
               cursor={false}
               content={
                 <ChartTooltipContent
+                  labelKey="responses"
                   hideLabel
-                  formatter={(value, name, props) => [
-                    `${value}%`,
-                    "Response Rate",
-                    `${props.payload.completed} out of ${props.payload.total} responses`,
-                  ]}
+                  formatter={(value, name) => (
+                    <div className="flex min-w-[130px] items-center text-xs text-muted-foreground">
+                      {chartConfig[name]?.label || name}
+                      <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
+                        {value}
+                        <span className="font-normal text-muted-foreground">
+                          %
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 />
               }
             />
             <Line
               dataKey="responseRate"
-              type="natural"
+              type="monotone"
               stroke="var(--color-responseRate)"
               strokeWidth={2}
               dot={{
@@ -83,14 +110,6 @@ const ResponseRateChart = ({ data }) => {
           </LineChart>
         </ChartContainer>
       </CardContent>
-      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter> */}
     </Card>
   );
 };

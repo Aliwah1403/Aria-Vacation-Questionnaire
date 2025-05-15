@@ -136,6 +136,7 @@ const RecentComments = ({ comments }) => {
                       {...testimonial}
                       name={testimonial.name}
                       testimonial={testimonial.comment}
+                      rating={testimonial.rating}
                     />
                   </div>
                 </CarouselItem>
