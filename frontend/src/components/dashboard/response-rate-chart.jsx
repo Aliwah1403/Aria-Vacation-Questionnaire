@@ -22,17 +22,33 @@ const chartConfig = {
   },
 };
 
-const ResponseRateChart = ({ data }) => {
+const ResponseRateChart = ({ data, selectedRange }) => {
+  // Determine x-axis format based on selected range
+  const xAxisTickFormatter = (value) => {
+    if (selectedRange <= 7) {
+      return value; // Show full date for weekly view
+    } else if (selectedRange <= 30) {
+      return value.split(" ")[1]; // Show only day for monthly view
+    }
+    return value.split(" ")[0]; // Show only month for yearly view
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Response Rate Trend</CardTitle>
-        <CardDescription>Monthly response rate percentage</CardDescription>
+        <CardDescription>
+          {selectedRange <= 7
+            ? "Daily"
+            : selectedRange <= 30
+            ? "Weekly"
+            : "Monthly"}{" "}
+          response rate percentage
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[500px] w-full">
           <LineChart
-            accessibilityLayer
             data={data}
             margin={{
               left: 12,
@@ -41,11 +57,12 @@ const ResponseRateChart = ({ data }) => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="date"
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickMargin={16}
+              height={40}
+              tickFormatter={xAxisTickFormatter}
             />
             <YAxis
               dataKey="responseRate"
@@ -91,14 +108,6 @@ const ResponseRateChart = ({ data }) => {
           </LineChart>
         </ChartContainer>
       </CardContent>
-      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter> */}
     </Card>
   );
 };
