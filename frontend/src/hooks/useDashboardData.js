@@ -64,7 +64,7 @@ export function useDashboardData(formSubmissionData, selectedRange) {
 
     // Transform response rates for chart
     const responseRatesData = Object.entries(responseRates)
-      .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB)) 
+      .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
       .map(([date, data]) => ({
         date,
         total: data.total,
@@ -105,8 +105,8 @@ export function useDashboardData(formSubmissionData, selectedRange) {
       .map((submission) => ({
         name: submission.memberName,
         comment: submission.additionalComments,
-      }));
-
+      }))
+      .slice(0, 10);
     return {
       currentData,
       previousData,
