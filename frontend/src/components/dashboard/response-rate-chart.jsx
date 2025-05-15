@@ -51,8 +51,10 @@ const ResponseRateChart = ({ data, selectedRange }) => {
           <LineChart
             data={data}
             margin={{
+              top: 20,
               left: 12,
               right: 12,
+              bottom: 5,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -95,7 +97,7 @@ const ResponseRateChart = ({ data, selectedRange }) => {
             />
             <Line
               dataKey="responseRate"
-              type="natural"
+              type="monotone"
               stroke="var(--color-responseRate)"
               strokeWidth={2}
               dot={{
