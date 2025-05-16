@@ -122,7 +122,7 @@ export const overviewColumns = [
           {status === "completed" ? (
             <>
               <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
-              <span>{rating}</span>
+              <span>{`${rating.toFixed(1)}`}</span>
             </>
           ) : (
             <span>N/A</span>
