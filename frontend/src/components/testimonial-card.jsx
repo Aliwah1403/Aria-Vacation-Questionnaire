@@ -43,21 +43,10 @@ const Testimonial = React.forwardRef(
 
           <div className="flex items-center gap-4 justify-start">
             <div className="flex items-center gap-4">
-              {/* Replace with People Icon */}
               <Users />
-              {/* {image && (
-                <Avatar>
-                  <AvatarImage src={image || "/placeholder.svg"} alt={name} height={48} width={48} />
-                  <AvatarFallback>{name[0]}</AvatarFallback>
-                </Avatar>
-              )} */}
 
               <div className="flex flex-col">
-                <h3 className="font-semibold text-foreground">{name}</h3>
-                {/* <p className="text-sm text-muted-foreground">
-                  {role}
-                  {company && ` @ ${company}`}
-                </p> */}
+                <h3 className="font-medium text-foreground">{name}</h3>
               </div>
             </div>
           </div>
