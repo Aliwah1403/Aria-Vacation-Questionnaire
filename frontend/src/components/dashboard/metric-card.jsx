@@ -105,7 +105,11 @@ export function MetricCard({
             )}
           </div>
           <div className="text-muted-foreground">
-            Comparing with previous {selectedRange} days
+            {selectedRange === 365 ? (
+              <span> Comparing with previous 1 year</span>
+            ) : (
+              <span> Comparing with previous {selectedRange} days</span>
+            )}
           </div>
         </CardFooter>
       </Card>
