@@ -36,7 +36,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useCreateEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
+import {
+  useCreateEmailTemplate,
+  useUpdateEmailTemplate,
+} from "@/mutations/emailTemplate/emailTemplateMutations";
 import { LoadingButton } from "@/components/ui/loading-button";
 
 // Mock form types data
@@ -84,29 +87,54 @@ const formSchema = z
     }
   );
 
-const CreateEmailDialog = ({ formTypes }) => {
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedFormType, setSelectedFormType] = useState(null);
-  const [contentType, setContentType] = useState("text");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const textareaRef = useRef(null);
-  const htmlEditorRef = useRef(null);
+const CreateEmailDialog = ({
+  formTypes,
+  initialData,
+  isOpen,
+  onOpenChange,
+  hidden,
+}) => {
+  const [selectedFormType, setSelectedFormType] = useState(
+    initialData?.formCode || null
+  );
+  const [contentType, setContentType] = useState(
+    initialData?.contentType || "text"
+  );
 
   const createMutation = useCreateEmailTemplate();
+  const updateMutation = useUpdateEmailTemplate();
 
-  // Initialize React Hook Form with Zod validation
+  // Initialize form with initial data if editing
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      formType: "",
-      templateName: "",
-      emailSubject: "",
-      contentType: "text",
-      textContent: "",
-      htmlContent: "",
+      formType: initialData?.formCode || "",
+      templateName: initialData?.emailTemplateName || "",
+      emailSubject: initialData?.emailSubject || "",
+      contentType: initialData?.contentType || "text",
+      textContent: initialData?.textContent || "",
+      htmlContent: initialData?.htmlContent || "",
     },
   });
+
+  // Reset form when dialog opens/closes or initialData changes
+  useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        formType: initialData?.formCode || "",
+        templateName: initialData?.emailTemplateName || "",
+        emailSubject: initialData?.emailSubject || "",
+        contentType: initialData?.contentType || "text",
+        textContent: initialData?.textContent || "",
+        htmlContent: initialData?.htmlContent || "",
+      });
+      setContentType(initialData?.contentType || "text");
+      setSelectedFormType(initialData?.formCode || null);
+    }
+  }, [isOpen, initialData, form]);
+
+  const textareaRef = useRef(null);
+  const htmlEditorRef = useRef(null);
 
   // Update contentType in form when tabs change
   useEffect(() => {
@@ -166,7 +194,6 @@ const CreateEmailDialog = ({ formTypes }) => {
   };
 
   const onSubmit = async (data) => {
-    // Log the form data
     const templateData = {
       formCode: selectedFormType,
       emailTemplateName: data.templateName,
@@ -177,45 +204,50 @@ const CreateEmailDialog = ({ formTypes }) => {
       variables: availableVariables,
     };
 
-    console.log(templateData);
+    const mutation = initialData ? updateMutation : createMutation;
 
-    createMutation.mutate(templateData, {
-      onSuccess: () => {
-        // Close the modal and reset form
-        setIsCreateDialogOpen(false);
-        form.reset();
-        setContentType("text");
-
-        // Success toast
-        toast.success("Email template created successfully");
-      },
-      onError: () => {
-        toast.error("Failed to create email template. Please try again");
-      },
-    });
+    mutation.mutate(
+      initialData ? { id: initialData._id, ...templateData } : templateData,
+      {
+        onSuccess: () => {
+          onOpenChange(false);
+          form.reset();
+          toast.success(
+            `Email template ${initialData ? "updated" : "created"} successfully`
+          );
+        },
+        onError: () => {
+          toast.error(
+            `Failed to ${initialData ? "update" : "create"} email template`
+          );
+        },
+      }
+    );
   };
 
   return (
-    <Dialog
-      open={isCreateDialogOpen}
-      onOpenChange={(open) => {
-        setIsCreateDialogOpen(open);
-        if (!open) form.reset();
-      }}
-    >
-      <DialogTrigger asChild>
-        <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create New Email Template
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      {!hidden && (
+        <DialogTrigger asChild>
+          <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create New Email Template
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Create Email Template</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Edit Email Template" : "Create Email Template"}
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+            id="email-template-form"
+          >
             <FormField
               control={form.control}
               name="formType"
@@ -346,18 +378,24 @@ const CreateEmailDialog = ({ formTypes }) => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
-                disabled={isSubmitting}
+                onClick={() => onOpenChange(false)}
+                disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Cancel
               </Button>
               <LoadingButton
                 type="submit"
-                loading={createMutation.isPending}
-                disabled={isSubmitting}
+                form="email-template-form"
+                loading={createMutation.isPending || updateMutation.isPending}
                 className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
               >
-                {createMutation.isPending ? "Creating..." : "Create Template"}
+                {createMutation.isPending || updateMutation.isPending
+                  ? initialData
+                    ? "Updating..."
+                    : "Creating..."
+                  : initialData
+                  ? "Update Template"
+                  : "Create Template"}
               </LoadingButton>
             </DialogFooter>
           </form>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
   PlusCircle,
@@ -32,10 +32,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDeleteEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
 import { toast } from "sonner";
+import { EmailTemplateContext } from "./email-template-table";
 
 const EmailTemplateActions = ({ row }) => {
-  const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
+  const [dialogType, setDialogType] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { setEditingTemplate, setDialogOpen } =
+    useContext(EmailTemplateContext);
+
+  const handleEditClick = () => {
+    setEditingTemplate(row.original);
+    setDialogOpen(true);
+    setDropdownOpen(false);
+  };
 
   const deleteMutation = useDeleteEmailTemplate();
   // const toggleStatusMutation = useToggleEmailTemplateStatus();
@@ -82,7 +91,7 @@ const EmailTemplateActions = ({ row }) => {
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleEditClick}>
             <Pencil className="size-4" />
             Edit email template
           </DropdownMenuItem>
@@ -152,8 +161,9 @@ const EmailTemplateActions = ({ row }) => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <LoadingButton
               variant={emailTemplate.isActive ? "destructive" : "default"}
-              onClick={()=>{console.log("toggle")}}
-              // loading={toggleStatusMutation.isPending}
+              onClick={() => {
+                console.log("toggle");
+              }}
             >
               Proceed
               {/* {toggleStatusMutation.isPending
@@ -185,7 +195,6 @@ export const emailTemplateColumns = [
   {
     accessorKey: "isActive",
     header: "Status",
-    // filterFn: multiSelectFilter,
     accessorFn: (row) => (row.isActive ? "Active" : "Inactive"),
     cell: ({ row }) => {
       const status = row.original.isActive;
