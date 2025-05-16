@@ -34,7 +34,7 @@ export const recentFeedbackColumns = [
     accessorKey: "averageRating",
     header: "Satisfaction",
     cell: ({ row }) => {
-      const rating = row.getValue("averageRating");
+      const rating = row.getValue("averageRating").toFixed(1);
       return (
         <div className="flex items-center gap-1">
           <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
