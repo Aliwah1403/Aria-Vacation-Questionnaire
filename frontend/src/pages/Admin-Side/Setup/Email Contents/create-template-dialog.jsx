@@ -248,34 +248,36 @@ const CreateEmailDialog = ({
             className="space-y-4"
             id="email-template-form"
           >
-            <FormField
-              control={form.control}
-              name="formType"
-              render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Form Type</FormLabel>
-                  <div className="col-span-3">
-                    <Select
-                      onValueChange={(value) => setSelectedFormType(value)}
-                    >
-                      <FormControl>
-                        <SelectTrigger id="form-type">
-                          <SelectValue placeholder="Select a form type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {formTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.formCode}>
-                            {type.formName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
+            {!initialData && (
+              <FormField
+                control={form.control}
+                name="formType"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Form Type</FormLabel>
+                    <div className="col-span-3">
+                      <Select
+                        onValueChange={(value) => setSelectedFormType(value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger id="form-type">
+                            <SelectValue placeholder="Select a form type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {formTypes.map((type) => (
+                            <SelectItem key={type.id} value={type.formCode}>
+                              {type.formName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
