@@ -142,7 +142,7 @@ export const getFormTemplate = async (req, res) => {
 export const updateFormTemplate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { questions, ratingOptions, isActive } = req.body;
+    const { formTemplateName, questions, ratingOptions, isActive } = req.body;
 
     // Check if template exists
     const existingTemplate = await FormTemplate.findById(id);
@@ -152,6 +152,9 @@ export const updateFormTemplate = async (req, res) => {
         message: "Form template not found",
       });
     }
+
+    let updatedFormTemplateName =
+      formTemplateName || existingTemplate.formTemplateName;
 
     let updatedQuestions = [...existingTemplate.questions]; // Create copy of existing questions
 
@@ -235,6 +238,7 @@ export const updateFormTemplate = async (req, res) => {
     const updatedTemplate = await FormTemplate.findByIdAndUpdate(
       id,
       {
+        formTemplateName: updatedFormTemplateName,
         questions: updatedQuestions,
         ratingOptions: updatedRatingOptions,
         isActive: isActive ?? existingTemplate.isActive,
