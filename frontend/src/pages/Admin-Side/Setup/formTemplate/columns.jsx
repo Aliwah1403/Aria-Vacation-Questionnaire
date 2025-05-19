@@ -69,10 +69,10 @@ const FormTemplateActions = ({ row }) => {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <Pencil className="size-4" />
             Edit form template
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           {/* <DropdownMenuItem
             onClick={() => {
