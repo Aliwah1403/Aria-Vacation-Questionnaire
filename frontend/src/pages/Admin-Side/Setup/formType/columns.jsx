@@ -81,7 +81,7 @@ const FormTypeActions = ({ row }) => {
             Edit form type
           </DropdownMenuItem>
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
               setDialogType("disable");
@@ -89,7 +89,7 @@ const FormTypeActions = ({ row }) => {
           >
             <BanIcon className="size-4" />
             {formType.isActive ? "Disable" : "Enable"} Form Type
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuItem
             className="text-red-500"

@@ -40,11 +40,11 @@ const router = createBrowserRouter([
     element: <MemberSideLayout />,
     children: [
       {
-        path: "/feedback/:formType/:id",
+        path: "/feedback/:id",
         element: <MemberHomepage />,
       },
       {
-        path: "/feedback/:formType/:id/questionnaire",
+        path: "/feedback/:id/questionnaire",
         element: <FeedbackFromDB />,
       },
       // {
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
       //   element: <Feedback />,
       // },
       {
-        path: "/feedback/:formType/:id/success",
+        path: "/feedback/:id/success",
         element: <Success />,
       },
     ],

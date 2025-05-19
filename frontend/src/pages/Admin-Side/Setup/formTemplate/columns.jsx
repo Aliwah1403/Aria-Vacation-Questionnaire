@@ -74,7 +74,7 @@ const FormTemplateActions = ({ row }) => {
             Edit form template
           </DropdownMenuItem>
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
               setDialogType("disable");
@@ -82,7 +82,7 @@ const FormTemplateActions = ({ row }) => {
           >
             <BanIcon className="size-4" />
             {formTemplate.isActive ? "Disable" : "Enable"} form template
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuItem
             className="text-red-500"
