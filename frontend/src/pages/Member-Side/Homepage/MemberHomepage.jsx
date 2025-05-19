@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 
 const MemberHomepage = () => {
-  const { formType, id } = useParams();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -82,7 +82,7 @@ const MemberHomepage = () => {
   ];
 
   const handleStartClick = () => {
-    navigate(`/feedback/${formType}/${id}/questionnaire?lng=${currentLang}`);
+    navigate(`/feedback/${id}/questionnaire?lng=${currentLang}`);
   };
 
   return (

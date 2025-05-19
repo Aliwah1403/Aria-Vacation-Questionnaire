@@ -40,7 +40,7 @@ const createFeedbackSchema = (questions) => {
 
 const FeedbackFromDB = () => {
   const { t } = useTranslation();
-  const { formType, id } = useParams();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const currentLang = searchParams.get("lng") || "en";
@@ -93,7 +93,7 @@ const FeedbackFromDB = () => {
       };
 
       await formSubmissionApi.submitResponses(id, submissionData);
-      navigate(`/feedback/${formType}/${id}/success?lng=${currentLang}`);
+      navigate(`/feedback/${id}/success?lng=${currentLang}`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       // Add error handling here if needed
