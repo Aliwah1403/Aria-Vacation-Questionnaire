@@ -95,7 +95,7 @@ const EmailTemplateActions = ({ row }) => {
             <Pencil className="size-4" />
             Edit email template
           </DropdownMenuItem>
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
               setDialogType("disable");
@@ -103,7 +103,7 @@ const EmailTemplateActions = ({ row }) => {
           >
             <BanIcon className="size-4" />
             {emailTemplate.isActive ? "Disable" : "Enable"} template
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
             className="text-red-500"
             onClick={() => {
