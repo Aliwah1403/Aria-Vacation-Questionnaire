@@ -18,8 +18,8 @@ export const formTemplateApi = {
     );
     return data;
   },
-  update: async ({ id, templateData }) => {
-    const { data } = await apiClient.put(
+  update: async (id, templateData) => {
+    const { data } = await apiClient.patch(
       `/api/v1/form-template/update/${id}`,
       templateData
     );
