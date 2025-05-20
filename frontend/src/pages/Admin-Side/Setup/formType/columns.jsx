@@ -31,7 +31,10 @@ import {
   CheckIcon,
 } from "lucide-react";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { useDeleteFormType } from "@/mutations/formType/formTypeMutations";
+import {
+  useDeleteFormType,
+  useToggleFormTypeStatus,
+} from "@/mutations/formType/formTypeMutations";
 import { toast } from "sonner";
 import { FormTypeContext } from "./form-type-table";
 
@@ -42,7 +45,7 @@ const FormTypeActions = ({ row }) => {
   const { setEditingFormType, setSheetOpen } = useContext(FormTypeContext);
 
   const deleteMutation = useDeleteFormType();
-  // const statusMutation = useEmailTemplateStatus()
+  const toggleStatusMutation = useToggleFormTypeStatus();
 
   const formType = row.original;
 
@@ -57,6 +60,31 @@ const FormTypeActions = ({ row }) => {
         toast.error("Failed to delete form type");
       },
     });
+  };
+
+  const handleStatusToggle = () => {
+    toggleStatusMutation.mutate(
+      {
+        id: formType._id,
+        isActive: !formType.isActive,
+      },
+      {
+        onSuccess: () => {
+          setDialogType(null);
+          setDropdownOpen(false);
+          toast.success(
+            `Form type ${
+              formType.isActive ? "disabled" : "enabled"
+            } successfully`
+          );
+        },
+        onError: () => {
+          toast.error(
+            `Failed to ${formType.isActive ? "disable" : "enable"} form type`
+          );
+        },
+      }
+    );
   };
 
   const handleEditClick = () => {
@@ -81,7 +109,7 @@ const FormTypeActions = ({ row }) => {
             Edit form type
           </DropdownMenuItem>
 
-          {/* <DropdownMenuItem
+          <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
               setDialogType("disable");
@@ -89,7 +117,7 @@ const FormTypeActions = ({ row }) => {
           >
             <BanIcon className="size-4" />
             {formType.isActive ? "Disable" : "Enable"} Form Type
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
 
           <DropdownMenuItem
             className="text-red-500"
@@ -147,15 +175,15 @@ const FormTypeActions = ({ row }) => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <LoadingButton
               variant={formType.isActive ? "destructive" : "default"}
-              // onClick={handleStatusToggle}
-              // loading={toggleStatusMutation.isPending}
+              onClick={handleStatusToggle}
+              loading={toggleStatusMutation.isPending}
+              className={!formType.isActive && "bg-fountain-blue-400 hover:bg-fountain-blue-400/80"}
             >
-              Proceed
-              {/* {toggleStatusMutation.isPending
+              {toggleStatusMutation.isPending
                 ? "Processing..."
-                : emailTemplate.isActive
+                : formType.isActive
                 ? "Disable"
-                : "Enable"} */}
+                : "Enable"}
             </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>

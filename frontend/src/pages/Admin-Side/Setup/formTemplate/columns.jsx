@@ -32,7 +32,10 @@ import {
 } from "lucide-react";
 import { dateFormat } from "@/utils/dateFormat";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { useDeleteFormTemplate } from "@/mutations/formTemplate/formTemplateMutations";
+import {
+  useDeleteFormTemplate,
+  useToggleFormTemplateStatus,
+} from "@/mutations/formTemplate/formTemplateMutations";
 import { toast } from "sonner";
 
 const FormTemplateActions = ({ row }) => {
@@ -40,6 +43,7 @@ const FormTemplateActions = ({ row }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const deleteMutation = useDeleteFormTemplate();
+  const toggleStatusMutation = useToggleFormTemplateStatus();
 
   const formTemplate = row.original;
 
@@ -54,6 +58,33 @@ const FormTemplateActions = ({ row }) => {
         toast.error("Failed to delete Form Template");
       },
     });
+  };
+
+  const handleStatusToggle = () => {
+    toggleStatusMutation.mutate(
+      {
+        id: formTemplate._id,
+        isActive: !formTemplate.isActive,
+      },
+      {
+        onSuccess: () => {
+          setDialogType(null);
+          setDropdownOpen(false);
+          toast.success(
+            `Form template ${
+              formTemplate.isActive ? "disabled" : "enabled"
+            } successfully`
+          );
+        },
+        onError: () => {
+          toast.error(
+            `Failed to ${
+              formTemplate.isActive ? "disable" : "enable"
+            } form template`
+          );
+        },
+      }
+    );
   };
 
   return (
@@ -74,15 +105,15 @@ const FormTemplateActions = ({ row }) => {
             Edit form template
           </DropdownMenuItem> */}
 
-          {/* <DropdownMenuItem
+          <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
               setDialogType("disable");
             }}
           >
             <BanIcon className="size-4" />
-            {formTemplate.isActive ? "Disable" : "Enable"} form template
-          </DropdownMenuItem> */}
+            {formTemplate.isActive ? "Disable" : "Enable"} Form Template
+          </DropdownMenuItem>
 
           <DropdownMenuItem
             className="text-red-500"
@@ -94,13 +125,6 @@ const FormTemplateActions = ({ row }) => {
             <Trash2 className="size-4 text-red-500" />
             Delete template
           </DropdownMenuItem>
-
-          {/* <AlertDialogTrigger>
-              <DropdownMenuItem>
-                <BanIcon className="mr-2 size-5" />
-                Disable vehicle
-              </DropdownMenuItem>
-            </AlertDialogTrigger> */}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -123,6 +147,42 @@ const FormTemplateActions = ({ row }) => {
               loading={deleteMutation.isPending}
             >
               {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </LoadingButton>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={dialogType === "disable"}
+        onOpenChange={() => setDialogType(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {formTemplate.isActive ? "Disable" : "Enable"} Form Template
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {formTemplate.isActive
+                ? "This form template will no longer be available for use after disabling."
+                : "This form template will be available for use after enabling."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <LoadingButton
+              variant={formTemplate.isActive ? "destructive" : "default"}
+              onClick={handleStatusToggle}
+              loading={toggleStatusMutation.isPending}
+              className={
+                !formTemplate.isActive &&
+                "bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+              }
+            >
+              {toggleStatusMutation.isPending
+                ? "Processing..."
+                : formTemplate.isActive
+                ? "Disable"
+                : "Enable"}
             </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -30,7 +30,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useDeleteEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
+import {
+  useDeleteEmailTemplate,
+  useToggleEmailTemplateStatus,
+} from "@/mutations/emailTemplate/emailTemplateMutations";
 import { toast } from "sonner";
 
 const EmailTemplateActions = ({ row }) => {
@@ -38,7 +41,7 @@ const EmailTemplateActions = ({ row }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const deleteMutation = useDeleteEmailTemplate();
-  // const toggleStatusMutation = useToggleEmailTemplateStatus();
+  const toggleStatusMutation = useToggleEmailTemplateStatus();
   const emailTemplate = row.original;
 
   const handleEmailTemplateDelete = () => {
@@ -54,22 +57,32 @@ const EmailTemplateActions = ({ row }) => {
     });
   };
 
-  // const handleStatusToggle = () => {
-  //   toggleStatusMutation.mutate(emailTemplate._id, {
-  //     onSuccess: () => {
-  //       setDialogType(null);
-  //       setDropdownOpen(false);
-  //       toast.success(
-  //         `Email Template ${
-  //           emailTemplate.isActive ? "disabled" : "enabled"
-  //         } successfully`
-  //       );
-  //     },
-  //     onError: () => {
-  //       toast.error("Failed to update Email Template status");
-  //     },
-  //   });
-  // };
+  const handleStatusToggle = () => {
+    toggleStatusMutation.mutate(
+      {
+        id: emailTemplate._id,
+        isActive: !emailTemplate.isActive,
+      },
+      {
+        onSuccess: () => {
+          setDialogType(null);
+          setDropdownOpen(false);
+          toast.success(
+            `Email template ${
+              emailTemplate.isActive ? "disabled" : "enabled"
+            } successfully`
+          );
+        },
+        onError: () => {
+          toast.error(
+            `Failed to ${
+              emailTemplate.isActive ? "disable" : "enable"
+            } email template`
+          );
+        },
+      }
+    );
+  };
 
   return (
     <>
@@ -82,11 +95,11 @@ const EmailTemplateActions = ({ row }) => {
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <Pencil className="size-4" />
             Edit email template
-          </DropdownMenuItem>
-          {/* <DropdownMenuItem
+          </DropdownMenuItem> */}
+          <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
               setDialogType("disable");
@@ -94,7 +107,7 @@ const EmailTemplateActions = ({ row }) => {
           >
             <BanIcon className="size-4" />
             {emailTemplate.isActive ? "Disable" : "Enable"} template
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="text-red-500"
             onClick={() => {
@@ -144,25 +157,26 @@ const EmailTemplateActions = ({ row }) => {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {emailTemplate.isActive
-                ? "This template will no longer be available for use after disabling."
-                : "This template will be available for use after enabling."}
+                ? "This email template will no longer be available for use after disabling."
+                : "This email template will be available for use after enabling."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <LoadingButton
               variant={emailTemplate.isActive ? "destructive" : "default"}
-              onClick={() => {
-                console.log("toggle");
-              }}
-              // loading={toggleStatusMutation.isPending}
+              onClick={handleStatusToggle}
+              loading={toggleStatusMutation.isPending}
+              className={
+                !emailTemplate.isActive &&
+                "bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+              }
             >
-              Proceed
-              {/* {toggleStatusMutation.isPending
+              {toggleStatusMutation.isPending
                 ? "Processing..."
                 : emailTemplate.isActive
                 ? "Disable"
-                : "Enable"} */}
+                : "Enable"}
             </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>

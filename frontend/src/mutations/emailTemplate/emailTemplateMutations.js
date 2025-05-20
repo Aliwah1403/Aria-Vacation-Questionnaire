@@ -29,6 +29,20 @@ export const useUpdateEmailTemplate = () => {
   });
 };
 
+export const useToggleEmailTemplateStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isActive }) => emailTemplateApi.update(id, { isActive }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["emailTemplates"] });
+    },
+    onError: () => {
+      console.error("Failed to toggle email template status");
+    },
+  });
+};
+
 export const useDeleteEmailTemplate = () => {
   const queryClient = useQueryClient();
 

@@ -9,8 +9,8 @@ export const formTypeApi = {
     const { data } = await apiClient.post("/api/v1/form-type/add", formData);
     return data;
   },
-  update: async ( id, formData ) => {
-    const { data } = await apiClient.put(
+  update: async (id, formData) => {
+    const { data } = await apiClient.patch(
       `/api/v1/form-type/update/${id}`,
       formData
     );

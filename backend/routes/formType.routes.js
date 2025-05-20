@@ -11,7 +11,7 @@ const formTypeRouter = Router();
 formTypeRouter
   .post("/add", addFormType)
   .get("/get", getFormType)
-  .put("/update/:id", updateFormType)
+  .patch("/update/:id", updateFormType)
   .delete("/delete/:id", deleteFormType)
 
 export default formTypeRouter;
