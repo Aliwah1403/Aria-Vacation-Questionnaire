@@ -36,11 +36,11 @@ export const HtmlEditor = forwardRef(({ value, onChange }, ref) => {
           <TabsTrigger value="preview">Preview</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="code" className="p-4">
+        <TabsContent value="code" className="p-4 overflow-scroll">
           <Textarea
             ref={textareaRef}
             placeholder="Enter HTML content here..."
-            className="min-h-[200px] font-mono text-sm"
+            className="min-h-[200px] max-h-[400px] font-mono text-sm "
             value={value}
             onChange={handleChange}
             onSelect={handleSelect}
@@ -49,7 +49,10 @@ export const HtmlEditor = forwardRef(({ value, onChange }, ref) => {
           />
         </TabsContent>
 
-        <TabsContent value="preview" className="p-4 min-h-[200px] border-t">
+        <TabsContent
+          value="preview"
+          className="p-4 max-h-[400px] border-t overflow-scroll"
+        >
           {value ? (
             <div
               className="prose max-w-none"
