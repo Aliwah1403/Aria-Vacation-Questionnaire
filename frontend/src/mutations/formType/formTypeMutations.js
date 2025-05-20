@@ -29,6 +29,20 @@ export const useUpdateFormType = () => {
   });
 };
 
+export const useToggleFormTypeStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isActive }) => formTypeApi.update(id, { isActive }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["formTypes"] });
+    },
+    onError: () => {
+      console.error("Failed to toggle form type status");
+    },
+  });
+};
+
 export const useDeleteFormType = () => {
   const queryClient = useQueryClient();
 
