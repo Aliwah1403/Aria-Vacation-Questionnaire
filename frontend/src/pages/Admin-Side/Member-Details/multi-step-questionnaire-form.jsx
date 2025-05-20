@@ -109,6 +109,10 @@ const MultiStepQuestionnaireForm = ({
 
   const navigate = useNavigate();
 
+  const validFormTemplates = formTemplates.filter(
+    (formTemplate) => formTemplate.isActive
+  );
+
   // Form for step 1 - Stay Details
   const stayDetailsForm = useForm({
     resolver: zodResolver(stayDetailsSchema),
@@ -172,7 +176,7 @@ const MultiStepQuestionnaireForm = ({
       setGeneratedLink(result.feedbackUrl);
 
       // Update form data with the selected template info
-      const selectedTemplate = formTemplates.find(
+      const selectedTemplate = validFormTemplates.find(
         (t) => t._id === values.formTemplateId
       );
       setFormData({
@@ -204,7 +208,7 @@ const MultiStepQuestionnaireForm = ({
   const { data: emailTemplateData } = useQuery({
     queryKey: ["emailTemplates", questionnaireTypeForm.watch("formTemplateId")],
     queryFn: async () => {
-      const selectedTemplate = formTemplates.find(
+      const selectedTemplate = validFormTemplates.find(
         (t) => t._id === questionnaireTypeForm.watch("formTemplateId")
       );
       if (!selectedTemplate?.formTypeId?.formCode) return [];
@@ -519,7 +523,7 @@ const MultiStepQuestionnaireForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {formTemplates?.map((template) => (
+                      {validFormTemplates?.map((template) => (
                         <SelectItem key={template._id} value={template._id}>
                           {template.formTemplateName}
                         </SelectItem>
@@ -532,7 +536,7 @@ const MultiStepQuestionnaireForm = ({
                     <div className="border rounded-md p-4">
                       <h3 className="font-medium mb-2">
                         {
-                          formTemplates.find((t) => t._id === field.value)
+                          validFormTemplates.find((t) => t._id === field.value)
                             ?.formTypeName
                         }
                       </h3>
@@ -545,7 +549,7 @@ const MultiStepQuestionnaireForm = ({
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge variant="outline" className="bg-gray-100">
                           {
-                            formTemplates.find((t) => t._id === field.value)
+                            validFormTemplates.find((t) => t._id === field.value)
                               ?.questions.length
                           }{" "}
                           questions

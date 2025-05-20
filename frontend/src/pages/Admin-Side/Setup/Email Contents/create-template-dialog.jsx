@@ -39,14 +39,6 @@ import {
 import { useCreateEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
 import { LoadingButton } from "@/components/ui/loading-button";
 
-// Mock form types data
-const formTypes = [
-  { id: "1", name: "Stay Experience Survey" },
-  { id: "2", name: "Membership Application" },
-  { id: "3", name: "Event Registration" },
-  { id: "4", name: "Feedback Form" },
-];
-
 // Available variables
 const availableVariables = [
   { name: "name", description: "Member's full name" },
@@ -94,6 +86,8 @@ const CreateEmailDialog = ({ formTypes }) => {
   const htmlEditorRef = useRef(null);
 
   const createMutation = useCreateEmailTemplate();
+
+  const validFormTypes = formTypes.filter((formType) => formType.isActive);
 
   // Initialize React Hook Form with Zod validation
   const form = useForm({
@@ -232,7 +226,7 @@ const CreateEmailDialog = ({ formTypes }) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {formTypes.map((type) => (
+                        {validFormTypes.map((type) => (
                           <SelectItem key={type.id} value={type.formCode}>
                             {type.formName}
                           </SelectItem>
