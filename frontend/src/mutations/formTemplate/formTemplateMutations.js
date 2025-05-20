@@ -29,6 +29,20 @@ export const useUpdateFormTemplate = () => {
   });
 };
 
+export const useToggleFormTemplateStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isActive }) => formTemplateApi.update(id, { isActive }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["formTemplates"] });
+    },
+    onError: () => {
+      console.error("Failed to toggle form template status");
+    },
+  });
+};
+
 export const useDeleteFormTemplate = () => {
   const queryClient = useQueryClient();
 
