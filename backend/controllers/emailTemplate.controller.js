@@ -121,6 +121,7 @@ export const updateEmailTemplate = async (req, res) => {
       textContent,
       htmlContent,
       variables,
+      isActive,
     } = req.body;
 
     const existingTemplate = await EmailTemplate.findById(id);
@@ -197,7 +198,7 @@ export const updateEmailTemplate = async (req, res) => {
     // Update the template
     const updatedTemplate = await EmailTemplate.findByIdAndUpdate(
       id,
-      { $set: updateData },
+      { $set: updateData, isActive: isActive ?? existingTemplate.isActive },
       { new: true }
     ).populate("formTypeId", "formName formCode formDescription");
 
