@@ -158,95 +158,36 @@ export const overviewColumns = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const status = row.getValue("status");
-      if (status != "completed") {
-        return (
-          // <AlertDialog>
-          //   <DropdownMenu>
-          //     <DropdownMenuTrigger asChild>
-          //       <Button variant="ghost" className="h-8 w-8 p-0">
-          //         <EllipsisHorizontalIcon className="h-4 w-4" />
-          //       </Button>
-          //     </DropdownMenuTrigger>
-          //     <DropdownMenuContent>
-          //       <DropdownMenuLabel>Actions</DropdownMenuLabel>
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => {
+  //     const status = row.getValue("status");
+  //     if (status != "completed") {
+  //       return (
+  //         <DropdownMenu>
+  //           <DropdownMenuTrigger asChild>
+  //             <Button variant="ghost" className="h-8 w-8 p-0">
+  //               <EllipsisIcon className="h-4 w-4" />
+  //             </Button>
+  //           </DropdownMenuTrigger>
+  //           <DropdownMenuContent align="middle">
+  //             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          //       <DropdownMenuSeparator />
+  //             <DropdownMenuSeparator />
 
-          //       <DropdownMenuItem onSelect={() => handleEdit(vehicle)}>
-          //         <Pencil1Icon className="mr-2 size-5" />
-          //         Edit vehicle details
-          //       </DropdownMenuItem>
+  //             <DropdownMenuItem>
+  //               <BellRingIcon className="size-4" />
+  //               Send Reminder
+  //             </DropdownMenuItem>
 
-          //       <AlertDialogTrigger>
-          //         <DropdownMenuItem>
-          //           <BanIcon className="mr-2 size-5" />
-          //           Disable vehicle
-          //         </DropdownMenuItem>
-          //       </AlertDialogTrigger>
-          //     </DropdownMenuContent>
-          //   </DropdownMenu>
-
-          //   <AlertDialogContent>
-          //     <AlertDialogHeader>
-          //       <AlertDialogTitle>
-          //         <p>
-          //           Are you sure you want to disable vehicle{" "}
-          //           <span className="uppercase">{registration}</span> ?
-          //         </p>
-          //       </AlertDialogTitle>
-          //       <AlertDialogDescription>
-          //         This vehicle is about to be disabled. You will still be able to
-          //         see the data associated with it
-          //       </AlertDialogDescription>
-          //     </AlertDialogHeader>
-          //     <AlertDialogFooter>
-          //       <AlertDialogCancel>Cancel</AlertDialogCancel>
-          //       <AlertDialogAction
-          //         // make use of loader button
-          //         className={cn("bg-tiber-950 hover:bg-tiber-950/90 text-white")}
-          //         onClick={() => toggleVehicleStatus(vehicle._id)}
-          //       >
-          //         Continue
-          //       </AlertDialogAction>
-          //     </AlertDialogFooter>
-          //   </AlertDialogContent>
-          // </AlertDialog>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <EllipsisIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="middle">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-              <DropdownMenuSeparator />
-
-              <DropdownMenuItem>
-                <BellRingIcon className="size-4" />
-                Send Reminder
-              </DropdownMenuItem>
-
-              <DropdownMenuItem>
-                <PencilIcon className="size-4" />
-                Edit stay details
-              </DropdownMenuItem>
-
-              {/* <AlertDialogTrigger>
-              <DropdownMenuItem>
-                <BanIcon className="mr-2 size-5" />
-                Disable vehicle
-              </DropdownMenuItem>
-            </AlertDialogTrigger> */}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      }
-    },
-  },
+  //             <DropdownMenuItem>
+  //               <PencilIcon className="size-4" />
+  //               Edit stay details
+  //             </DropdownMenuItem>
+  //           </DropdownMenuContent>
+  //         </DropdownMenu>
+  //       );
+  //     }
+  //   },
+  // },
 ];
