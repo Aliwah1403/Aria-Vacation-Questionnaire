@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
   PlusCircle,
@@ -32,19 +32,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDeleteEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
 import { toast } from "sonner";
-import { EmailTemplateContext } from "./email-template-table";
 
 const EmailTemplateActions = ({ row }) => {
-  const [dialogType, setDialogType] = useState(null);
+  const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { setEditingTemplate, setDialogOpen } =
-    useContext(EmailTemplateContext);
-
-  const handleEditClick = () => {
-    setEditingTemplate(row.original);
-    setDialogOpen(true);
-    setDropdownOpen(false);
-  };
 
   const deleteMutation = useDeleteEmailTemplate();
   // const toggleStatusMutation = useToggleEmailTemplateStatus();
@@ -91,7 +82,7 @@ const EmailTemplateActions = ({ row }) => {
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleEditClick}>
+          <DropdownMenuItem>
             <Pencil className="size-4" />
             Edit email template
           </DropdownMenuItem>
@@ -164,6 +155,7 @@ const EmailTemplateActions = ({ row }) => {
               onClick={() => {
                 console.log("toggle");
               }}
+              // loading={toggleStatusMutation.isPending}
             >
               Proceed
               {/* {toggleStatusMutation.isPending
@@ -195,6 +187,7 @@ export const emailTemplateColumns = [
   {
     accessorKey: "isActive",
     header: "Status",
+    // filterFn: multiSelectFilter,
     accessorFn: (row) => (row.isActive ? "Active" : "Inactive"),
     cell: ({ row }) => {
       const status = row.original.isActive;

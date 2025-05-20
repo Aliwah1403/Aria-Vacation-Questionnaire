@@ -11,7 +11,7 @@ const formTemplateRouter = Router();
 formTemplateRouter
   .post("/add", addFormTemplate)
   .get("/get", getFormTemplate)
-  .put("/update/:id", updateFormTemplate)
+  .patch("/update/:id", updateFormTemplate)
   .delete("/delete/:id", deleteFormTemplate);
 
 export default formTemplateRouter;

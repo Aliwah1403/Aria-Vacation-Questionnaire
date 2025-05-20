@@ -19,7 +19,7 @@ export const useUpdateFormTemplate = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: formTemplateApi.update,
+    mutationFn: ({ id, ...data }) => formTemplateApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(["formTemplates"]);
     },
