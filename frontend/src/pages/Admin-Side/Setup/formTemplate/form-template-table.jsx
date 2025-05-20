@@ -137,11 +137,14 @@ export function FormTemplateTable({ columns, data, formTypes }) {
     return <LoaderComponent text="Preparing question builder" />;
   }
 
+  // Valid formTypes
+  const validFormTypes = formTypes.filter((formType) => formType.isActive);
+
   if (showQuestionBuilder) {
     return (
       <QuestionBuilder
         formTypeDetails={{
-          [selectedFormType]: formTypes.find(
+          [selectedFormType]: validFormTypes.find(
             (ft) => ft.formCode === selectedFormType
           ),
         }}
@@ -209,7 +212,7 @@ export function FormTemplateTable({ columns, data, formTypes }) {
                       <SelectValue placeholder="Select form type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {formTypes.map((formType) => (
+                      {validFormTypes.map((formType) => (
                         <SelectItem
                           key={formType._id}
                           value={formType.formCode}
