@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
   PlusCircle,
@@ -35,10 +35,13 @@ import {
   useToggleEmailTemplateStatus,
 } from "@/mutations/emailTemplate/emailTemplateMutations";
 import { toast } from "sonner";
+import { EmailTemplateContext } from "./email-template-table";
 
 const EmailTemplateActions = ({ row }) => {
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { setEditingTemplate, setDialogOpen } =
+    useContext(EmailTemplateContext);
 
   const deleteMutation = useDeleteEmailTemplate();
   const toggleStatusMutation = useToggleEmailTemplateStatus();
@@ -84,6 +87,12 @@ const EmailTemplateActions = ({ row }) => {
     );
   };
 
+  const handleEditClick = () => {
+    setEditingTemplate(emailTemplate);
+    setDialogOpen(true);
+    setDropdownOpen(false);
+  };
+
   return (
     <>
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
@@ -95,10 +104,10 @@ const EmailTemplateActions = ({ row }) => {
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {/* <DropdownMenuItem>
-            <Pencil className="size-4" />
+          <DropdownMenuItem onClick={handleEditClick}>
+            <Pencil className="size-4 mr-2" />
             Edit email template
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               setDropdownOpen(false);
