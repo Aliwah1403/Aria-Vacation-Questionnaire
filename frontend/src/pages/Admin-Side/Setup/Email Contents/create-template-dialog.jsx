@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Loader2 } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -83,11 +83,11 @@ const CreateEmailDialog = ({
   isOpen,
   onOpenChange,
 }) => {
-  const [contentType, setContentType] = useState(
-    initialData?.contentType || "text"
-  );
+  const [contentType, setContentType] = useState("text");
   const createMutation = useCreateEmailTemplate();
   const updateMutation = useUpdateEmailTemplate();
+  const isEditing = !!initialData;
+
 
   const textareaRef = useRef(null);
   const htmlEditorRef = useRef(null);
@@ -115,17 +115,26 @@ const CreateEmailDialog = ({
   // Set initial data when editing
   useEffect(() => {
     if (isOpen && initialData) {
+      // Find the correct form type from the initialData
+      const formTypeValue = initialData.formTypeName || "";
+
       form.reset({
-        formType: initialData.formCode,
-        templateName: initialData.emailTemplateName,
-        emailSubject: initialData.emailSubject,
-        contentType: initialData.contentType,
+        formType: formTypeValue,
+        templateName: initialData.emailTemplateName || "",
+        emailSubject: initialData.emailSubject || "",
+        contentType: initialData.contentType || "text",
         textContent: initialData.textContent || "",
         htmlContent: initialData.htmlContent || "",
       });
-      setContentType(initialData.contentType);
+
+      setContentType(initialData.contentType || "text");
+
+      // Force the form to recognize the formType value is set
+      setTimeout(() => {
+        form.setValue("formType", formTypeValue, { shouldValidate: true });
+      }, 0);
     }
-  }, [isOpen, initialData, form]);
+  }, [isOpen, initialData, form, formTypes]);
 
   // Update contentType in form when tabs change
   useEffect(() => {
@@ -231,41 +240,43 @@ const CreateEmailDialog = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="formType"
-              render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Form Type</FormLabel>
-                  <div className="col-span-3">
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      // disabled={!!initialData}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder="Select a form type"
-                            defaultValue={initialData?.formCode}
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {formTypes
-                          .filter((t) => t.isActive)
-                          .map((type) => (
-                            <SelectItem key={type._id} value={type.formCode}>
-                              {type.formName}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
+            {!isEditing && (
+              <FormField
+                control={form.control}
+                name="formType"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Form Type</FormLabel>
+                    <div className="col-span-3">
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        // disabled={!!initialData}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder="Select a form type"
+                              defaultValue={initialData?.formCode}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {formTypes
+                            .filter((t) => t.isActive)
+                            .map((type) => (
+                              <SelectItem key={type._id} value={type.formCode}>
+                                {type.formName}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
