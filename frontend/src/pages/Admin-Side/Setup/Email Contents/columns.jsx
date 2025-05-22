@@ -105,7 +105,7 @@ const EmailTemplateActions = ({ row }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleEditClick}>
-            <Pencil className="size-4 mr-2" />
+            <Pencil className="size-4" />
             Edit email template
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -115,7 +115,7 @@ const EmailTemplateActions = ({ row }) => {
             }}
           >
             <BanIcon className="size-4" />
-            {emailTemplate.isActive ? "Disable" : "Enable"} template
+            {emailTemplate.isActive ? "Disable" : "Enable"} email template
           </DropdownMenuItem>
           <DropdownMenuItem
             className="text-red-500"

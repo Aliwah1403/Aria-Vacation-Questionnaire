@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,10 +37,13 @@ import {
   useToggleFormTemplateStatus,
 } from "@/mutations/formTemplate/formTemplateMutations";
 import { toast } from "sonner";
+import { FormTemplateContext } from "./form-template-table";
 
 const FormTemplateActions = ({ row }) => {
-  const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
+  const [dialogType, setDialogType] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { setEditingTemplate, setIsCreateDialogOpen } =
+    useContext(FormTemplateContext);
 
   const deleteMutation = useDeleteFormTemplate();
   const toggleStatusMutation = useToggleFormTemplateStatus();
@@ -87,6 +90,12 @@ const FormTemplateActions = ({ row }) => {
     );
   };
 
+  const handleEditClick = () => {
+    setEditingTemplate(row.original);
+    setIsCreateDialogOpen(true);
+    setDropdownOpen(false);
+  };
+
   return (
     <>
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
@@ -100,10 +109,10 @@ const FormTemplateActions = ({ row }) => {
 
           <DropdownMenuSeparator />
 
-          {/* <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleEditClick}>
             <Pencil className="size-4" />
             Edit form template
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
 
           <DropdownMenuItem
             onClick={() => {
