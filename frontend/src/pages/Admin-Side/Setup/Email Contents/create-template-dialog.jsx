@@ -91,49 +91,50 @@ const CreateEmailDialog = ({
   const textareaRef = useRef(null);
   const htmlEditorRef = useRef(null);
 
+  const defaultValues = {
+    formType: "",
+    templateName: "",
+    emailSubject: "",
+    contentType: "text",
+    textContent: "",
+    htmlContent: "",
+  };
+
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      formType: "",
-      templateName: "",
-      emailSubject: "",
-      contentType: "text",
-      textContent: "",
-      htmlContent: "",
-    },
+    defaultValues,
   });
+
+  // Enhanced reset function
+  const resetForm = () => {
+    form.reset(defaultValues);
+    setContentType("text");
+  };
 
   // Reset form when dialog closes
   useEffect(() => {
     if (!isOpen) {
-      form.reset();
-      setContentType("text");
+      resetForm();
     }
-  }, [isOpen, form]);
+  }, [isOpen]);
 
   // Set initial data when editing
   useEffect(() => {
     if (isOpen && initialData) {
-      // Find the correct form type from the initialData
-      const formTypeValue = initialData.formTypeName || "";
-
       form.reset({
-        formType: formTypeValue,
-        templateName: initialData.emailTemplateName || "",
-        emailSubject: initialData.emailSubject || "",
+        formType: initialData.formCode,
+        templateName: initialData.emailTemplateName,
+        emailSubject: initialData.emailSubject,
         contentType: initialData.contentType || "text",
         textContent: initialData.textContent || "",
         htmlContent: initialData.htmlContent || "",
       });
-
       setContentType(initialData.contentType || "text");
-
-      // Force the form to recognize the formType value is set
-      setTimeout(() => {
-        form.setValue("formType", formTypeValue, { shouldValidate: true });
-      }, 0);
+    } else if (isOpen && !initialData) {
+      // Explicitly reset when opening for new template
+      resetForm();
     }
-  }, [isOpen, initialData, form, formTypes]);
+  }, [isOpen, initialData, form]);
 
   // Update contentType in form when tabs change
   useEffect(() => {
@@ -210,8 +211,7 @@ const CreateEmailDialog = ({
         initialData ? { id: initialData._id, ...templateData } : templateData
       );
       onOpenChange(false);
-      form.reset();
-      setContentType("text");
+      resetForm(); // Use the new reset function
       toast.success(
         `Email template ${initialData ? "updated" : "created"} successfully`
       );
@@ -223,7 +223,15 @@ const CreateEmailDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          resetForm();
+        }
+        onOpenChange(open);
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
           <PlusCircle className="mr-2 h-4 w-4" />
@@ -378,7 +386,10 @@ const CreateEmailDialog = ({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  resetForm();
+                  onOpenChange(false);
+                }}
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Cancel
