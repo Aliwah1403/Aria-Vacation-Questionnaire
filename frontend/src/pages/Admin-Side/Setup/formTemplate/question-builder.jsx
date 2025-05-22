@@ -53,22 +53,14 @@ const emojiCodeToEmoji = (unified) => {
 
 export function QuestionBuilder({
   formTypeDetails,
+  mutation,
   selectedFormType,
   templateName,
-  initialQuestions = [],
-  initialRatingOptions = [],
-  isEditing = false,
   onSave,
   onCancel,
-  isPending, // Add this prop
 }) {
-  // Initialize with initial data if editing
-  const [questions, setQuestions] = useState(initialQuestions);
-  const [ratingOptions, setRatingOptions] = useState(
-    initialRatingOptions.length > 0
-      ? initialRatingOptions
-      : defaultEmojiMappings
-  );
+  const [questions, setQuestions] = useState([]);
+  const [ratingOptions, setRatingOptions] = useState([...defaultEmojiMappings]);
   const [newQuestion, setNewQuestion] = useState({
     questionText: { en: "", fr: "", ar: "", ru: "" },
     questionType: "emoji",
@@ -307,10 +299,10 @@ export function QuestionBuilder({
                 <FileText className="h-6 w-6 text-primary" />
               </div>
               <h2 className="text-2xl font-bold mb-2">
-                {formTypeDetails?.formName}
+                {formTypeDetails[selectedFormType]?.formName}
               </h2>
               <p className="text-muted-foreground">
-                {formTypeDetails?.formDescription}
+                {formTypeDetails[selectedFormType]?.formDescription}
               </p>
             </div>
 
@@ -332,13 +324,13 @@ export function QuestionBuilder({
 
             <div className="space-y-4 mt-8">
               <LoadingButton
-                loading={isPending} // Use isPending instead of mutation.isPending
+                loading={mutation.isPending}
                 className="w-full justify-start"
                 variant="outline"
                 onClick={handleSave}
                 disabled={questions.length === 0}
               >
-                {isPending ? "Saving" : "Save Template"}
+                {mutation.isPending ? "Saving" : "Save Template"}
               </LoadingButton>
 
               <Button
