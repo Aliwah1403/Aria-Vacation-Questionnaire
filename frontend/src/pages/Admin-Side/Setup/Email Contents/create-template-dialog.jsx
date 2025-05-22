@@ -88,7 +88,6 @@ const CreateEmailDialog = ({
   const updateMutation = useUpdateEmailTemplate();
   const isEditing = !!initialData;
 
-
   const textareaRef = useRef(null);
   const htmlEditorRef = useRef(null);
 
@@ -326,7 +325,7 @@ const CreateEmailDialog = ({
                     <TabsTrigger value="html">HTML</TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="text" className="mt-4">
+                  <TabsContent value="text" className="mt-4 overflow-scroll">
                     <FormField
                       control={form.control}
                       name="textContent"
@@ -336,7 +335,7 @@ const CreateEmailDialog = ({
                             <Textarea
                               ref={textareaRef}
                               placeholder="Enter email content here..."
-                              className="min-h-[200px]"
+                              className="min-h-[200px] max-h-[400px]"
                               {...field}
                             />
                           </FormControl>
