@@ -63,7 +63,9 @@ export function QuestionBuilder({
 }) {
   const [questions, setQuestions] = useState(initialQuestions);
   const [ratingOptions, setRatingOptions] = useState(
-    initialRatingOptions.length > 0 ? initialRatingOptions : [...defaultEmojiMappings]
+    initialRatingOptions.length > 0
+      ? initialRatingOptions
+      : [...defaultEmojiMappings]
   );
   const [newQuestion, setNewQuestion] = useState({
     questionText: { en: "", fr: "", ar: "", ru: "" },
@@ -109,7 +111,10 @@ export function QuestionBuilder({
 
   const handleEditQuestion = (index) => {
     setCurrentQuestionIndex(index);
-    setNewQuestion({ ...questions[index] });
+    setNewQuestion({
+      ...questions[index],
+      _id: questions[index]._id, // Explicitly preserve _id
+    });
     setEditingQuestion(true);
   };
 
@@ -119,7 +124,10 @@ export function QuestionBuilder({
       currentQuestionIndex !== null
     ) {
       const updatedQuestions = [...questions];
-      updatedQuestions[currentQuestionIndex] = { ...newQuestion };
+      updatedQuestions[currentQuestionIndex] = {
+        ...newQuestion,
+        _id: questions[currentQuestionIndex]._id, // Preserve the original _id
+      };
       setQuestions(updatedQuestions);
 
       // Reset form
