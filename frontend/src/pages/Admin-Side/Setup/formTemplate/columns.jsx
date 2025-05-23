@@ -37,10 +37,12 @@ import {
   useToggleFormTemplateStatus,
 } from "@/mutations/formTemplate/formTemplateMutations";
 import { toast } from "sonner";
+import { EditFormTemplate } from "./edit-form-template";
 
-const FormTemplateActions = ({ row }) => {
-  const [dialogType, setDialogType] = useState(null); // 'delete' or 'disable'
+const FormTemplateActions = ({ row, formTypes }) => {
+  const [dialogType, setDialogType] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const deleteMutation = useDeleteFormTemplate();
   const toggleStatusMutation = useToggleFormTemplateStatus();
@@ -97,13 +99,17 @@ const FormTemplateActions = ({ row }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
           <DropdownMenuSeparator />
 
-          {/* <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setDropdownOpen(false);
+              setShowEditForm(true);
+            }}
+          >
             <Pencil className="size-4" />
             Edit form template
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
 
           <DropdownMenuItem
             onClick={() => {
@@ -127,6 +133,14 @@ const FormTemplateActions = ({ row }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {showEditForm && (
+        <EditFormTemplate
+          template={row.original}
+          formTypes={formTypes}
+          onClose={() => setShowEditForm(false)}
+        />
+      )}
 
       <AlertDialog
         open={dialogType === "delete"}
@@ -191,7 +205,8 @@ const FormTemplateActions = ({ row }) => {
   );
 };
 
-export const formTemplateColumns = [
+// Make columns a function that accepts formTypes
+export const formTemplateColumns = (formTypes) => [
   {
     accessorKey: "formTemplateName",
     header: "Template Name",
@@ -248,6 +263,6 @@ export const formTemplateColumns = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <FormTemplateActions row={row} />,
+    cell: ({ row }) => <FormTemplateActions row={row} formTypes={formTypes} />,
   },
 ];

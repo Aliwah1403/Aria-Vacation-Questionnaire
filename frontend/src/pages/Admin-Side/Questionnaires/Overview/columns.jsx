@@ -119,7 +119,7 @@ export const overviewColumns = [
       const status = row.getValue("status");
       return (
         <div className="flex items-center gap-1">
-          {status === "completed" ? (
+          {status === "completed" && rating != null ? (
             <>
               <Star className="size-4 fill-fountain-blue-400 stroke-fountain-blue-400" />
               <span>{`${rating.toFixed(1)}`}</span>
