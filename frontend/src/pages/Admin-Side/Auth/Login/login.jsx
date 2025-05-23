@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { signIn } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,21 +17,29 @@ const LoginPage = () => {
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    await signIn.email(
-      { email, password },
-      {
-        onSuccess: () => {
-          // Handle successful login
-          navigate("/admin/dashboard");
-          console.log("Login successful");
-        },
-        onError: (error) => {
-          // Handle error
-          console.error("Login failed", error);
-        },
-      }
-    );
+    try {
+      await signIn.email(
+        { email, password },
+        {
+          onSuccess: () => {
+            // Handle successful login
+            navigate("/admin/dashboard");
+            console.log("Login successful");
+          },
+          onError: (error) => {
+            // Handle error
+            console.error("Login failed", error);
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,10 +100,9 @@ const LoginPage = () => {
                   className="mt-2 w-full bg-fountain-blue-400 hover:bg-fountain-blue-400/80 text-white hover:text-white"
                   size="lg"
                   disabled={isLoading}
+                  loading={isLoading}
                 >
-                  Login
-                  {/* {isLoading && <LoaderCircle className="animate-spin" />}
-              {isLoading ? "Logging in..." : "Login"} */}
+                  {isLoading ? "Logging in..." : "Login"}
                 </LoadingButton>
               </div>
               {/* {errorMessage && (

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { signOut } from "@//lib/auth-client";
 
 const AdminPanelNavigation = () => {
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            navigate("admin/login"); // redirect to login page
+          },
+        },
+      });
+      // Redirect to the login page or perform any other action after sign out
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 bg-background px-4 md:px-6">
@@ -120,7 +138,7 @@ const AdminPanelNavigation = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500">
+            <DropdownMenuItem className="text-red-500" onClick={handleSignOut}>
               <LogOut className="stroke-red-500" />
               Log out
             </DropdownMenuItem>

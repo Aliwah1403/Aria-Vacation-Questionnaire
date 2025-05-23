@@ -105,6 +105,7 @@ const SignupPage = () => {
                   className="mt-2 w-full bg-fountain-blue-400 hover:bg-fountain-blue-400/80 text-white hover:text-white"
                   size="lg"
                   loading={isLoading}
+                  disabled={isLoading}
                 >
                   {isLoading ? "Creating Account..." : "Sign Up"}
                 </LoadingButton>
