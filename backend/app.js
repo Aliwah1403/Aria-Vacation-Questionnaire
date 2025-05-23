@@ -7,6 +7,9 @@ import formSubmissionRouter from "./routes/formSubmission.routes.js";
 import emailTemplateRouter from "./routes/emailTemplate.routes.js";
 import cors from "cors";
 import emailRouter from "./routes/email.routes.js";
+import authRouter from "./routes/auth.routes.js";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth.js";
 
 const app = express();
 
@@ -16,8 +19,13 @@ const corsOptions = {
   credentials: true,
 };
 
-// middlewares
 app.use(cors(corsOptions));
+
+// BetterAuth
+app.all("/api/auth/*", toNodeHandler(auth));
+
+// middlewares
+
 app.use(express.json());
 
 // routes
