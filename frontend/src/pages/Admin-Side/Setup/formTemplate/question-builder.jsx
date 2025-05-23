@@ -56,8 +56,10 @@ export function QuestionBuilder({
   mutation,
   selectedFormType,
   templateName,
+  setTemplateName, // Add this prop
   initialQuestions = [],
   initialRatingOptions = [],
+  isEditing = false,
   onSave,
   onCancel,
 }) {
@@ -76,6 +78,7 @@ export function QuestionBuilder({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(null);
   const [editingQuestion, setEditingQuestion] = useState(false);
   const [activeLanguage, setActiveLanguage] = useState("en");
+  const [isEditingName, setIsEditingName] = useState(false);
 
   const languages = [
     { code: "en", name: "English" },
@@ -242,15 +245,6 @@ export function QuestionBuilder({
       //   : undefined,
     };
 
-    // Log the data being sent
-    console.group("Form Template Data");
-    console.log("Template Data:", templateData);
-    console.log("Questions:", templateData.questions);
-    if (templateData.ratingOptions) {
-      console.log("Rating Options:", templateData.ratingOptions);
-    }
-    console.groupEnd();
-
     onSave(templateData);
   };
 
@@ -284,7 +278,6 @@ export function QuestionBuilder({
     return languages.filter((lang) => !questionText[lang.code]?.trim());
   };
 
-  // Return the same JSX structure
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -320,10 +313,35 @@ export function QuestionBuilder({
 
             {templateName && (
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                  Template Name
-                </h3>
-                <p className="font-medium">{templateName}</p>
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    Template Name
+                  </h3>
+                </div>
+                <div className="flex items-center gap-4">
+                  {isEditingName ? (
+                    <Input
+                      value={templateName}
+                      onChange={(e) => setTemplateName(e.target.value)}
+                      className="mt-1"
+                      placeholder="Enter template name"
+                      autoFocus
+                      onBlur={() => setIsEditingName(false)}
+                    />
+                  ) : (
+                    <p className="font-medium">{templateName}</p>
+                  )}
+                  {isEditing && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="size-4 hover:cursor-pointer"
+                      onClick={() => setIsEditingName(!isEditingName)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -334,10 +352,10 @@ export function QuestionBuilder({
               <p className="font-medium">{questions.length} added</p>
             </div>
 
-            <div className="space-y-4 mt-8">
+            <div className="flex flex-col gap-4">
               <LoadingButton
                 loading={mutation.isPending}
-                className="w-full justify-start"
+                className="w-full justify-start bg-fountain-blue-400 hover:bg-fountain-blue-400/80 text-white hover:text-white "
                 variant="outline"
                 onClick={handleSave}
                 disabled={questions.length === 0}
@@ -347,7 +365,7 @@ export function QuestionBuilder({
 
               <Button
                 className="w-full justify-start"
-                variant="ghost"
+                variant="outline"
                 onClick={handleCancel}
               >
                 Cancel

@@ -4,21 +4,18 @@ import { useUpdateFormTemplate } from "@/mutations/formTemplate/formTemplateMuta
 import { toast } from "sonner";
 
 export function EditFormTemplate({ template, formTypes, onClose }) {
-  // Find formType using formTypeId to get formCode
   const formType = formTypes.find((f) => f._id === template.formTypeId);
   const [selectedFormType] = useState(formType?.formCode);
-  const [templateName] = useState(template.formTemplateName);
+  const [templateName, setTemplateName] = useState(template.formTemplateName); // Make templateName stateful
   const updateMutation = useUpdateFormTemplate();
 
+
   const handleSaveTemplate = (templateData) => {
-    // Preserve question IDs and ensure order numbers
     const updatedQuestions = templateData.questions.map((question, index) => {
-      const existingQuestion = template.questions.find(
-        (q, i) => i === index // Match by index since we're updating in place
-      );
+      const existingQuestion = template.questions.find((q, i) => i === index);
       return {
         ...question,
-        _id: existingQuestion?._id, // Preserve the original _id
+        _id: existingQuestion?._id,
         order: question.order || existingQuestion?.order || index + 1,
       };
     });
@@ -26,11 +23,11 @@ export function EditFormTemplate({ template, formTypes, onClose }) {
     updateMutation.mutate(
       {
         id: template._id,
-        formTypeId: template.formTypeId, // Include formTypeId
-        formCode: formType?.formCode, // Include formCode
-        formTemplateName: templateData.formTemplateName,
+        formTypeId: template.formTypeId,
+        formCode: formType?.formCode,
+        formTemplateName: templateData.formTemplateName || templateName, // Use fallback
         questions: updatedQuestions,
-        ratingOptions: templateData.ratingOptions,
+        ratingOptions: template.ratingOptions, // Use existing rating options instead
       },
       {
         onSuccess: () => {
@@ -45,9 +42,7 @@ export function EditFormTemplate({ template, formTypes, onClose }) {
     );
   };
 
-  const formTypeDetails = formTypes.find(
-    (f) => f.formCode === template.formCode
-  );
+  const formTypeDetails = formTypes.find((f) => f._id === template.formTypeId);
 
   return (
     <QuestionBuilder
@@ -57,8 +52,10 @@ export function EditFormTemplate({ template, formTypes, onClose }) {
       mutation={updateMutation}
       selectedFormType={selectedFormType}
       templateName={templateName}
+      setTemplateName={setTemplateName} // Add this prop
       initialQuestions={template.questions}
       initialRatingOptions={template.ratingOptions}
+      isEditing={true}
       onSave={handleSaveTemplate}
       onCancel={onClose}
     />
