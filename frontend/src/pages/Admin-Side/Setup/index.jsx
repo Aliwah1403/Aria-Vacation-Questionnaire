@@ -163,7 +163,7 @@ const QuestionnaireSetup = () => {
           <TabsContent value="form-templates" className="mt-0">
             {/* <FormTemplatesList /> */}
             <FormTemplateTable
-              columns={formTemplateColumns}
+              columns={formTemplateColumns(formTypeData || [])}
               data={formTemplateData || []}
               formTypes={formTypeData || []}
             />

@@ -56,11 +56,15 @@ export function QuestionBuilder({
   mutation,
   selectedFormType,
   templateName,
+  initialQuestions = [],
+  initialRatingOptions = [],
   onSave,
   onCancel,
 }) {
-  const [questions, setQuestions] = useState([]);
-  const [ratingOptions, setRatingOptions] = useState([...defaultEmojiMappings]);
+  const [questions, setQuestions] = useState(initialQuestions);
+  const [ratingOptions, setRatingOptions] = useState(
+    initialRatingOptions.length > 0 ? initialRatingOptions : [...defaultEmojiMappings]
+  );
   const [newQuestion, setNewQuestion] = useState({
     questionText: { en: "", fr: "", ar: "", ru: "" },
     questionType: "emoji",
