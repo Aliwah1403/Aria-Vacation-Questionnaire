@@ -13,6 +13,9 @@ export const auth = betterAuth({
   database: mongodbAdapter(db),
   trustedOrigins: [FRONTEND_URL],
   basePath: "/api/auth",
+  session: {
+    expiresIn: 60 * 60 * 24 * 3, // 3 days
+  },
   emailAndPassword: {
     enabled: true,
 

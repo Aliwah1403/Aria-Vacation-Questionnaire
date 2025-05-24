@@ -15,9 +15,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut } from "@//lib/auth-client";
+import { signOut, useSession } from "@//lib/auth-client";
 
 const AdminPanelNavigation = () => {
+  const { data: session } = useSession();
+
+  const user = session?.user;
+
+  const initials = user?.name
+    .split(" ")
+    .map((part) => part[0].toUpperCase())
+    .join("");
+
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -97,13 +106,16 @@ const AdminPanelNavigation = () => {
               <Avatar className="size-10 rounded-full ">
                 {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
                 <AvatarFallback className="rounded-full">
-                  <User className="size-5 mx-auto" />
+                  {initials}
+                  {/* <User className="size-5 mx-auto" /> */}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">John Doe</span>
+                <span className="truncate font-medium capitalize">
+                  {user?.name}
+                </span>
                 <span className="text-muted-foreground truncate text-xs">
-                  testemail@test.com
+                  {user?.email}
                 </span>
               </div>
             </div>
@@ -119,13 +131,13 @@ const AdminPanelNavigation = () => {
                 <Avatar className="size-8 rounded-full ">
                   {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
                   <AvatarFallback className="rounded-full ">
-                    <User className="size-5" />
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">John Doe</span>
+                  <span className="truncate font-medium">{user?.name}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    testemail@test.com
+                    {user?.email}
                   </span>
                 </div>
               </div>
