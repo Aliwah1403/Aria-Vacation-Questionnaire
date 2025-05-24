@@ -19,6 +19,7 @@ import ReactQueryProvider from "./providers/ReactQueryProviuder";
 import FeedbackFromDB from "./pages/Member-Side/Feedback/FeedbackFromDB";
 import LoginPage from "./pages/Admin-Side/Auth/Login/login";
 import SignupPage from "./pages/Admin-Side/Auth/Signup/signup";
+import AdminAuthLayout from "./layouts/AdminAuthLayout";
 
 const router = createBrowserRouter([
   {
@@ -60,13 +61,19 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin/login",
-    element: <LoginPage />,
+    element: <AdminAuthLayout />,
+    children: [
+      {
+        path: "/admin/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/admin/signup",
+        element: <SignupPage />,
+      },
+    ],
   },
-  {
-    path: "/admin/signup",
-    element: <SignupPage />,
-  },
+
   {
     path: "/",
     element: <Homepage />,
