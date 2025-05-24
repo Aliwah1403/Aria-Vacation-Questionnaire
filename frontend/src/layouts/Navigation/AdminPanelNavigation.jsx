@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "@//lib/auth-client";
+import { toast } from "sonner";
 
 const AdminPanelNavigation = () => {
   const { data: session } = useSession();
@@ -38,8 +39,8 @@ const AdminPanelNavigation = () => {
           },
         },
       });
-      // Redirect to the login page or perform any other action after sign out
     } catch (error) {
+      toast.error("Failed to sign out. Please try again.");
       console.error("Sign out error:", error);
     }
   };

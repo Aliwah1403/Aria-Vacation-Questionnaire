@@ -20,22 +20,28 @@ import FeedbackFromDB from "./pages/Member-Side/Feedback/FeedbackFromDB";
 import LoginPage from "./pages/Admin-Side/Auth/Login/login";
 import SignupPage from "./pages/Admin-Side/Auth/Signup/signup";
 import AdminAuthLayout from "./layouts/AdminAuthLayout";
+import ProtectedRoute from "./pages/Admin-Side/Auth/ProtectRoutes/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
-    element: <AdminLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "/admin/dashboard",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "/admin/questionnaires",
-        element: <QuestionnairesOverview />,
-      },
-      {
-        path: "/admin/questionnaire-setup",
-        element: <QuestionnaireSetup />,
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "/admin/dashboard",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "/admin/questionnaires",
+            element: <QuestionnairesOverview />,
+          },
+          {
+            path: "/admin/questionnaire-setup",
+            element: <QuestionnaireSetup />,
+          },
+        ],
       },
     ],
   },
