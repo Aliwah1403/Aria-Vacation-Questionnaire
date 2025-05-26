@@ -21,7 +21,7 @@ const LoginPage = () => {
 
     try {
       await signIn.email(
-        { email, password },
+        { email, password, callbackURL: "/admin/dashboard" },
         {
           onSuccess: () => {
             // Handle successful login
