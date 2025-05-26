@@ -22,6 +22,7 @@ import SignupPage from "./pages/Admin-Side/Auth/Signup/signup";
 import AdminAuthLayout from "./layouts/AdminAuthLayout";
 import ProtectedRoute from "./pages/Admin-Side/Auth/ProtectRoutes/ProtectedRoute";
 import ForgotPassword from "./pages/Admin-Side/Auth/Forgot-Account/forgot-password";
+import ResetPassword from "./pages/Admin-Side/Auth/Forgot-Account/reset-password";
 
 const router = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/forgot-account",
         element: <ForgotPassword />,
+      },
+      {
+        path: "/admin/forgot-account/reset-password",
+        element: <ResetPassword />,
       },
     ],
   },

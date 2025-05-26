@@ -20,7 +20,7 @@ const ForgotPassword = () => {
         email: email,
         redirectTo: `${window.location.origin}/admin/forgot-account/reset-password`,
       });
-      toast.success("Password reset link sent to your email.");
+      toast.success(`Password reset link sent to ${email}.`);
     } catch (error) {
       console.error("Error sending reset password email:", error);
       toast.error("Failed to send reset password email. Please try again.");
@@ -47,7 +47,15 @@ const ForgotPassword = () => {
                        </div>
                        <span className="sr-only">Acme Inc.</span>
                      </a> */}
-          <h1 className="text-xl font-semibold">Forgot Password</h1>
+          <div className="flex flex-col space-y-2 text-left">
+            <h1 className="text-xl font-semibold tracking-tight">
+              Forgot Password
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your registered email and we will send you a link to reset
+              your password.
+            </p>
+          </div>
         </div>
         <Input
           type="email"
