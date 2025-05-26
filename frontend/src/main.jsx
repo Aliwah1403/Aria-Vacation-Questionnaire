@@ -18,22 +18,32 @@ import QuestionnaireSetup from "./pages/Admin-Side/Setup";
 import ReactQueryProvider from "./providers/ReactQueryProviuder";
 import FeedbackFromDB from "./pages/Member-Side/Feedback/FeedbackFromDB";
 import LoginPage from "./pages/Admin-Side/Auth/Login/login";
+import SignupPage from "./pages/Admin-Side/Auth/Signup/signup";
+import AdminAuthLayout from "./layouts/AdminAuthLayout";
+import ProtectedRoute from "./pages/Admin-Side/Auth/ProtectRoutes/ProtectedRoute";
+import ForgotPassword from "./pages/Admin-Side/Auth/Forgot-Account/forgot-password";
+import ResetPassword from "./pages/Admin-Side/Auth/Forgot-Account/reset-password";
 
 const router = createBrowserRouter([
   {
-    element: <AdminLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "/admin/dashboard",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "/admin/questionnaires",
-        element: <QuestionnairesOverview />,
-      },
-      {
-        path: "/admin/questionnaire-setup",
-        element: <QuestionnaireSetup />,
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "/admin/dashboard",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "/admin/questionnaires",
+            element: <QuestionnairesOverview />,
+          },
+          {
+            path: "/admin/questionnaire-setup",
+            element: <QuestionnaireSetup />,
+          },
+        ],
       },
     ],
   },
@@ -59,9 +69,27 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin/login",
-    element: <LoginPage />,
+    element: <AdminAuthLayout />,
+    children: [
+      {
+        path: "/admin/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/admin/signup",
+        element: <SignupPage />,
+      },
+      {
+        path: "/admin/forgot-account",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "/admin/forgot-account/reset-password",
+        element: <ResetPassword />,
+      },
+    ],
   },
+
   {
     path: "/",
     element: <Homepage />,

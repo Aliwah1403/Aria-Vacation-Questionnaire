@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { signOut, useSession } from "@//lib/auth-client";
+import { toast } from "sonner";
 
 const AdminPanelNavigation = () => {
+  const { data: session } = useSession();
+
+  const user = session?.user;
+
+  const initials = user?.name
+    .split(" ")
+    .map((part) => part[0].toUpperCase())
+    .join("");
+
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            navigate("admin/login"); // redirect to login page
+          },
+        },
+      });
+    } catch (error) {
+      toast.error("Failed to sign out. Please try again.");
+      console.error("Sign out error:", error);
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 bg-background px-4 md:px-6">
@@ -79,13 +107,16 @@ const AdminPanelNavigation = () => {
               <Avatar className="size-10 rounded-full ">
                 {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
                 <AvatarFallback className="rounded-full">
-                  <User className="size-5 mx-auto" />
+                  {initials}
+                  {/* <User className="size-5 mx-auto" /> */}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">John Doe</span>
+                <span className="truncate font-medium capitalize">
+                  {user?.name}
+                </span>
                 <span className="text-muted-foreground truncate text-xs">
-                  testemail@test.com
+                  {user?.email}
                 </span>
               </div>
             </div>
@@ -101,26 +132,26 @@ const AdminPanelNavigation = () => {
                 <Avatar className="size-8 rounded-full ">
                   {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
                   <AvatarFallback className="rounded-full ">
-                    <User className="size-5" />
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">John Doe</span>
+                  <span className="truncate font-medium">{user?.name}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    testemail@test.com
+                    {user?.email}
                   </span>
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <User />
                 Account
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500">
+            <DropdownMenuItem className="text-red-500" onClick={handleSignOut}>
               <LogOut className="stroke-red-500" />
               Log out
             </DropdownMenuItem>
