@@ -19,9 +19,11 @@ export const auth = betterAuth({
   },
   advanced: {
     defaultCookieAttributes: {
-      secure: true,
+      // secure: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: true,
-      sameSite: "none", // Allows CORS-based cookie sharing across subdomains
+      // sameSite: "none", // Allows CORS-based cookie sharing across subdomains
     },
   },
   secret: process.env.BETTER_AUTH_SECRET,
