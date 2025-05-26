@@ -25,7 +25,6 @@ app.use(cors(corsOptions));
 app.all("/api/auth/*", toNodeHandler(auth));
 
 // middlewares
-
 app.use(express.json());
 
 // routes

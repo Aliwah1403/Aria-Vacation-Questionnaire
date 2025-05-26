@@ -18,12 +18,13 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },
   advanced: {
-    cookie: {
-      sameSite: "none",
+    defaultCookieAttributes: {
       secure: true,
-      path: "/",
+      httpOnly: true,
+      sameSite: "none", // Allows CORS-based cookie sharing across subdomains
     },
   },
+  secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url, token }, request) => {
