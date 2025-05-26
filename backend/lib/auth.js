@@ -18,15 +18,10 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },
   advanced: {
-    cookies: {
-      session_token: {
-        name: "better-auth.session_token",
-        attributes: {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-        },
-      },
+    cookie: {
+      sameSite: "none",
+      secure: true,
+      path: "/",
     },
   },
   emailAndPassword: {
