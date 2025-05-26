@@ -17,6 +17,7 @@ import QuestionnairesOverview from "./pages/Admin-Side/Questionnaires/Overview/O
 import QuestionnaireSetup from "./pages/Admin-Side/Setup";
 import ReactQueryProvider from "./providers/ReactQueryProviuder";
 import FeedbackFromDB from "./pages/Member-Side/Feedback/FeedbackFromDB";
+import LoginPage from "./pages/Admin-Side/Auth/Login/login";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
         element: <Success />,
       },
     ],
+  },
+  {
+    path: "/admin/login",
+    element: <LoginPage />,
   },
   {
     path: "/",

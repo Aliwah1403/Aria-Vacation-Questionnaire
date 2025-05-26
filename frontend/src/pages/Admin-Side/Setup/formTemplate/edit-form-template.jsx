@@ -9,7 +9,6 @@ export function EditFormTemplate({ template, formTypes, onClose }) {
   const [templateName, setTemplateName] = useState(template.formTemplateName); // Make templateName stateful
   const updateMutation = useUpdateFormTemplate();
 
-
   const handleSaveTemplate = (templateData) => {
     const updatedQuestions = templateData.questions.map((question, index) => {
       const existingQuestion = template.questions.find((q, i) => i === index);
