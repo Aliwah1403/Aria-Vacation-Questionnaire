@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,11 +11,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import * as z from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -34,7 +37,7 @@ const createFeedbackSchema = (questions) => {
         answer: z.string().min(1, "Please provide an answer"),
       })
     ),
-    testimonialConsent: z.boolean(),
+    // testimonialConsent: z.enum(["agree", "anonymous"]),
   });
 };
 
@@ -79,7 +82,6 @@ const FeedbackFromDB = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      // Format the responses data correctly
       const formattedResponses = data.answers.map((answer, index) => ({
         questionId: questions[index]._id,
         question: questions[index].questionText,
@@ -92,17 +94,24 @@ const FeedbackFromDB = () => {
         language: currentLang,
       };
 
+      console.log("Submitting data:", submissionData); // Debug log
+
       await formSubmissionApi.submitResponses(id, submissionData);
       navigate(`/feedback/${id}/success?lng=${currentLang}`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      // Add error handling here if needed
+      toast.error("Failed to submit feedback. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending)
+    return (
+      <div className="flex items-center justify-center min-h-screen mx-0 bg-red">
+        Loading...
+      </div>
+    );
   if (error) return <div>Error: {error.message}</div>;
 
   // Move these after the loading/error checks
@@ -265,24 +274,62 @@ const FeedbackFromDB = () => {
                             control={form.control}
                             name="testimonialConsent"
                             render={({ field }) => (
-                              <div className="flex items-start space-x-2 mt-4">
-                                <Checkbox
-                                  id="testimonialConsent"
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                  className="mt-1"
-                                />
-                                <div className="grid gap-1.5 leading-none">
-                                  <label
-                                    htmlFor="testimonialConsent"
-                                    className="text-sm font-medium leading-5 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                  >
-                                    {t("testimonialConsent")}
-                                  </label>
-                                  <p className="text-xs text-muted-foreground">
-                                    {t("testimonialDisclaimer")}
-                                  </p>
+                              <div className="mt-4  bg-gray-50 rounded-lg">
+                                <p className="text-xs text-gray-700 mb-4 leading-relaxed">
+                                  By submitting this form, you agree that your
+                                  feedback may be used, in whole or in part, as
+                                  a testimonial on our website. We may edit your
+                                  comments for clarity, grammar, or length
+                                  without changing the intended meaning. Unless
+                                  you request anonymity, your first name and
+                                  general location (e.g., city or state) may be
+                                  shown.
+                                </p>
+
+                                <div className="space-y-3">
+                                  <div className="flex items-start space-x-3">
+                                    <RadioGroup
+                                      onValueChange={(value) => {
+                                        field.onChange(value);
+                                        console.log("Consent changed:", value);
+                                      }}
+                                      value={field.value || ""}
+                                      className="space-y-3"
+                                    >
+                                      <div className="flex items-start space-x-3">
+                                        <RadioGroupItem
+                                          value="agree"
+                                          id="agree"
+                                          className="size-[18px] border-2"
+                                        />
+                                        <Label
+                                          htmlFor="agree"
+                                          className="text-sm font-medium leading-relaxed cursor-pointer"
+                                        >
+                                          I agree to the user of my feedback as
+                                          testimonial under the terms stated
+                                          above.
+                                        </Label>
+                                      </div>
+
+                                      <div className="flex items-start space-x-3">
+                                        <RadioGroupItem
+                                          value="anonymous"
+                                          id="anonymous"
+                                          className="size-[18px] border-2"
+                                        />
+                                        <Label
+                                          htmlFor="anonymous"
+                                          className="text-sm font-medium leading-relaxed cursor-pointer"
+                                        >
+                                          I prefer my feedback to remain
+                                          anonymous.
+                                        </Label>
+                                      </div>
+                                    </RadioGroup>
+                                  </div>
                                 </div>
+                                <FormMessage />
                               </div>
                             )}
                           />
