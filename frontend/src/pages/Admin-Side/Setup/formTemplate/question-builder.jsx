@@ -399,9 +399,9 @@ export function QuestionBuilder({
                           {question.order}
                         </div>
                         <div className="flex-grow">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-medium text-lg">
-                              {question.questionText[activeLanguage] ||
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-medium text-lg text-wrap">
+                              {question.questionText[activeLanguage] || //Will change this to en to see if after adding last question language it remains as english
                                 question.questionText.en}
                             </h3>
                             <div className="flex items-center text-sm text-muted-foreground">
@@ -410,13 +410,13 @@ export function QuestionBuilder({
                             </div>
                           </div>
                         </div>
-                        <div className="flex gap-2 ml-4">
+                        <div className="flex gap-1 items-center flex-end">
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleEditQuestion(index)}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="size-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -427,7 +427,7 @@ export function QuestionBuilder({
                               setQuestions(newQuestions);
                             }}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="size-4" />
                           </Button>
                         </div>
                       </div>
