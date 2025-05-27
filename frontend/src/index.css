@@ -233,3 +233,18 @@
   left: -0.5rem;
   right: auto;
 }
+
+.rtl .radio-consent-group {
+  padding-right: 1 rem;
+  padding-left: 0;
+}
+
+.rtl .radio-consent-item {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.rtl .radio-consent-label{
+  margin-right: 0;
+  margin-left: 0.75rem;
+}

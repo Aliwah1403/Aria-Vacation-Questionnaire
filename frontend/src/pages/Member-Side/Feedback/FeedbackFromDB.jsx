@@ -276,14 +276,7 @@ const FeedbackFromDB = () => {
                             render={({ field }) => (
                               <div className="mt-4  bg-gray-50 rounded-lg">
                                 <p className="text-xs text-gray-700 mb-4 leading-relaxed">
-                                  By submitting this form, you agree that your
-                                  feedback may be used, in whole or in part, as
-                                  a testimonial on our website. We may edit your
-                                  comments for clarity, grammar, or length
-                                  without changing the intended meaning. Unless
-                                  you request anonymity, your first name and
-                                  general location (e.g., city or state) may be
-                                  shown.
+                                  {t("testimonialDisclaimer")}
                                 </p>
 
                                 <div className="space-y-3">
@@ -291,7 +284,6 @@ const FeedbackFromDB = () => {
                                     <RadioGroup
                                       onValueChange={(value) => {
                                         field.onChange(value);
-                                        console.log("Consent changed:", value);
                                       }}
                                       value={field.value || ""}
                                       className="space-y-3"
@@ -306,9 +298,7 @@ const FeedbackFromDB = () => {
                                           htmlFor="agree"
                                           className="text-sm font-medium leading-relaxed cursor-pointer"
                                         >
-                                          I agree to the user of my feedback as
-                                          testimonial under the terms stated
-                                          above.
+                                          {t("testimonialConsentAgree")}
                                         </Label>
                                       </div>
 
@@ -316,14 +306,13 @@ const FeedbackFromDB = () => {
                                         <RadioGroupItem
                                           value="anonymous"
                                           id="anonymous"
-                                          className="size-[18px] border-2"
+                                          className="size-[18px] border-2 "
                                         />
                                         <Label
                                           htmlFor="anonymous"
                                           className="text-sm font-medium leading-relaxed cursor-pointer"
                                         >
-                                          I prefer my feedback to remain
-                                          anonymous.
+                                       {t("testimonialConsentAnonymous")}
                                         </Label>
                                       </div>
                                     </RadioGroup>
