@@ -37,7 +37,7 @@ const createFeedbackSchema = (questions) => {
         answer: z.string().min(1, "Please provide an answer"),
       })
     ),
-    // testimonialConsent: z.enum(["agree", "anonymous"]),
+    testimonialConsent: z.enum(["agree", "anonymous"]),
   });
 };
 
@@ -75,7 +75,7 @@ const FeedbackFromDB = () => {
           questionId: response.questionId,
           answer: "",
         })) || [],
-      testimonialConsent: false,
+      testimonialConsent: undefined,
     },
   });
 
@@ -90,7 +90,7 @@ const FeedbackFromDB = () => {
 
       const submissionData = {
         responses: formattedResponses,
-        testimonialConsent: data.testimonialConsent,
+        testimonialConsent: data.testimonialConsent === "agree", // Convert to boolean here
         language: currentLang,
       };
 
