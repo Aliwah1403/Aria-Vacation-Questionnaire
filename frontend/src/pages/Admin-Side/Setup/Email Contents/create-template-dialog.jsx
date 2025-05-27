@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,6 +76,15 @@ const formSchema = z
     }
   );
 
+const defaultValues = {
+  formType: "",
+  templateName: "",
+  emailSubject: "",
+  contentType: "text",
+  textContent: "",
+  htmlContent: "",
+};
+
 const CreateEmailDialog = ({
   formTypes,
   initialData,
@@ -91,48 +99,32 @@ const CreateEmailDialog = ({
   const textareaRef = useRef(null);
   const htmlEditorRef = useRef(null);
 
-  const defaultValues = {
-    formType: "",
-    templateName: "",
-    emailSubject: "",
-    contentType: "text",
-    textContent: "",
-    htmlContent: "",
-  };
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  // Enhanced reset function
+  // Improved form reset handling
   const resetForm = () => {
     form.reset(defaultValues);
     setContentType("text");
   };
 
-  // Reset form when dialog closes
+  // Handle dialog state changes
   useEffect(() => {
     if (!isOpen) {
       resetForm();
-    }
-  }, [isOpen]);
-
-  // Set initial data when editing
-  useEffect(() => {
-    if (isOpen && initialData) {
+    } else if (isOpen && initialData) {
+      // Set form data when editing
       form.reset({
-        formType: initialData.formCode,
-        templateName: initialData.emailTemplateName,
-        emailSubject: initialData.emailSubject,
+        formType: initialData.formCode || "",
+        templateName: initialData.emailTemplateName || "",
+        emailSubject: initialData.emailSubject || "",
         contentType: initialData.contentType || "text",
         textContent: initialData.textContent || "",
         htmlContent: initialData.htmlContent || "",
       });
       setContentType(initialData.contentType || "text");
-    } else if (isOpen && !initialData) {
-      // Explicitly reset when opening for new template
-      resetForm();
     }
   }, [isOpen, initialData, form]);
 
@@ -222,6 +214,7 @@ const CreateEmailDialog = ({
     }
   };
 
+  // Update Dialog component to handle close properly
   return (
     <Dialog
       open={isOpen}

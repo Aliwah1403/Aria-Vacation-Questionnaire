@@ -1,4 +1,3 @@
-"use client";
 import { useState, useRef, useEffect, forwardRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
