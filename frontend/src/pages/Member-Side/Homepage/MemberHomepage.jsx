@@ -1,15 +1,8 @@
-import React from "react";
+"use client";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, useSearchParams } from "react-router";
-import {
-  ClockIcon,
-  User2Icon,
-  TrendingUp,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+import { ClockIcon, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 
@@ -39,7 +32,7 @@ const MemberHomepage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  //  Check if form is completed (either from 403 response or regular response)
+  // Check if form is completed (either from 403 response or regular response)
   const isCompleted =
     !formData.success || formData?.data?.status === "completed";
 
@@ -63,23 +56,12 @@ const MemberHomepage = () => {
     );
   }
 
-  const features = [
-    {
-      icon: <CheckCircle2 className="h-6 w-6 text-[#2FA5AF]" />,
-      title: t("simpleQuestions"),
-      description: t("simpleQuestionsDesc"),
-    },
-    {
-      icon: <ClockIcon className="h-6 w-6 text-[#2FA5AF]" />,
-      title: t("quickCompletion"),
-      description: t("quickCompletionDesc"),
-    },
-    {
-      icon: <TrendingUp className="h-6 w-6 text-[#2FA5AF]" />,
-      title: t("valuableImpact"),
-      description: t("valuableImpactDesc"),
-    },
-  ];
+  // Combined feature - merging "Simple Questions" and "Quick Completion"
+  const combinedFeature = {
+    icon: <ClockIcon className="h-6 w-6 text-[#2FA5AF]" />,
+    title: t("quickCompletion"),
+    description: `${t("quickCompletionDesc")} ${t("simpleQuestionsDesc")}`,
+  };
 
   const handleStartClick = () => {
     navigate(`/feedback/${id}/questionnaire?lng=${currentLang}`);
@@ -102,19 +84,14 @@ const MemberHomepage = () => {
         <h2 className="text-2xl font-semibold text-gray-900 mb-8 text-center">
           {t("whatToExpect")}
         </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm"
-            >
-              {feature.icon}
-              <h3 className="mt-4 mb-2 font-medium text-gray-900">
-                {feature.title}
-              </h3>
-              <p className="text-gray-600 text-sm">{feature.description}</p>
-            </div>
-          ))}
+        <div className="flex justify-center">
+          <div className="flex flex-col items-center text-center p-8 rounded-lg bg-white shadow-sm max-w-md">
+            {combinedFeature.icon}
+            <h3 className="mt-4 mb-3 font-medium text-gray-900 text-lg">
+              {combinedFeature.title}
+            </h3>
+            <p className="text-gray-600">{combinedFeature.description}</p>
+          </div>
         </div>
       </div>
 
