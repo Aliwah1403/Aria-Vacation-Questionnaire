@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 
 import { User, LogOut } from "lucide-react";
@@ -17,8 +17,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "@//lib/auth-client";
 import { toast } from "sonner";
+import AccountSettingsDialog from "@/pages/Admin-Side/Auth/User-Settings/account-settings-dialog";
 
 const AdminPanelNavigation = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const { data: session } = useSession();
 
   const user = session?.user;
@@ -106,7 +109,7 @@ const AdminPanelNavigation = () => {
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar className="size-10 rounded-full ">
                 {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
-                <AvatarFallback className="rounded-full">
+                <AvatarFallback className="rounded-full bg-fountain-blue-500 text-white">
                   {initials}
                   {/* <User className="size-5 mx-auto" /> */}
                 </AvatarFallback>
@@ -131,7 +134,7 @@ const AdminPanelNavigation = () => {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-full ">
                   {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
-                  <AvatarFallback className="rounded-full ">
+                  <AvatarFallback className="rounded-full bg-fountain-blue-500 text-white">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -143,13 +146,13 @@ const AdminPanelNavigation = () => {
                 </div>
               </div>
             </DropdownMenuLabel>
-            {/* <DropdownMenuSeparator /> */}
-            {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
                 <User />
                 Account
               </DropdownMenuItem>
-            </DropdownMenuGroup> */}
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-500" onClick={handleSignOut}>
               <LogOut className="stroke-red-500" />
@@ -157,6 +160,10 @@ const AdminPanelNavigation = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <AccountSettingsDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+        />
       </header>
 
       <Separator />
