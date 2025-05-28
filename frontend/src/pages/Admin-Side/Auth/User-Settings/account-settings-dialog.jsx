@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { User, Shield, Eye, EyeOff, X } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, updateUser } from "@/lib/auth-client";
 
 // Mock current user data
 // const currentUser = {
@@ -40,13 +40,13 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
 
   const firstName = user?.name.split(" ")[0];
   const lastName = user?.name.split(" ")[1];
+
   const email = user?.email;
 
-  // Profile form state
-  //   const [profileForm, setProfileForm] = useState({
-  //     firstName: currentUser.firstName,
-  //     lastName: currentUser.lastName,
-  //   });
+  const [formName, setFormName] = useState({
+    firstName: firstName || "",
+    lastName: lastName || "",
+  });
 
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
@@ -75,10 +75,16 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const fullName =
+        `${formName.firstName.trim()} ${formName.lastName.trim()}`.trim();
+
+      await updateUser({
+        name: fullName,
+      });
       toast.success("Profile updated successfully");
     } catch (error) {
+      console.error("Profile update error:", error);
+
       toast.error("Failed to update profile");
     } finally {
       setIsLoading(false);
@@ -160,17 +166,6 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col">
-            {/* Header with close button */}
-            {/* <div className="flex items-center justify-end p-4 border-b border-gray-200">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div> */}
-
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6">
               {activeSection === "profile" && (
@@ -209,13 +204,13 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                         <Label htmlFor="firstName">First name</Label>
                         <Input
                           id="firstName"
-                          value={firstName}
-                          //   onChange={(e) =>
-                          //     setProfileForm({
-                          //       ...profileForm,
-                          //       firstName: e.target.value,
-                          //     })
-                          //   }
+                          value={formName.firstName}
+                          onChange={(e) =>
+                            setFormName({
+                              ...formName,
+                              firstName: e.target.value,
+                            })
+                          }
                           placeholder="Enter your first name"
                         />
                       </div>
@@ -223,13 +218,13 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                         <Label htmlFor="lastName">Last name</Label>
                         <Input
                           id="lastName"
-                          value={lastName}
-                          //   onChange={(e) =>
-                          //     setProfileForm({
-                          //       ...profileForm,
-                          //       lastName: e.target.value,
-                          //     })
-                          //   }
+                          value={formName.lastName}
+                          onChange={(e) =>
+                            setFormName({
+                              ...formName,
+                              lastName: e.target.value,
+                            })
+                          }
                           placeholder="Enter your last name"
                         />
                       </div>
@@ -387,23 +382,7 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
 
                           {/* Sign out other devices */}
                           <div className="flex items-start space-x-3">
-                            {/* <Checkbox
-                              id="signOutDevices"
-                              checked={passwordForm.signOutOtherDevices}
-                              onCheckedChange={(checked) =>
-                                setPasswordForm({
-                                  ...passwordForm,
-                                  signOutOtherDevices: checked,
-                                })
-                              }
-                            /> */}
                             <div className="space-y-1">
-                              {/* <Label
-                                htmlFor="signOutDevices"
-                                className="text-sm font-medium"
-                              >
-                                Sign out of all other devices
-                              </Label> */}
                               <p className="text-xs text-gray-500">
                                 You will be signed out of all other devices
                                 which may have used your old password.
