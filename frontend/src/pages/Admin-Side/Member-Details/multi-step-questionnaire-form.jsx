@@ -79,6 +79,11 @@ const stayDetailsSchema = z.object({
 const questionnaireTypeSchema = z.object({
   formTemplateId: z.string().min(1, "Questionnaire type is required"),
   emailTemplates: z.string().min(1, "Email template is required"),
+  language: z
+    .enum(["en", "ar", "fr", "ru"], {
+      required_error: "Language is required",
+    })
+    .default("en"),
 });
 
 const URL = import.meta.env.VITE_URL;
@@ -119,6 +124,7 @@ const MultiStepQuestionnaireForm = ({
     defaultValues: {
       formTemplateId: "",
       emailTemplates: "",
+      language: "en",
     },
   });
 
@@ -155,6 +161,7 @@ const MultiStepQuestionnaireForm = ({
         unitNo: `BR${formData.unitNo}`,
         checkIn: formData.checkIn,
         checkOut: formData.checkOut,
+        language: values.language,
       };
 
       const result = await createSubmission.mutateAsync(submissionData);
@@ -499,7 +506,7 @@ const MultiStepQuestionnaireForm = ({
               control={questionnaireTypeForm.control}
               name="formTemplateId"
               render={({ field }) => (
-                <FormItem className="space-y-4">
+                <FormItem>
                   <FormLabel>Select Form Template</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -546,6 +553,37 @@ const MultiStepQuestionnaireForm = ({
                       </div>
                     </div>
                   )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Language selector */}
+            <FormField
+              control={questionnaireTypeForm.control}
+              name="language"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Form Language</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "en"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="ar">Arabic</SelectItem>
+                      <SelectItem value="fr">French</SelectItem>
+                      <SelectItem value="ru">Russian</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Select the language for the feedback form
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
