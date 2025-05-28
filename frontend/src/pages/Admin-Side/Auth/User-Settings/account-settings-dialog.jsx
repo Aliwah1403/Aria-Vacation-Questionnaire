@@ -12,14 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { User, Shield, Eye, EyeOff, X } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
 
 // Mock current user data
-const currentUser = {
-  firstName: "Curtis",
-  lastName: "Aliwah",
-  email: "curtis.aliwah@ariavacationclub.com",
-  avatar: "/placeholder.svg?height=40&width=40",
-};
+// const currentUser = {
+//   firstName: "Curtis",
+//   lastName: "Aliwah",
+//   email: "curtis.aliwah@ariavacationclub.com",
+//   avatar: "/placeholder.svg?height=40&width=40",
+// };
 
 const AccountSettingsDialog = ({ open, onOpenChange }) => {
   const [activeSection, setActiveSection] = useState("profile");
@@ -28,11 +29,24 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false);
 
+  const { data: session } = useSession();
+
+  const user = session?.user;
+
+  const initials = user?.name
+    .split(" ")
+    .map((part) => part[0].toUpperCase())
+    .join("");
+
+  const firstName = user?.name.split(" ")[0];
+  const lastName = user?.name.split(" ")[1];
+  const email = user?.email;
+
   // Profile form state
-  const [profileForm, setProfileForm] = useState({
-    firstName: currentUser.firstName,
-    lastName: currentUser.lastName,
-  });
+  //   const [profileForm, setProfileForm] = useState({
+  //     firstName: currentUser.firstName,
+  //     lastName: currentUser.lastName,
+  //   });
 
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
@@ -172,12 +186,11 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                     {/* Avatar Section */}
                     <div className="flex items-center space-x-4">
                       <Avatar className="h-16 w-16">
-                        <AvatarImage
+                        {/* <AvatarImage
                           src={currentUser.avatar || "/placeholder.svg"}
-                        />
+                        /> */}
                         <AvatarFallback className="bg-fountain-blue-500 text-white text-lg">
-                          {currentUser.firstName[0]}
-                          {currentUser.lastName[0]}
+                          {initials}
                         </AvatarFallback>
                       </Avatar>
                       {/* <div>
@@ -196,13 +209,13 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                         <Label htmlFor="firstName">First name</Label>
                         <Input
                           id="firstName"
-                          value={profileForm.firstName}
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              firstName: e.target.value,
-                            })
-                          }
+                          value={firstName}
+                          //   onChange={(e) =>
+                          //     setProfileForm({
+                          //       ...profileForm,
+                          //       firstName: e.target.value,
+                          //     })
+                          //   }
                           placeholder="Enter your first name"
                         />
                       </div>
@@ -210,13 +223,13 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                         <Label htmlFor="lastName">Last name</Label>
                         <Input
                           id="lastName"
-                          value={profileForm.lastName}
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              lastName: e.target.value,
-                            })
-                          }
+                          value={lastName}
+                          //   onChange={(e) =>
+                          //     setProfileForm({
+                          //       ...profileForm,
+                          //       lastName: e.target.value,
+                          //     })
+                          //   }
                           placeholder="Enter your last name"
                         />
                       </div>
@@ -228,12 +241,12 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                       <Input
                         id="email"
                         type="email"
-                        value={currentUser.email}
+                        value={email}
                         disabled
                         className="bg-gray-50"
                       />
                       <p className="text-xs text-gray-500">
-                        Email cannot be changed
+                        Email cannot be changed. Contact admin.
                       </p>
                     </div>
 
