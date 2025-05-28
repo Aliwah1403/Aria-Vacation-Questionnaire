@@ -59,18 +59,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { emailSendApi } from "@/api/emailSend";
 
-const emailTemplates = [
-  { label: "Tester Survey Email Template", value: "tester-survey" },
-  { label: "Post Feedback Request", value: "post-feedback" },
-  { label: "Pre-Arrival Feedback Request", value: "pre-arrival" },
-  { label: "Post-Departure Feedback Request", value: "post-departure" },
-  { label: "Post-Stay Feedback Request", value: "post-stay" },
-  { label: "Pre-Stay Feedback Request", value: "pre-stay" },
-  { label: "Pre-Check-In Feedback Request", value: "pre-check-in" },
-  { label: "Post-Check-Out Feedback Request", value: "post-check-out" },
-  { label: "Pre-Check-Out Feedback Request", value: "pre-check-out" },
-];
-
 // Form schemas
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
@@ -424,7 +412,7 @@ const MultiStepQuestionnaireForm = ({
                       <CheckInOutDatePicker
                         value={field.value}
                         onChange={(date) => handleCheckInSelect(date)}
-                        disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
+                        // disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
                       />
                     </FormControl>
                     <FormMessage />
@@ -443,7 +431,7 @@ const MultiStepQuestionnaireForm = ({
                         value={field.value}
                         onChange={field.onChange}
                         disabled={[
-                          { dayOfWeek: [0, 1, 2, 3, 4, 5] },
+                          // { dayOfWeek: [0, 1, 2, 3, 4, 5] },
                           ...(checkInDate
                             ? [{ before: addDays(checkInDate, 0) }]
                             : []),
@@ -549,8 +537,9 @@ const MultiStepQuestionnaireForm = ({
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge variant="outline" className="bg-gray-100">
                           {
-                            validFormTemplates.find((t) => t._id === field.value)
-                              ?.questions.length
+                            validFormTemplates.find(
+                              (t) => t._id === field.value
+                            )?.questions.length
                           }{" "}
                           questions
                         </Badge>
