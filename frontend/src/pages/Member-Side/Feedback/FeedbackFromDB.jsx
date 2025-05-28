@@ -186,7 +186,7 @@ const FeedbackFromDB = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
+    <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24 font-arial">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-12">
@@ -212,7 +212,7 @@ const FeedbackFromDB = () => {
                     <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
                       {t("question")} {currentStep}
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
+                    <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8 font-arial">
                       {questions[currentStep - 1].questionText}
                     </h2>
 
@@ -312,7 +312,7 @@ const FeedbackFromDB = () => {
                                           htmlFor="anonymous"
                                           className="text-sm font-medium leading-relaxed cursor-pointer"
                                         >
-                                       {t("testimonialConsentAnonymous")}
+                                          {t("testimonialConsentAnonymous")}
                                         </Label>
                                       </div>
                                     </RadioGroup>

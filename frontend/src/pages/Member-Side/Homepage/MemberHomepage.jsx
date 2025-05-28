@@ -45,7 +45,7 @@ const MemberHomepage = () => {
 
   if (isCompleted) {
     return (
-      <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
+      <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24 font-arial">
         <div className="text-center space-y-4 p-6 rounded-lg border border-gray-100 bg-gray-50">
           <div className="mx-auto w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
             <AlertCircle className="w-6 h-6 text-fountain-blue-600" />
@@ -86,7 +86,7 @@ const MemberHomepage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-12 max-w-5xl">
+    <div className="container mx-auto px-4 pt-24 pb-12 max-w-5xl font-arial">
       {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">

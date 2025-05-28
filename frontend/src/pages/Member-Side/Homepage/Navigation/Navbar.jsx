@@ -16,7 +16,7 @@ const Navbar = ({ language, onLanguageChange }) => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between font-arial">
         <div className="flex items-center space-x-2">
           <img src={AriaLogo} alt="Company Logo" width={100} height={50} />
         </div>

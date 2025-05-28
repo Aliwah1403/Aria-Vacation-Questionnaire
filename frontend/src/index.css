@@ -124,6 +124,7 @@
 
   --font-poppins: "Poppins", sans-serif;
   --font-lora: "Lora", serif;
+  --font-arial: Arial, sans-serif !important;
 }
 
 /* arabic layout */
