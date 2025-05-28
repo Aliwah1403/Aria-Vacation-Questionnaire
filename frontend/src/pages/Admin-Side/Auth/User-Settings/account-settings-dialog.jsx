@@ -12,20 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { User, Shield, Eye, EyeOff, X } from "lucide-react";
-import { useSession, updateUser } from "@/lib/auth-client";
-
-// Mock current user data
-// const currentUser = {
-//   firstName: "Curtis",
-//   lastName: "Aliwah",
-//   email: "curtis.aliwah@ariavacationclub.com",
-//   avatar: "/placeholder.svg?height=40&width=40",
-// };
+import { useSession, updateUser, changePassword } from "@/lib/auth-client";
 
 const AccountSettingsDialog = ({ open, onOpenChange }) => {
   const [activeSection, setActiveSection] = useState("profile");
   const [isLoading, setIsLoading] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false);
 
@@ -52,7 +45,6 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
   const [passwordForm, setPasswordForm] = useState({
     newPassword: "",
     confirmPassword: "",
-    signOutOtherDevices: true,
   });
 
   const [passwordErrors, setPasswordErrors] = useState([]);
@@ -107,17 +99,21 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+        revokeOtherSessions: true,
+      });
       toast.success("Password updated successfully");
       setPasswordForm({
+        currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-        signOutOtherDevices: true,
       });
       setPasswordErrors([]);
       setIsPasswordFormOpen(false); // Close the form after successful update
     } catch (error) {
+      console.error("Password update error:", error);
       toast.error("Failed to update password");
     } finally {
       setIsLoading(false);
@@ -297,6 +293,43 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
                           onSubmit={handlePasswordUpdate}
                           className="space-y-4"
                         >
+                          {/* Current Password */}
+                          <div className="space-y-2">
+                            <Label htmlFor="currentPassword">
+                              Current password
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="currentPassword"
+                                type={showCurrentPassword ? "text" : "password"}
+                                value={passwordForm.currentPassword}
+                                onChange={(e) =>
+                                  setPasswordForm({
+                                    ...passwordForm,
+                                    currentPassword: e.target.value,
+                                  })
+                                }
+                                placeholder="Enter current password"
+                                required
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 h-auto p-1"
+                                onClick={() =>
+                                  setShowCurrentPassword(!showCurrentPassword)
+                                }
+                              >
+                                {showCurrentPassword ? (
+                                  <EyeOff className="h-4 w-4 text-gray-400" />
+                                ) : (
+                                  <Eye className="h-4 w-4 text-gray-400" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+
                           {/* New Password */}
                           <div className="space-y-2">
                             <Label htmlFor="newPassword">New password</Label>
