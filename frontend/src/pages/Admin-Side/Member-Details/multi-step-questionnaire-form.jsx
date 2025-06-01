@@ -1,6 +1,6 @@
-import { useState, useId } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format, addDays } from "date-fns";
 import {
@@ -41,7 +41,6 @@ import {
   LinkIcon,
   ChevronsUpDown,
   PlusCircleIcon,
-  Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -59,17 +58,23 @@ import { emailTemplateApi } from "@/api/emailTemplates";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { emailSendApi } from "@/api/emailSend";
-import { SelectNative } from "@/components/ui/select-native";
+
+const emailTemplates = [
+  { label: "Tester Survey Email Template", value: "tester-survey" },
+  { label: "Post Feedback Request", value: "post-feedback" },
+  { label: "Pre-Arrival Feedback Request", value: "pre-arrival" },
+  { label: "Post-Departure Feedback Request", value: "post-departure" },
+  { label: "Post-Stay Feedback Request", value: "post-stay" },
+  { label: "Pre-Stay Feedback Request", value: "pre-stay" },
+  { label: "Pre-Check-In Feedback Request", value: "pre-check-in" },
+  { label: "Post-Check-Out Feedback Request", value: "post-check-out" },
+  { label: "Pre-Check-Out Feedback Request", value: "pre-check-out" },
+];
 
 // Form schemas
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
-  name: z.array(
-    z.object({
-      firstName: z.string().min(1, "First name is required"),
-      lastName: z.string().min(1, "Last name is required"),
-    })
-  ),
+  name: z.string().min(1, "Name is required"),
   email: z.string().email({
     message: "Please enter a valid email address",
   }),
@@ -86,11 +91,6 @@ const stayDetailsSchema = z.object({
 const questionnaireTypeSchema = z.object({
   formTemplateId: z.string().min(1, "Questionnaire type is required"),
   emailTemplates: z.string().min(1, "Email template is required"),
-  language: z
-    .enum(["en", "ar", "fr", "ru"], {
-      required_error: "Language is required",
-    })
-    .default("en"),
 });
 
 const URL = import.meta.env.VITE_URL;
@@ -108,7 +108,6 @@ const MultiStepQuestionnaireForm = ({
   const createSubmission = useCreateFormSubmission();
 
   const navigate = useNavigate();
-  const id = useId();
 
   const validFormTemplates = formTemplates.filter(
     (formTemplate) => formTemplate.isActive
@@ -119,7 +118,7 @@ const MultiStepQuestionnaireForm = ({
     resolver: zodResolver(stayDetailsSchema),
     defaultValues: {
       memberId: "",
-      name: [{ firstName: "", lastName: "" }],
+      name: "",
       email: "",
       resort: "",
       unitNo: "",
@@ -132,17 +131,7 @@ const MultiStepQuestionnaireForm = ({
     defaultValues: {
       formTemplateId: "",
       emailTemplates: "",
-      language: "en",
     },
-  });
-
-  const {
-    fields: nameFields,
-    append: appendNameField,
-    remove: removeNameField,
-  } = useFieldArray({
-    control: stayDetailsForm.control,
-    name: "name",
   });
 
   // Watch the check-in date to update check-out calendar
@@ -178,7 +167,6 @@ const MultiStepQuestionnaireForm = ({
         unitNo: `BR${formData.unitNo}`,
         checkIn: formData.checkIn,
         checkOut: formData.checkOut,
-        language: values.language,
       };
 
       const result = await createSubmission.mutateAsync(submissionData);
@@ -311,6 +299,30 @@ const MultiStepQuestionnaireForm = ({
 
   const steps = [1, 2, 3];
 
+  const questionnaireTypes = {
+    "stay-experience": {
+      title: "Stay Experience Survey",
+      description:
+        "Collects feedback about the overall stay experience, including check-in/out, room comfort, and resort facilities.",
+      questions: "10 questions",
+      duration: "5-10 minutes",
+    },
+    amenities: {
+      title: "Amenities Survey",
+      description:
+        "Focuses on the resort amenities such as pools, restaurants, spa services, and recreational activities.",
+      questions: "8 questions",
+      duration: "3-5 minutes",
+    },
+    "customer-service": {
+      title: "Customer Service Survey",
+      description:
+        "Evaluates the quality of customer service provided by resort staff during the member's stay.",
+      questions: "6 questions",
+      duration: "2-4 minutes",
+    },
+  };
+
   return (
     <div>
       {/* Progress indicator */}
@@ -348,75 +360,19 @@ const MultiStepQuestionnaireForm = ({
               )}
             />
 
-            {nameFields.map((field, index) => (
-              <div
-                key={field.id}
-                className="flex flex-row justify-between items-center space-x-3"
-              >
-                <FormField
-                  control={stayDetailsForm.control}
-                  name={`name.${index}.firstName`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <div className="*:not-first:mt-2">
-                          <div className="flex rounded-md shadow-xs">
-                            <SelectNative className="text-muted-foreground hover:text-foreground w-fit rounded-e-none shadow-none">
-                              <option value="mr">Mr</option>
-                              <option value="mrs">Mrs</option>
-                              <option value="dr">Dr</option>
-                            </SelectNative>
-                            <Input
-                              className="-ms-px rounded-s-none shadow-none focus-visible:z-10"
-                              placeholder="John"
-                              {...field}
-                            />
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={stayDetailsForm.control}
-                  name={`name.${index}.lastName`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {index > 0 && (
-                  <Button
-                    type="button"
-                    onClick={() => removeNameField(index)}
-                    variant="outline"
-                    size="icon"
-                    className="mt-auto"
-                  >
-                    <Trash2 className="size-4 text-red-500 hover:text-red-400" />
-                  </Button>
-                )}
-              </div>
-            ))}
-
-            {nameFields.length < 2 && (
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => appendNameField({ firstName: "", lastName: "" })}
-                className=" text-fountain-blue-400 hover:underline hover:text-fountain-blue-400/80 space-y-0"
-              >
-                Add Extra Name
-              </Button>
-            )}
+            <FormField
+              control={stayDetailsForm.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter member name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={stayDetailsForm.control}
@@ -468,7 +424,7 @@ const MultiStepQuestionnaireForm = ({
                       <CheckInOutDatePicker
                         value={field.value}
                         onChange={(date) => handleCheckInSelect(date)}
-                        // disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
+                        disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
                       />
                     </FormControl>
                     <FormMessage />
@@ -487,7 +443,7 @@ const MultiStepQuestionnaireForm = ({
                         value={field.value}
                         onChange={field.onChange}
                         disabled={[
-                          // { dayOfWeek: [0, 1, 2, 3, 4, 5] },
+                          { dayOfWeek: [0, 1, 2, 3, 4, 5] },
                           ...(checkInDate
                             ? [{ before: addDays(checkInDate, 0) }]
                             : []),
@@ -555,7 +511,7 @@ const MultiStepQuestionnaireForm = ({
               control={questionnaireTypeForm.control}
               name="formTemplateId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-4">
                   <FormLabel>Select Form Template</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -602,37 +558,6 @@ const MultiStepQuestionnaireForm = ({
                       </div>
                     </div>
                   )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Language selector */}
-            <FormField
-              control={questionnaireTypeForm.control}
-              name="language"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Form Language</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value || "en"}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="ar">Arabic</SelectItem>
-                      <SelectItem value="fr">French</SelectItem>
-                      <SelectItem value="ru">Russian</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Select the language for the feedback form
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
