@@ -23,6 +23,8 @@ import AdminAuthLayout from "./layouts/AdminAuthLayout";
 import ProtectedRoute from "./pages/Admin-Side/Auth/ProtectRoutes/ProtectedRoute";
 import ForgotPassword from "./pages/Admin-Side/Auth/Forgot-Account/forgot-password";
 import ResetPassword from "./pages/Admin-Side/Auth/Forgot-Account/reset-password";
+import AdminNotFound from "./AdminNotFound";
+import MemberNotFound from "./MemberNotFound";
 
 const router = createBrowserRouter([
   {
@@ -93,6 +95,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
+  },
+
+  {
+    path: "/admin/*",
+    element: <AdminNotFound />,
+  },
+  {
+    path: "/feedback/*",
+    element: <MemberNotFound />,
   },
 ]);
 
