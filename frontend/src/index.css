@@ -159,7 +159,7 @@
   margin-right: 0.75rem;
 }
 
-.rtl .flex-row {
+.rtl-flex-row {
   flex-direction: row-reverse;
 }
 
@@ -179,6 +179,10 @@
 
 .ltr-text {
   direction: ltr;
+}
+
+.rtl-text{
+  direction: rtl;
 }
 
 /* Margins and positioning */

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -41,6 +41,7 @@ import {
   LinkIcon,
   ChevronsUpDown,
   PlusCircleIcon,
+  Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -91,6 +92,11 @@ const stayDetailsSchema = z.object({
 const questionnaireTypeSchema = z.object({
   formTemplateId: z.string().min(1, "Questionnaire type is required"),
   emailTemplates: z.string().min(1, "Email template is required"),
+  language: z
+    .enum(["en", "ar", "fr", "ru"], {
+      required_error: "Language is required",
+    })
+    .default("en"),
 });
 
 const URL = import.meta.env.VITE_URL;
@@ -108,6 +114,7 @@ const MultiStepQuestionnaireForm = ({
   const createSubmission = useCreateFormSubmission();
 
   const navigate = useNavigate();
+  const id = useId();
 
   const validFormTemplates = formTemplates.filter(
     (formTemplate) => formTemplate.isActive
@@ -131,6 +138,7 @@ const MultiStepQuestionnaireForm = ({
     defaultValues: {
       formTemplateId: "",
       emailTemplates: "",
+      language: "en",
     },
   });
 
@@ -167,6 +175,7 @@ const MultiStepQuestionnaireForm = ({
         unitNo: `BR${formData.unitNo}`,
         checkIn: formData.checkIn,
         checkOut: formData.checkOut,
+        language: values.language,
       };
 
       const result = await createSubmission.mutateAsync(submissionData);
@@ -299,30 +308,6 @@ const MultiStepQuestionnaireForm = ({
 
   const steps = [1, 2, 3];
 
-  const questionnaireTypes = {
-    "stay-experience": {
-      title: "Stay Experience Survey",
-      description:
-        "Collects feedback about the overall stay experience, including check-in/out, room comfort, and resort facilities.",
-      questions: "10 questions",
-      duration: "5-10 minutes",
-    },
-    amenities: {
-      title: "Amenities Survey",
-      description:
-        "Focuses on the resort amenities such as pools, restaurants, spa services, and recreational activities.",
-      questions: "8 questions",
-      duration: "3-5 minutes",
-    },
-    "customer-service": {
-      title: "Customer Service Survey",
-      description:
-        "Evaluates the quality of customer service provided by resort staff during the member's stay.",
-      questions: "6 questions",
-      duration: "2-4 minutes",
-    },
-  };
-
   return (
     <div>
       {/* Progress indicator */}
@@ -424,7 +409,7 @@ const MultiStepQuestionnaireForm = ({
                       <CheckInOutDatePicker
                         value={field.value}
                         onChange={(date) => handleCheckInSelect(date)}
-                        disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
+                        // disabled={[{ dayOfWeek: [0, 1, 2, 3, 4, 5] }]}
                       />
                     </FormControl>
                     <FormMessage />
@@ -443,7 +428,7 @@ const MultiStepQuestionnaireForm = ({
                         value={field.value}
                         onChange={field.onChange}
                         disabled={[
-                          { dayOfWeek: [0, 1, 2, 3, 4, 5] },
+                          // { dayOfWeek: [0, 1, 2, 3, 4, 5] },
                           ...(checkInDate
                             ? [{ before: addDays(checkInDate, 0) }]
                             : []),
@@ -511,7 +496,7 @@ const MultiStepQuestionnaireForm = ({
               control={questionnaireTypeForm.control}
               name="formTemplateId"
               render={({ field }) => (
-                <FormItem className="space-y-4">
+                <FormItem>
                   <FormLabel>Select Form Template</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -558,6 +543,37 @@ const MultiStepQuestionnaireForm = ({
                       </div>
                     </div>
                   )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Language selector */}
+            <FormField
+              control={questionnaireTypeForm.control}
+              name="language"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Form Language</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "en"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="ar">Arabic</SelectItem>
+                      <SelectItem value="fr">French</SelectItem>
+                      <SelectItem value="ru">Russian</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Select the language for the feedback form
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -781,7 +797,7 @@ const MultiStepQuestionnaireForm = ({
             <div className="space-x-2">
               <LoadingButton
                 loading={loading}
-                disabled={loading} // Explicitly disable while loading
+                disabled={loading} 
                 type="button"
                 variant="outline"
                 onClick={() => handleEmailSend()}
