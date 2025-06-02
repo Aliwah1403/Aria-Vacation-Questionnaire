@@ -46,6 +46,14 @@ const formSubmissionSchema = new mongoose.Schema(
       required: true,
     },
 
+    // Form language
+    language: {
+      type: String,
+      enum: ["en", "ar", "fr", "ru"],
+      default: "en",
+      required: true,
+    },
+
     // Access and status
     status: {
       type: String,

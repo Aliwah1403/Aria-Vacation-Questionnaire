@@ -401,8 +401,7 @@ export function QuestionBuilder({
                         <div className="flex-grow">
                           <div className="flex items-center justify-between gap-3">
                             <h3 className="font-medium text-lg text-wrap">
-                              {question.questionText[activeLanguage] || //Will change this to en to see if after adding last question language it remains as english
-                                question.questionText.en}
+                              {question.questionText.en}
                             </h3>
                             <div className="flex items-center text-sm text-muted-foreground">
                               {getQuestionTypeIcon(question.questionType)}

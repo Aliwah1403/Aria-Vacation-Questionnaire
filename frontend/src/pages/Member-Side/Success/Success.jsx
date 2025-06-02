@@ -46,7 +46,9 @@ const Success = () => {
               <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-600">
                 <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {/* Prevent layout switch in AR for mobile number */}
-                <span className="text-sm sm:text-base">+971 4 5420 202</span>
+                <span className="text-sm sm:text-base ltr-text">
+                  +971 4 5420 202
+                </span>
               </div>
               <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-600">
                 <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

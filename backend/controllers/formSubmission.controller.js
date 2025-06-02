@@ -13,6 +13,7 @@ export const addFormSubmission = async (req, res) => {
       unitNo,
       checkIn,
       checkOut,
+      language = "en",
     } = req.body;
 
     // Validate if form template exists
@@ -48,7 +49,7 @@ export const addFormSubmission = async (req, res) => {
 
     const BASE_URL = process.env.FRONTEND_URL;
     // const formType = template.formTypeName.toLowerCase().replace(/\s+/g, "_");
-    const feedbackUrl = `${BASE_URL}/feedback/${newSubmission.id}/`;
+    const feedbackUrl = `${BASE_URL}/feedback/${newSubmission.id}/?lng=${language}`;
 
     // Populate template details in response
     const populatedSubmission = await FormSubmission.findById(
@@ -65,6 +66,7 @@ export const addFormSubmission = async (req, res) => {
       message: "Form submission created successfully",
       data: populatedSubmission,
       feedbackUrl: feedbackUrl,
+      language: language,
     });
   } catch (error) {
     console.error("Error creating form submission:", error);

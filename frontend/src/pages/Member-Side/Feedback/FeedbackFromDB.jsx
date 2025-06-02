@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, AlertCircle } from "lucide-react";
 import { useCharacterLimit } from "@/hooks/use-character-limit";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router";
@@ -114,6 +114,30 @@ const FeedbackFromDB = () => {
     );
   if (error) return <div>Error: {error.message}</div>;
 
+  // Check if form is completed (either from 403 response or regular response)
+  const isCompleted =
+    !formData.success || formData?.data?.status === "completed";
+
+  if (isCompleted) {
+    return (
+      <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24 font-arial">
+        <div className="text-center space-y-4 p-6 rounded-lg border border-gray-100 bg-gray-50">
+          <div className="mx-auto w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
+            <AlertCircle className="w-6 h-6 text-fountain-blue-600" />
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            {t("formSubmittedHeader")}
+          </h2>
+          <div className="space-y-2">
+            <p className="text-gray-600 max-w-md mx-auto">
+              {t("formSubmittedText")}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Move these after the loading/error checks
   const questions = formData?.data?.formDetails?.questions || [];
   const ratingOptions = formData?.data?.formDetails?.ratingOptions || [];
@@ -186,7 +210,7 @@ const FeedbackFromDB = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24">
+    <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24 font-arial">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-12">
@@ -209,10 +233,18 @@ const FeedbackFromDB = () => {
                 name={`answers.${currentStep - 1}.answer`}
                 render={({ field }) => (
                   <FormItem>
-                    <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
+                    <span
+                      className={`text-gray-500 mb-1 sm:mb-2 block text-sm ${
+                        currentLang === "ar" ? "text-right" : "text-left"
+                      }`}
+                    >
                       {t("question")} {currentStep}
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8">
+                    <h2
+                      className={`text-xl sm:text-2xl font-medium mb-4 sm:mb-8 font-arial ${
+                        currentLang === "ar" ? "text-right" : "text-left"
+                      }`}
+                    >
                       {questions[currentStep - 1].questionText}
                     </h2>
 
@@ -241,7 +273,7 @@ const FeedbackFromDB = () => {
                               <span className="text-2xl sm:text-3xl sm:mb-2 mr-3 sm:mr-0">
                                 {renderEmoji(option.emoji)}
                               </span>
-                              <span className="text-xs sm:text-sm text-gray-600 flex-1 sm:flex-none text-left sm:text-center">
+                              <span className="text-xs sm:text-sm text-gray-600 rtl-ml-3 sm:flex-none text-left sm:text-center">
                                 {option.value}
                               </span>
                             </motion.button>
@@ -312,7 +344,7 @@ const FeedbackFromDB = () => {
                                           htmlFor="anonymous"
                                           className="text-sm font-medium leading-relaxed cursor-pointer"
                                         >
-                                       {t("testimonialConsentAnonymous")}
+                                          {t("testimonialConsentAnonymous")}
                                         </Label>
                                       </div>
                                     </RadioGroup>
