@@ -1,4 +1,3 @@
-"use client";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, useSearchParams } from "react-router";
 import { ClockIcon, AlertCircle } from "lucide-react";

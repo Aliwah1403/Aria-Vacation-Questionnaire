@@ -233,10 +233,18 @@ const FeedbackFromDB = () => {
                 name={`answers.${currentStep - 1}.answer`}
                 render={({ field }) => (
                   <FormItem>
-                    <span className="text-gray-500 mb-1 sm:mb-2 block text-sm">
+                    <span
+                      className={`text-gray-500 mb-1 sm:mb-2 block text-sm ${
+                        currentLang === "ar" ? "text-right" : "text-left"
+                      }`}
+                    >
                       {t("question")} {currentStep}
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-8 font-arial">
+                    <h2
+                      className={`text-xl sm:text-2xl font-medium mb-4 sm:mb-8 font-arial ${
+                        currentLang === "ar" ? "text-right" : "text-left"
+                      }`}
+                    >
                       {questions[currentStep - 1].questionText}
                     </h2>
 

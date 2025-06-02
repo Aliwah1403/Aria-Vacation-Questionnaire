@@ -177,6 +177,10 @@
   text-align: left;
 }
 
+.ltr-text {
+  direction: ltr;
+}
+
 /* Margins and positioning */
 .rtl .-right-1\.5 {
   right: auto;
@@ -225,7 +229,7 @@
 }
 
 /* Absolute positioning for emoji selection checkmark */
-.rtl .absolute.-top-1\.5.-right-1\.5 {
+/* .rtl .absolute.-top-1\.5.-right-1\.5 {
   left: -0.375rem;
   right: auto;
 }
@@ -233,4 +237,18 @@
 .rtl .sm\:-top-2.sm\:-right-2 {
   left: -0.5rem;
   right: auto;
+} */
+
+/*radix-ui RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .reverse-flex {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .reverse-margin {
+  margin-right: 0;
+  margin-left: auto;
 }
