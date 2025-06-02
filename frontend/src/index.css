@@ -134,9 +134,9 @@
   text-align: right;
 }
 
-.rtl .ml-2 {
+.rtl-ml-3 {
   margin-left: 0;
-  margin-right: 0.5rem;
+  margin-right: 1rem;
 }
 
 .rtl .mr-2 {

@@ -273,7 +273,7 @@ const FeedbackFromDB = () => {
                               <span className="text-2xl sm:text-3xl sm:mb-2 mr-3 sm:mr-0">
                                 {renderEmoji(option.emoji)}
                               </span>
-                              <span className="text-xs sm:text-sm text-gray-600 flex-1 sm:flex-none text-left sm:text-center">
+                              <span className="text-xs sm:text-sm text-gray-600 rtl-ml-3 sm:flex-none text-left sm:text-center">
                                 {option.value}
                               </span>
                             </motion.button>
