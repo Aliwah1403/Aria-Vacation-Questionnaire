@@ -49,7 +49,7 @@ export const addFormSubmission = async (req, res) => {
 
     const BASE_URL = process.env.FRONTEND_URL;
     // const formType = template.formTypeName.toLowerCase().replace(/\s+/g, "_");
-    const feedbackUrl = `${BASE_URL}/feedback/${newSubmission.id}/?lng=${language}`;
+    const feedbackUrl = `${BASE_URL}/${newSubmission.id}/?lng=${language}`;
 
     // Populate template details in response
     const populatedSubmission = await FormSubmission.findById(

@@ -25,6 +25,11 @@ import ForgotPassword from "./pages/Admin-Side/Auth/Forgot-Account/forgot-passwo
 import ResetPassword from "./pages/Admin-Side/Auth/Forgot-Account/reset-password";
 import AdminNotFound from "./AdminNotFound";
 import MemberNotFound from "./MemberNotFound";
+import { PostHogProvider } from "posthog-js/react";
+
+const options = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+};
 
 const router = createBrowserRouter([
   {
@@ -53,11 +58,11 @@ const router = createBrowserRouter([
     element: <MemberSideLayout />,
     children: [
       {
-        path: "/feedback/:id",
+        path: "/:id",
         element: <MemberHomepage />,
       },
       {
-        path: "/feedback/:id/questionnaire",
+        path: "/:id/questionnaire",
         element: <FeedbackFromDB />,
       },
       // {
@@ -92,17 +97,17 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "/",
-    element: <Homepage />,
-  },
+  // {
+  //   path: "/",
+  //   element: <Homepage />,
+  // },
 
   {
     path: "/admin/*",
     element: <AdminNotFound />,
   },
   {
-    path: "/feedback/*",
+    path: "*",
     element: <MemberNotFound />,
   },
 ]);
@@ -116,7 +121,12 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ReactQueryProvider>
-      <RouterProvider router={router} />
+      <PostHogProvider
+        apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+        options={options}
+      >
+        <RouterProvider router={router} />
+      </PostHogProvider>
     </ReactQueryProvider>
   </React.StrictMode>
 );

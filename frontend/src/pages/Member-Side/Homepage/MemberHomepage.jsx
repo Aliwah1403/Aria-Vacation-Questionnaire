@@ -63,7 +63,7 @@ const MemberHomepage = () => {
   };
 
   const handleStartClick = () => {
-    navigate(`/feedback/${id}/questionnaire?lng=${currentLang}`);
+    navigate(`/${id}/questionnaire?lng=${currentLang}`);
   };
 
   return (
