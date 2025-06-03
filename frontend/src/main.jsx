@@ -92,17 +92,17 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "/",
-    element: <Homepage />,
-  },
+  // {
+  //   path: "/",
+  //   element: <Homepage />,
+  // },
 
   {
     path: "/admin/*",
     element: <AdminNotFound />,
   },
   {
-    path: "/feedback/*",
+    path: "*",
     element: <MemberNotFound />,
   },
 ]);
