@@ -53,11 +53,11 @@ const router = createBrowserRouter([
     element: <MemberSideLayout />,
     children: [
       {
-        path: "/feedback/:id",
+        path: "/:id",
         element: <MemberHomepage />,
       },
       {
-        path: "/feedback/:id/questionnaire",
+        path: "/:id/questionnaire",
         element: <FeedbackFromDB />,
       },
       // {
