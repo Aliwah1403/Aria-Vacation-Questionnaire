@@ -19,6 +19,7 @@ import { formSubmissionApi } from "@/api/formSubmissions";
 import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { FeedbackPageLoader } from "@/components/feedback-page-loader";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -54,6 +55,8 @@ const FeedbackFromDB = () => {
   const { value, characterCount, handleChange } = useCharacterLimit({
     maxLength,
   });
+
+  const loaderVariants = ["terminal", "text-blink", "loading-dots"];
 
   const {
     data: formData,
@@ -109,7 +112,7 @@ const FeedbackFromDB = () => {
   if (isPending)
     return (
       <div className="flex items-center justify-center min-h-screen mx-0 bg-red">
-        Loading...
+        <FeedbackPageLoader variant="loading-dots" text="Fetching Questions" />
       </div>
     );
   if (error) return <div>Error: {error.message}</div>;
