@@ -622,7 +622,7 @@ export function QuestionBuilder({
                           <Textarea
                             disabled
                             placeholder="Comments"
-                            className="bg-white h-24"
+                            className="bg-white h-[200px] resize-none"
                           />
                         )}
 

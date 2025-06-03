@@ -20,6 +20,7 @@ import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { FeedbackPageLoader } from "@/components/feedback-page-loader";
+import { Input } from "@/components/ui/input";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -283,7 +284,21 @@ const FeedbackFromDB = () => {
                           );
                         })}
                       </div>
+                    ) : questions[currentStep - 1].questionType === "text" ? (
+                      <div>
+                        <Input
+                          {...field}
+                          value={field.value}
+                          onChange={(e) => {
+                            handleAnswer(e.target.value);
+                            field.onChange(e);
+                          }}
+                          className="w-full text-sm sm:text-base p-3 h-10"
+                          placeholder={t("inputAnswer")}
+                        />
+                      </div>
                     ) : (
+                      // This is for "comments" type
                       <div>
                         <p className="text-muted-foreground mb-2 text-right text-xs">
                           <span className="tabular-nums">
@@ -304,6 +319,7 @@ const FeedbackFromDB = () => {
                           placeholder={t("shareThoughts")}
                         />
 
+                        {/* Keep the testimonial consent for the last step */}
                         {currentStep === questions.length && (
                           <FormField
                             control={form.control}
