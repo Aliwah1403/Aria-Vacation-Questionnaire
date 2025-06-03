@@ -25,6 +25,11 @@ import ForgotPassword from "./pages/Admin-Side/Auth/Forgot-Account/forgot-passwo
 import ResetPassword from "./pages/Admin-Side/Auth/Forgot-Account/reset-password";
 import AdminNotFound from "./AdminNotFound";
 import MemberNotFound from "./MemberNotFound";
+import { PostHogProvider } from "posthog-js/react";
+
+const options = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+};
 
 const router = createBrowserRouter([
   {
@@ -116,7 +121,12 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ReactQueryProvider>
-      <RouterProvider router={router} />
+      <PostHogProvider
+        apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+        options={options}
+      >
+        <RouterProvider router={router} />
+      </PostHogProvider>
     </ReactQueryProvider>
   </React.StrictMode>
 );
