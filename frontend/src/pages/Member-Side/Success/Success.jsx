@@ -2,8 +2,11 @@ import { motion } from "framer-motion";
 import { MessageCircle, Phone, Mail, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { usePostHog } from "posthog-js/react";
 
 const Success = () => {
+  const posthog = usePostHog();
+
   const { t } = useTranslation();
 
   const openWhatsApp = () => {
@@ -11,6 +14,8 @@ const Success = () => {
     const whatsappUrl = `https://wa.me/${phoneNumber}`;
     window.open(whatsappUrl, "_blank");
   };
+
+  posthog.capture("Questionnaire Finished Successfully");
 
   return (
     <div className="h-screen bg-white flex items-center justify-center p-4 sm:p-0">

@@ -4,14 +4,19 @@ import { ClockIcon, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
+import { usePostHog } from "posthog-js/react";
 
 const MemberHomepage = () => {
+  const posthog = usePostHog();
+
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const currentLang = searchParams.get("lng") || "en";
+
+  posthog.capture("Questionnaire Opened");
 
   const {
     data: formData,

@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { FeedbackPageLoader } from "@/components/feedback-page-loader";
 import { Input } from "@/components/ui/input";
+import { usePostHog } from "posthog-js/react";
 
 const emojiOptions = [
   { emoji: "1f603", label: "Satisfied" },
@@ -44,6 +45,8 @@ const createFeedbackSchema = (questions) => {
 };
 
 const FeedbackFromDB = () => {
+  const posthog = usePostHog();
+
   const { t } = useTranslation();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
@@ -57,7 +60,7 @@ const FeedbackFromDB = () => {
     maxLength,
   });
 
-  const loaderVariants = ["terminal", "text-blink", "loading-dots"];
+  posthog.capture("Questionnaire Started");
 
   const {
     data: formData,
