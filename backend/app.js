@@ -1,3 +1,5 @@
+// import "./instrument.js";
+
 import express from "express";
 import { PORT } from "./config/env.js";
 import formTypeRouter from "./routes/formType.routes.js";
@@ -10,6 +12,8 @@ import emailRouter from "./routes/email.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
+
+import * as Sentry from "@sentry/node";
 
 const app = express();
 
@@ -33,6 +37,8 @@ app.use("/api/v1/form-template", formTemplateRouter);
 app.use("/api/v1/form-submission", formSubmissionRouter);
 app.use("/api/v1/email-template", emailTemplateRouter);
 app.use("/api/v1/email-send", emailRouter);
+
+Sentry.setupExpressErrorHandler(app);
 
 const server = () => {
   app.listen(PORT, async () => {
