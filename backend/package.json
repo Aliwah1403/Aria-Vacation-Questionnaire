@@ -4,10 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node --import ./instrument.js app.js",
+    "dev": "nodemon --import ./instrument.js app.js"
   },
   "dependencies": {
+    "@sentry/node": "^9.28.1",
+    "@sentry/profiling-node": "^9.28.1",
     "better-auth": "^1.2.8",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
