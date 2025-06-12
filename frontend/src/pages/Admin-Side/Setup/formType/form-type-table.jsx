@@ -53,6 +53,9 @@ import {
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  FileText,
+  Link,
+  Files,
 } from "lucide-react";
 import {
   flexRender,
@@ -69,6 +72,7 @@ import {
 } from "@/mutations/formType/formTypeMutations";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { EmptyState } from "@/components/empty-state";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import { formTypeApi } from "@/api/formTypes";
 
@@ -288,11 +292,12 @@ export function FormTypeTable({ columns, data }) {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No recent responses
+                    <TableCell colSpan={columns.length}>
+                      <EmptyState
+                        title="No Form Types Created"
+                        description="You can create a new form type to start making questionnaires."
+                        icons={[FileText, Link, Files]}
+                      />
                     </TableCell>
                   </TableRow>
                 )}

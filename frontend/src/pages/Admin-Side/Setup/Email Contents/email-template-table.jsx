@@ -65,6 +65,9 @@ import {
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  MessageSquare,
+  Mail,
+  Image,
 } from "lucide-react";
 import {
   flexRender,
@@ -82,6 +85,7 @@ import { useCreateFormType } from "@/mutations/formType/formTypeMutations";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/ui/loading-button";
 import CreateEmailDialog from "./create-template-dialog";
+import { EmptyState } from "@/components/empty-state";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import { formTypeApi } from "@/api/formTypes";
 
@@ -260,11 +264,12 @@ export function EmailTemplateTable({ columns, data, formTypes }) {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No recent responses
+                    <TableCell colSpan={columns.length}>
+                      <EmptyState
+                        title="No Email Templates Created"
+                        description="You can create a new email template to start sending questionnaires."
+                        icons={[Image, Mail, MessageSquare]}
+                      />
                     </TableCell>
                   </TableRow>
                 )}
