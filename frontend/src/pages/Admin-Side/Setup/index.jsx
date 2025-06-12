@@ -15,56 +15,6 @@ import { emailTemplateColumns } from "./Email Contents/columns";
 import { emailTemplateApi } from "@/api/emailTemplates";
 import { LoaderComponent } from "@/components/data-loader";
 
-const formTemplates = [
-  {
-    id: 1,
-    formTemplateName: "Stay Experience Survey",
-    formTypeName: "Stay Experience Survey",
-    questions: 10,
-    updatedAt: "07/04/2024",
-    isActive: true,
-  },
-  {
-    id: 2,
-    formTemplateName: "Pool and Spa Feedback",
-    formTypeName: "Amenities Feedback",
-    questions: 8,
-    updatedAt: "05/04/2024",
-    isActive: true,
-  },
-  {
-    id: 3,
-    formTemplateName: "Front Desk Service Survey",
-    formTypeName: "Customer Service Rating",
-    questions: 12,
-    updatedAt: "06/04/2024",
-    isActive: true,
-  },
-  {
-    id: 4,
-    formTemplateName: "Resort Experience Review",
-    formTypeName: "Post-Stay Survey",
-    questions: 15,
-    updatedAt: "08/04/2024",
-    isActive: false,
-  },
-];
-
-const emailTemplates = [
-  {
-    id: 1,
-    formTypeName: "Stay Experience Survey",
-    emailTemplateName: "Stay Experience Email",
-    emailSubjectLine: "Your Stay Experience Feedback",
-    isHtml: false,
-    isActive: true,
-    createdAt: "08/04/2024",
-    updatedAt: "08/04/2024",
-    emailContent:
-      "We value your feedback on your recent stay. Please take a moment to complete our survey",
-  },
-];
-
 const QuestionnaireSetup = () => {
   const queryClient = useQueryClient();
 

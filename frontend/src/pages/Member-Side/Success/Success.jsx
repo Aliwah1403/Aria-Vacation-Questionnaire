@@ -18,7 +18,7 @@ const Success = () => {
   posthog.capture("Questionnaire Finished Successfully");
 
   return (
-    <div className="h-screen bg-white flex items-center justify-center p-4 sm:p-0">
+    <div className="h-screen bg-white flex items-center justify-center p-4 sm:p-0 font-arial">
       <div className="max-w-xl w-full mx-auto px-3 sm:px-4 py-6 sm:py-8 text-center">
         <motion.div
           initial={{ scale: 0 }}

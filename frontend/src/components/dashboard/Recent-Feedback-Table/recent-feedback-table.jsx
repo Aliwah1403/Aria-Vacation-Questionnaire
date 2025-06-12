@@ -80,11 +80,14 @@ import {
   InfoIcon,
   PlusIcon,
   TrashIcon,
+  Search,
+  FileQuestion,
 } from "lucide-react";
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import FacetedDataFilter from "@/components/faceted-data-filter";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/empty-state";
 
 const RecentFeedbackTable = ({ columns, data }) => {
   const tableId = useId();
@@ -154,8 +157,12 @@ const RecentFeedbackTable = ({ columns, data }) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No recent responses
+              <TableCell colSpan={columns.length}>
+                <EmptyState
+                  title="No Responses Found"
+                  description="Try adjusting your filters or wait for some responses from members."
+                  icons={[Search, FileQuestion]}
+                />
               </TableCell>
             </TableRow>
           )}

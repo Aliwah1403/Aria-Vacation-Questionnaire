@@ -43,6 +43,9 @@ import {
   ChevronLastIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  FileText,
+  Link,
+  Files,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -57,6 +60,7 @@ import { QuestionBuilder } from "./question-builder";
 import { useCreateFormTemplate } from "@/mutations/formTemplate/formTemplateMutations";
 import { toast } from "sonner";
 import { LoaderComponent } from "@/components/data-loader";
+import { EmptyState } from "@/components/empty-state";
 
 export function FormTemplateTable({ columns, data, formTypes }) {
   // 1. Declare ALL hooks at the top of component
@@ -296,11 +300,12 @@ export function FormTemplateTable({ columns, data, formTypes }) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No recent responses
+                  <TableCell colSpan={columns.length}>
+                    <EmptyState
+                      title="No Form Templates Created"
+                      description="You can create a new form template to start making questionnaires"
+                      icons={[FileText, Link, Files]}
+                    />
                   </TableCell>
                 </TableRow>
               )}
