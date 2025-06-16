@@ -7,7 +7,7 @@ Sentry.init({
   integrations: [
     nodeProfilingIntegration(),
     Sentry.consoleLoggingIntegration({
-      levels: ["log", "info", "warn", "error"],
+      levels: ["log", "error", "warn"],
     }),
   ],
   tracesSampleRate: NODE_ENV === "development" ? 1.0 : 0.3,
