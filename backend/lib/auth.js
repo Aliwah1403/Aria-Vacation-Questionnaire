@@ -10,6 +10,21 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const client = new MongoClient(DB_URI);
 const db = client.db();
 
+// Cleaning up expired sessions from DB every 24hrs
+const cleanupExpiredSessions = async () => {
+  try {
+    const sessions = db.collection("session");
+    const result = await sessions.deleteMany({
+      expiresAt: { $lt: new Date() },
+    });
+    console.log(`Cleaned up ${result.deletedCount} expired sessions`);
+  } catch (error) {
+    console.error("Error cleaning up expired sessions from DB: ", error);
+  }
+};
+
+setInterval(cleanupExpiredSessions, 24 * 60 * 60 * 1000);
+
 export const auth = betterAuth({
   database: mongodbAdapter(db),
   trustedOrigins: [FRONTEND_URL],
