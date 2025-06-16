@@ -42,9 +42,9 @@ export function useDashboardData(formSubmissionData, selectedRange) {
     // Calculate response rates with daily/weekly/monthly grouping
     const groupingFormat =
       selectedRange <= 7
-        ? "MMM dd"
+        ? "MMM dd yyyy"
         : selectedRange <= 30
-        ? "MMM dd"
+        ? "MMM dd yyyy"
         : "MMM yyyy";
 
     const responseRates = currentData.reduce((acc, submission) => {

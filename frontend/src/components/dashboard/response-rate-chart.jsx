@@ -26,7 +26,7 @@ const ResponseRateChart = ({ data, selectedRange }) => {
   // Determine x-axis format based on selected range
   const xAxisTickFormatter = (value) => {
     if (selectedRange <= 7) {
-      return value; // Show full date for weekly view
+      return value.split(" ").slice(0, 2).join(" "); // Show month and date for weekly view
     } else if (selectedRange <= 30) {
       return value.split(" ")[1]; // Show only day for monthly view
     }
@@ -75,12 +75,9 @@ const ResponseRateChart = ({ data, selectedRange }) => {
               tickFormatter={(value) => `${value}%`}
             />
             <ChartTooltip
-              defaultIndex={1}
-              cursor={false}
               content={
                 <ChartTooltipContent
-                  labelKey="responses"
-                  hideLabel
+                  labelFormatter={(value) => value}
                   formatter={(value, name) => (
                     <div className="flex min-w-[130px] items-center text-xs text-muted-foreground">
                       {chartConfig[name]?.label || name}
@@ -94,6 +91,8 @@ const ResponseRateChart = ({ data, selectedRange }) => {
                   )}
                 />
               }
+              defaultIndex={1}
+              cursor={false}
             />
             <Line
               dataKey="responseRate"
