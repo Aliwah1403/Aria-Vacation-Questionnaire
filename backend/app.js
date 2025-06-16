@@ -12,6 +12,7 @@ import emailRouter from "./routes/email.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
+import { setSentryUserContext } from "./middleware/sentry-context.js";
 
 import * as Sentry from "@sentry/node";
 
@@ -30,6 +31,9 @@ app.all("/api/auth/*", toNodeHandler(auth));
 
 // middlewares
 app.use(express.json());
+
+// Add Sentry context middleware before your routes
+app.use(setSentryUserContext);
 
 // routes
 app.use("/api/v1/form-type", formTypeRouter);
