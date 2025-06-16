@@ -150,7 +150,7 @@ const FormTemplateActions = ({ row, formTypes }) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Form Template Deletion</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete {formTemplate.formTypeName}?
+              Are you sure you want to delete {formTemplate.formTemplateName}?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
