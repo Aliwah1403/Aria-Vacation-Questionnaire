@@ -101,7 +101,6 @@ const FeedbackFromDB = () => {
         language: currentLang,
       };
 
-      console.log("Submitting data:", submissionData); // Debug log
 
       await formSubmissionApi.submitResponses(id, submissionData);
       navigate(`/feedback/${id}/success?lng=${currentLang}`);
