@@ -107,7 +107,7 @@ const SignupPage = () => {
       <div className="text-center text-sm">
         Already have an account?{" "}
         <Link
-          to="/login"
+          to="/admin/login"
           className="text-fountain-blue-400 hover:underline underline-offset-4"
         >
           Sign in

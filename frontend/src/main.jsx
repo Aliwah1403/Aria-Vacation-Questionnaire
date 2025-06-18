@@ -26,6 +26,7 @@ import ResetPassword from "./pages/Admin-Side/Auth/Forgot-Account/reset-password
 import AdminNotFound from "./AdminNotFound";
 import MemberNotFound from "./MemberNotFound";
 import { PostHogProvider } from "posthog-js/react";
+import PosthogIdentification from "./pages/Admin-Side/Auth/Posthog-Person-Identifier/PosthogIdentification";
 
 const options = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
@@ -125,6 +126,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
         options={options}
       >
+        <PosthogIdentification />
         <RouterProvider router={router} />
       </PostHogProvider>
     </ReactQueryProvider>
