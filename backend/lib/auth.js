@@ -35,28 +35,28 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },
-  // advanced: {
-  //   ...(process.env.NODE_ENV === "production"
-  //     ? {
-  //         crossSubDomainCookies: {
-  //           enabled: true,
-  //           domain: ".ariavacationnclub.com",
-  //         },
-  //         defaultCookieAttributes: {
-  //           secure: true,
-  //           httpOnly: true,
-  //           sameSite: "none",
-  //           partitioned: true,
-  //         },
-  //       }
-  //     : {
-  //         defaultCookieAttributes: {
-  //           secure: false,
-  //           httpOnly: true,
-  //           sameSite: "lax",
-  //         },
-  //       }),
-  // },
+  advanced: {
+    ...(process.env.NODE_ENV === "production"
+      ? {
+          crossSubDomainCookies: {
+            enabled: true,
+            domain: ".ariavacationclub.com",
+          },
+          defaultCookieAttributes: {
+            secure: true,
+            httpOnly: true,
+            sameSite: "none",
+            partitioned: true,
+          },
+        }
+      : {
+          defaultCookieAttributes: {
+            secure: false,
+            httpOnly: true,
+            sameSite: "lax",
+          },
+        }),
+  },
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
