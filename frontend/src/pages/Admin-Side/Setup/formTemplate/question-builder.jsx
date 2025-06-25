@@ -376,7 +376,7 @@ export function QuestionBuilder({
 
         {/* Right Column - Question Builder or Rating Options Editor */}
         <div className="w-3/4 p-8 overflow-auto">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-2">Question Builder</h2>
               <p className="text-muted-foreground">

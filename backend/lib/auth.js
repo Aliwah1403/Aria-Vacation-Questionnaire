@@ -6,6 +6,7 @@ import { DB_URI } from "../config/env.js";
 import { sendMail } from "../services/emailService.js";
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 const client = new MongoClient(DB_URI);
 const db = client.db();
@@ -27,19 +28,33 @@ setInterval(cleanupExpiredSessions, 24 * 60 * 60 * 1000);
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-  trustedOrigins: [FRONTEND_URL],
+  trustedOrigins: [FRONTEND_URL, BACKEND_URL],
   basePath: "/api/auth",
+  disabledPaths: ["/api/auth/sign-up"],
   session: {
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },
   advanced: {
-    defaultCookieAttributes: {
-      // secure: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      httpOnly: true,
-      // sameSite: "none", // Allows CORS-based cookie sharing across subdomains
-    },
+    ...(process.env.NODE_ENV === "production"
+      ? {
+          crossSubDomainCookies: {
+            enabled: true,
+            domain: ".yourdomain.com",
+          },
+          defaultCookieAttributes: {
+            secure: true,
+            httpOnly: true,
+            sameSite: "none",
+            partitioned: true,
+          },
+        }
+      : {
+          defaultCookieAttributes: {
+            secure: false,
+            httpOnly: true,
+            sameSite: "lax",
+          },
+        }),
   },
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
@@ -218,6 +233,6 @@ export const auth = betterAuth({
     },
     resetPasswordTokenExpiresIn: 3600, // 1 hour
 
-    // disableSignUp: true,
+    disableSignUp: true,
   },
 });
