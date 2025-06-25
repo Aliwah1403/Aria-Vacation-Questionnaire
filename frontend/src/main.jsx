@@ -83,10 +83,10 @@ const router = createBrowserRouter([
         path: "/admin/login",
         element: <LoginPage />,
       },
-      {
-        path: "/admin/signup",
-        element: <SignupPage />,
-      },
+      // {
+      //   path: "/admin/signup",
+      //   element: <SignupPage />,
+      // },
       {
         path: "/admin/forgot-account",
         element: <ForgotPassword />,
