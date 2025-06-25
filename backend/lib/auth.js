@@ -36,10 +36,14 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },
   advanced: {
-   defaultCookieAttributes:{
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "productionn" ? "none" : "Lax",
-   }
+    defaultCookieAttributes: {
+      domain:
+        process.env.NODE_ENV === "production"
+          ? ".ariavacationclub.com"
+          : ".localhost",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "productionn" ? "none" : "Lax",
+    },
   },
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
