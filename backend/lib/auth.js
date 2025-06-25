@@ -42,7 +42,7 @@ export const auth = betterAuth({
           ? ".ariavacationclub.com"
           : ".localhost",
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "productionn" ? "none" : "Lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
     },
   },
   secret: process.env.BETTER_AUTH_SECRET,
