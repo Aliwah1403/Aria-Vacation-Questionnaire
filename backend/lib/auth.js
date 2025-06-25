@@ -28,34 +28,35 @@ setInterval(cleanupExpiredSessions, 24 * 60 * 60 * 1000);
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-  trustedOrigins: [FRONTEND_URL, BACKEND_URL],
+  trustedOrigins: [FRONTEND_URL],
+  // trustedOrigins: [FRONTEND_URL, BACKEND_URL],
   basePath: "/api/auth",
   disabledPaths: ["/api/auth/sign-up"],
   session: {
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },
-  advanced: {
-    ...(process.env.NODE_ENV === "production"
-      ? {
-          crossSubDomainCookies: {
-            enabled: true,
-            domain: ".ariavacationnclub.com",
-          },
-          defaultCookieAttributes: {
-            secure: true,
-            httpOnly: true,
-            sameSite: "none",
-            partitioned: true,
-          },
-        }
-      : {
-          defaultCookieAttributes: {
-            secure: false,
-            httpOnly: true,
-            sameSite: "lax",
-          },
-        }),
-  },
+  // advanced: {
+  //   ...(process.env.NODE_ENV === "production"
+  //     ? {
+  //         crossSubDomainCookies: {
+  //           enabled: true,
+  //           domain: ".ariavacationnclub.com",
+  //         },
+  //         defaultCookieAttributes: {
+  //           secure: true,
+  //           httpOnly: true,
+  //           sameSite: "none",
+  //           partitioned: true,
+  //         },
+  //       }
+  //     : {
+  //         defaultCookieAttributes: {
+  //           secure: false,
+  //           httpOnly: true,
+  //           sameSite: "lax",
+  //         },
+  //       }),
+  // },
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
