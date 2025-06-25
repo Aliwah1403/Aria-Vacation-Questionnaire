@@ -28,8 +28,8 @@ setInterval(cleanupExpiredSessions, 24 * 60 * 60 * 1000);
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-  trustedOrigins: [FRONTEND_URL],
-  // trustedOrigins: [FRONTEND_URL, BACKEND_URL],
+  // trustedOrigins: [FRONTEND_URL],
+  trustedOrigins: [FRONTEND_URL, BACKEND_URL],
   basePath: "/api/auth",
   disabledPaths: ["/api/auth/sign-up"],
   session: {
