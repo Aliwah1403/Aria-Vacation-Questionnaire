@@ -39,7 +39,7 @@ export const auth = betterAuth({
       ? {
           crossSubDomainCookies: {
             enabled: true,
-            domain: ".yourdomain.com",
+            domain: ".ariavacationnclub.com",
           },
           defaultCookieAttributes: {
             secure: true,
