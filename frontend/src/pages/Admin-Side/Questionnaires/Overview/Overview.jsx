@@ -96,7 +96,11 @@ const QuestionnairesOverview = () => {
                   Send Questionnaires
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-[700px]">
+              <DialogContent
+                className="max-w-[700px]"
+                onInteractOutside={(e) => e.preventDefault()}
+                onEscapeKeyDown={(e) => e.preventDefault()}
+              >
                 <DialogHeader>
                   <DialogTitle className="text-xl font-semibold">
                     Send Questionnaire

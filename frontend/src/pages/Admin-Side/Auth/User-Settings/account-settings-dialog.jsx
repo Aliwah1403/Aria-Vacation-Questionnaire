@@ -122,7 +122,11 @@ const AccountSettingsDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[600px] p-0">
+      <DialogContent
+        className="max-w-4xl h-[600px] p-0"
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <div className="flex h-full">
           {/* Sidebar */}
           <div className="w-64 bg-gray-50 border-r border-gray-200 p-6">
