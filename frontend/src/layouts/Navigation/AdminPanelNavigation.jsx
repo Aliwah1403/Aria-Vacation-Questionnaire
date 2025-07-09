@@ -18,9 +18,11 @@ import {
 import { signOut, useSession } from "@//lib/auth-client";
 import { toast } from "sonner";
 import AccountSettingsDialog from "@/pages/Admin-Side/Auth/User-Settings/account-settings-dialog";
+import SignOutOverlayLoader from "@/components/signout-overlay-loader";
 
 const AdminPanelNavigation = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const { data: session } = useSession();
 
@@ -34,15 +36,18 @@ const AdminPanelNavigation = () => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
+    setIsSigningOut(true);
     try {
       await signOut({
         fetchOptions: {
           onSuccess: () => {
+            setIsSigningOut(false);
             navigate("admin/login"); // redirect to login page
           },
         },
       });
     } catch (error) {
+      setIsSigningOut(false);
       toast.error("Failed to sign out. Please try again.");
       console.error("Sign out error:", error);
     }
@@ -50,6 +55,7 @@ const AdminPanelNavigation = () => {
 
   return (
     <>
+      {isSigningOut && <SignOutOverlayLoader message="Hang on tight while we sign you out of your account..."/>}
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 bg-background px-4 md:px-6">
         <div className="flex items-center gap-10">
           <img src={AriaLogo} className="mx-auto" width={100} height={50} />
@@ -165,8 +171,7 @@ const AdminPanelNavigation = () => {
           onOpenChange={setIsDialogOpen}
         />
       </header>
-
-      <Separator />
+      <Separator />{" "}
     </>
   );
 };
