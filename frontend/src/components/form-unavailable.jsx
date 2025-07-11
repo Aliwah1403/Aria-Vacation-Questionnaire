@@ -1,5 +1,3 @@
-"use client";
-
 import {
   AlertTriangle,
   RefreshCw,
@@ -187,8 +185,7 @@ const FormUnavailable = ({
         {/* Help Text */}
         <div className="text-center mt-6 pt-6 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            If you continue to experience issues, please check the URL or
-            contact the form administrator.
+            If you continue to experience issues, please check the URL.
           </p>
         </div>
       </div>

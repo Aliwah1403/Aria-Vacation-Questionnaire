@@ -120,7 +120,7 @@ const MemberHomepage = () => {
       <FormUnavailable
         title={"Form Not Available"}
         primaryReason={getUnavailableReason()}
-        customMessage={formData?.message || undefined}
+        customMessage={"Feedback questionnaire not found" || formData?.message}
         onRetry={() => {
           posthog.capture("Form Retry Attempted");
           refetch();
