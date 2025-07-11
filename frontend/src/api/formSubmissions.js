@@ -25,6 +25,9 @@ export const formSubmissionApi = {
         // Return the error response data for completed forms
         return error.response.data;
       }
+      if (error.response?.status === 404) {
+        return error.response.data;
+      }
       throw error; // Re-throw other errors
     }
   },

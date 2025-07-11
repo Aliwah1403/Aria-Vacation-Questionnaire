@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { usePostHog } from "posthog-js/react";
+import FormUnavailable from "@/components/form-unavailable";
+FormUnavailable;
 
 const MemberHomepage = () => {
   const posthog = usePostHog();
@@ -22,6 +24,7 @@ const MemberHomepage = () => {
     data: formData,
     isPending,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["formSubmission", id, currentLang],
     queryFn: () => formSubmissionApi.getById(id, currentLang),
@@ -36,9 +39,43 @@ const MemberHomepage = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  console.log("Form Details: ", formData);
+
+  // Check if form is not available in the DB
+  const isNotAvailable =
+    formData &&
+    formData.success === false &&
+    formData.message &&
+    formData.message.toLowerCase().includes("not found");
+
   // Check if form is completed (either from 403 response or regular response)
   const isCompleted =
-    !formData.success || formData?.data?.status === "completed";
+    (formData &&
+      formData.success === false &&
+      formData.message?.toLowerCase().includes("already completed")) ||
+    formData?.data?.status === "completed";
+
+  // Determine the reason for unavailability
+  const getUnavailableReason = () => {
+    if (!formData || !formData.message) return "url-error";
+
+    const message = formData.message.toLowerCase();
+
+    if (message.includes("not found") || message.includes("invalid")) {
+      return "url-error";
+    }
+    if (message.includes("expired") || message.includes("deadline")) {
+      return "expired";
+    }
+    if (message.includes("permission") || message.includes("access")) {
+      return "restricted";
+    }
+    if (message.includes("maintenance") || message.includes("unavailable")) {
+      return "maintenance";
+    }
+
+    return "url-error";
+  };
 
   if (isCompleted) {
     return (
@@ -57,6 +94,32 @@ const MemberHomepage = () => {
           </div>
         </div>
       </div>
+    );
+  }
+
+  if (isNotAvailable) {
+    return (
+      <FormUnavailable
+        title={"Form Not Available"}
+        primaryReason={getUnavailableReason()}
+        customMessage={formData?.message || undefined}
+        onRetry={() => {
+          posthog.capture("Form Retry Attempted");
+          refetch();
+        }}
+        onLoading={isPending}
+        onGoHome={() => {
+          posthog.capture("Navigate Home from Unavailable Form");
+          navigate("/");
+        }}
+        onContactSupport={() => {
+          posthog.capture("Contact Support from Unavailable Form");
+          // You can customize this based on your support system
+          window.location.href =
+            "mailto:support@yourcompany.com?subject=Form Access Issue&body=I'm having trouble accessing form ID: " +
+            id;
+        }}
+      />
     );
   }
 
