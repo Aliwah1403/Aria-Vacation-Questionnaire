@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formSubmissionApi } from "@/api/formSubmissions";
 import { usePostHog } from "posthog-js/react";
 import FormUnavailable from "@/components/form-unavailable";
-FormUnavailable;
+import FormCompleted from "@/components/form-completed";
 
 const MemberHomepage = () => {
   const posthog = usePostHog();
@@ -79,21 +79,39 @@ const MemberHomepage = () => {
 
   if (isCompleted) {
     return (
-      <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24 font-arial">
-        <div className="text-center space-y-4 p-6 rounded-lg border border-gray-100 bg-gray-50">
-          <div className="mx-auto w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
-            <AlertCircle className="w-6 h-6 text-fountain-blue-600" />
-          </div>
-          <h2 className="text-2xl font-semibold text-gray-900">
-            {t("formSubmittedHeader")}
-          </h2>
-          <div className="space-y-2">
-            <p className="text-gray-600 max-w-md mx-auto">
-              {t("formSubmittedText")}
-            </p>
-          </div>
-        </div>
-      </div>
+      <FormCompleted
+        title={t("formSubmittedHeader") || "Form Already Submitted"}
+        customMessage={t("formSubmittedText") || formData?.message}
+        submissionDate={
+          formData?.data?.submittedAt || formData?.data?.createdAt
+        }
+        onGoHome={() => {
+          posthog.capture("Navigate Home from Completed Form");
+          navigate("/");
+        }}
+        onContactSupport={() => {
+          posthog.capture("Contact Support from Completed Form");
+          window.location.href =
+            "mailto:support@yourcompany.com?subject=Form Submission Question&body=I have a question about my form submission (ID: " +
+            id +
+            ")";
+        }}
+      />
+      // <div className="max-w-4xl mx-auto px-5 sm:px-4 py-4 sm:py-8 md:mt-32 mt-24 font-arial">
+      //   <div className="text-center space-y-4 p-6 rounded-lg border border-gray-100 bg-gray-50">
+      //     <div className="mx-auto w-12 h-12 rounded-full bg-fountain-blue-100 flex items-center justify-center">
+      //       <AlertCircle className="w-6 h-6 text-fountain-blue-600" />
+      //     </div>
+      //     <h2 className="text-2xl font-semibold text-gray-900">
+      //       {t("formSubmittedHeader")}
+      //     </h2>
+      //     <div className="space-y-2">
+      //       <p className="text-gray-600 max-w-md mx-auto">
+      //         {t("formSubmittedText")}
+      //       </p>
+      //     </div>
+      //   </div>
+      // </div>
     );
   }
 
