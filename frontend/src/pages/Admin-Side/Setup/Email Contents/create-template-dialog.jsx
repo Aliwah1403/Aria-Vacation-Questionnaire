@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -231,7 +230,11 @@ const CreateEmailDialog = ({
           Create New Email Template
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent
+        className="sm:max-w-[800px]"
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>
             {initialData ? "Edit Email Template" : "Create Email Template"}
@@ -375,10 +378,11 @@ const CreateEmailDialog = ({
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
+                className="justify-start"
                 onClick={() => {
                   resetForm();
                   onOpenChange(false);
@@ -387,19 +391,34 @@ const CreateEmailDialog = ({
               >
                 Cancel
               </Button>
-              <LoadingButton
-                type="submit"
-                loading={createMutation.isPending || updateMutation.isPending}
-                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
-              >
-                {createMutation.isPending || updateMutation.isPending
-                  ? initialData
-                    ? "Updating..."
-                    : "Creating..."
-                  : initialData
-                  ? "Update Template"
-                  : "Create Template"}
-              </LoadingButton>
+              <div className="flex items-center justify-center gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  // onClick={() => {
+                  //   resetForm();
+                  //   onOpenChange(false);
+                  // }}
+                  // disabled={
+                  //   createMutation.isPending || updateMutation.isPending
+                  // }
+                >
+                  Send Test Mail
+                </Button>
+                <LoadingButton
+                  type="submit"
+                  loading={createMutation.isPending || updateMutation.isPending}
+                  className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                >
+                  {createMutation.isPending || updateMutation.isPending
+                    ? initialData
+                      ? "Updating..."
+                      : "Creating..."
+                    : initialData
+                    ? "Update Template"
+                    : "Create Template"}
+                </LoadingButton>
+              </div>
             </DialogFooter>
           </form>
         </Form>
