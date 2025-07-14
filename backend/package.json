@@ -10,7 +10,7 @@
   "dependencies": {
     "@sentry/node": "^9.28.1",
     "@sentry/profiling-node": "^9.28.1",
-    "better-auth": "^1.2.8",
+    "better-auth": "^1.2.10",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
