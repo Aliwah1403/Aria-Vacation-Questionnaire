@@ -20,6 +20,8 @@ const Users = () => {
       const data = await authClient.admin.listUsers(
         {
           query: {
+            searchField: "email",
+            searchOperator: "contains",
             limit: 10,
             sortBy: "createdAt",
             sortDirection: "desc",
