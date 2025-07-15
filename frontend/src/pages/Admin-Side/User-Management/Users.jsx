@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import AdminPageHeader from "@/components/admin-page-header";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,35 @@ import { dummyUsers } from "./dummyUsers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserManagementTable } from "./users-table";
 import { usersColumns } from "./columns";
+import { authClient } from "@/lib/auth-client";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { LoaderComponent } from "@/components/data-loader";
 
 const Users = () => {
+  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { data: users, isPending: isUsersLoading } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const data = await authClient.admin.listUsers(
+        {
+          query: {
+            limit: 10,
+            sortBy: "createdAt",
+            sortDirection: "desc",
+          },
+        },
+        { throw: true }
+      );
+      return data?.users || [];
+    },
+  });
+
+  if (isUsersLoading) {
+    return <LoaderComponent />;
+  }
+
   return (
     <>
       <AdminPageHeader
@@ -28,10 +55,7 @@ const Users = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent className="mt-0">
-            <UserManagementTable
-              columns={usersColumns}
-              data={dummyUsers || []}
-            />
+            <UserManagementTable columns={usersColumns} data={users || []} />
           </TabsContent>
         </Tabs>
       </div>

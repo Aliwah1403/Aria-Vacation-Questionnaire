@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EllipsisIcon, Trash2Icon, User2Icon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { userTableDateLong } from "@/utils/dateFormat";
 
 export const usersColumns = [
   //   {
@@ -69,7 +70,11 @@ export const usersColumns = [
     header: "Created",
     cell: ({ row }) => {
       const created = row.getValue("createdAt");
-      return <div className="text-muted-foreground">{created}</div>;
+      return (
+        <div className="text-muted-foreground">
+          {userTableDateLong(created)}
+        </div>
+      );
     },
   },
   {
