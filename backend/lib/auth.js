@@ -32,11 +32,14 @@ export const auth = betterAuth({
   trustedOrigins: [FRONTEND_URL, BACKEND_URL],
   basePath: "/api/auth",
   disabledPaths: ["/api/auth/sign-up"],
-  plugins: [admin({
-    defaultRole: "user",
-    adminRoles: ["admin", "superadmin"],
-
-  })],
+  plugins: [
+    admin({
+      defaultRole: "user",
+      adminRoles: ["admin", "superadmin"],
+      bannedUserMessage:
+        "You have been blocked from using this application. Please contact admin if you believe this to be an error",
+    }),
+  ],
   session: {
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },

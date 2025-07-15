@@ -7,7 +7,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisIcon, Trash2Icon, User2Icon } from "lucide-react";
+import {
+  EllipsisIcon,
+  Trash2Icon,
+  User2Icon,
+  UserCog,
+  UserLock,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { userTableDateLong } from "@/utils/dateFormat";
 
@@ -36,7 +42,6 @@ export const usersColumns = [
             {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
             <AvatarFallback className="rounded-full bg-fountain-blue-500 text-white">
               {initials}
-              {/* <User className="size-5 mx-auto" /> */}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -53,22 +58,22 @@ export const usersColumns = [
     accessorKey: "role",
     header: "Role",
   },
-  {
-    accessorKey: "ipAddress",
-    header: "IP Address",
-    cell: ({ row }) => {
-      const ipAddress = row.getValue("ipAddress");
-      return <div className="text-muted-foreground">{ipAddress}</div>;
-    },
-  },
-  {
-    accessorKey: "lastSignedIn",
-    header: "Last Signed In",
-    cell: ({ row }) => {
-      const signedIn = row.getValue("lastSignedIn");
-      return <div className="text-muted-foreground">{signedIn}</div>;
-    },
-  },
+  //   {
+  //     accessorKey: "ipAddress",
+  //     header: "IP Address",
+  //     cell: ({ row }) => {
+  //       const ipAddress = row.getValue("ipAddress");
+  //       return <div className="text-muted-foreground">{ipAddress}</div>;
+  //     },
+  //   },
+  //   {
+  //     accessorKey: "lastSignedIn",
+  //     header: "Last Signed In",
+  //     cell: ({ row }) => {
+  //       const signedIn = row.getValue("lastSignedIn");
+  //       return <div className="text-muted-foreground">{signedIn}</div>;
+  //     },
+  //   },
   {
     accessorKey: "createdAt",
     header: "Created",
@@ -97,6 +102,15 @@ export const usersColumns = [
             <DropdownMenuItem>
               <User2Icon className="size-4" />
               View profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <UserCog className="size-4" />
+              Impersonate user
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-500">
+              <UserLock className="size-4 text-red-500" />
+              Ban user
             </DropdownMenuItem>
             <DropdownMenuItem className="text-red-500">
               <Trash2Icon className="size-4 text-red-500" />
