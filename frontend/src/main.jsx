@@ -27,6 +27,7 @@ import AdminNotFound from "./AdminNotFound";
 import MemberNotFound from "./MemberNotFound";
 import { PostHogProvider } from "posthog-js/react";
 import PosthogIdentification from "./pages/Admin-Side/Auth/Posthog-Person-Identifier/PosthogIdentification";
+import Users from "./pages/Admin-Side/User-Management/Users";
 
 const options = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
           {
             path: "/admin/questionnaire-setup",
             element: <QuestionnaireSetup />,
+          },
+          {
+            path: "/admin/users",
+            element: <Users />,
           },
         ],
       },

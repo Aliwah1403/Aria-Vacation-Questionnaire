@@ -1,0 +1,42 @@
+export const dummyUsers = [
+  {
+    name: "Curtis Aliwah",
+    email: "curtis.aliwah@ariavacationclub.com",
+    ipAddress: "192.390.300.299",
+    createdAt: "27 February, 2025",
+    lastSignedIn: "05 July, 2025",
+    role: "admin",
+  },
+  {
+    name: "Samantha Lee",
+    email: "samantha.lee@ariavacationclub.com",
+    ipAddress: "172.168.45.101",
+    createdAt: "12 March, 2025",
+    lastSignedIn: "10 July, 2025",
+    role: "user",
+  },
+  {
+    name: "Miguel Torres",
+    email: "miguel.torres@ariavacationclub.com",
+    ipAddress: "203.0.113.42",
+    createdAt: "03 April, 2025",
+    lastSignedIn: "08 July, 2025",
+    role: "admin",
+  },
+  {
+    name: "Aisha Patel",
+    email: "aisha.patel@ariavacationclub.com",
+    ipAddress: "198.51.100.77",
+    createdAt: "19 May, 2025",
+    lastSignedIn: "06 July, 2025",
+    role: "user",
+  },
+  {
+    name: "Liam O'Connor",
+    email: "liam.oconnor@ariavacationclub.com",
+    ipAddress: "192.0.2.123",
+    createdAt: "25 June, 2025",
+    lastSignedIn: "07 July, 2025",
+    role: "user",
+  },
+];

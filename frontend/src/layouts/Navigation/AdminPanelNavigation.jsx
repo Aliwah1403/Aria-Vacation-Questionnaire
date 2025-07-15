@@ -55,7 +55,9 @@ const AdminPanelNavigation = () => {
 
   return (
     <>
-      {isSigningOut && <SignOutOverlayLoader message="Hang on tight while we sign you out of your account..."/>}
+      {isSigningOut && (
+        <SignOutOverlayLoader message="Hang on tight while we sign you out of your account..." />
+      )}
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 bg-background px-4 md:px-6">
         <div className="flex items-center gap-10">
           <img src={AriaLogo} className="mx-auto" width={100} height={50} />
@@ -101,6 +103,20 @@ const AdminPanelNavigation = () => {
                   }
                 >
                   Setup
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/admin/users"
+                  className={({ isActive }) =>
+                    `text-sm font-medium ${
+                      isActive
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary/80"
+                    }`
+                  }
+                >
+                  Users
                 </NavLink>
               </li>
             </ul>
