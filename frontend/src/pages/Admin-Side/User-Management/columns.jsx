@@ -25,13 +25,17 @@ export const usersColumns = [
     header: "User",
     cell: ({ row }) => {
       const { name, email } = row.original;
+      const initials = name
+        .split(" ")
+        .map((part) => part[0].toUpperCase())
+        .join("");
+
       return (
         <div className="flex items-cennter gap-3">
           <Avatar className="size-10 rounded-full ">
             {/* <AvatarImage src={avatar} alt="UserProfile" /> */}
             <AvatarFallback className="rounded-full bg-fountain-blue-500 text-white">
-              {/* {initials} */}
-              AV
+              {initials}
               {/* <User className="size-5 mx-auto" /> */}
             </AvatarFallback>
           </Avatar>
