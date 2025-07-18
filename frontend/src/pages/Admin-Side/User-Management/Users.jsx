@@ -9,10 +9,19 @@ import { usersColumns } from "./columns";
 import { authClient } from "@/lib/auth-client";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { LoaderComponent } from "@/components/data-loader";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import CreateUserForm from "./create-user-form";
 
 const Users = () => {
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
+  const [createUserDialog, setCreateUserDialog] = useState(false);
 
   const { data: users, isPending: isUsersLoading } = useQuery({
     queryKey: ["users"],
@@ -43,9 +52,16 @@ const Users = () => {
         header="Users"
         description="Manage the users in your organization"
         action={
-          <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
-            Create user
-          </Button>
+          <Dialog open={createUserDialog} onOpenChange={setCreateUserDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80">
+                Create user
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <CreateUserForm setCreateUserDialog={setCreateUserDialog} />
+            </DialogContent>
+          </Dialog>
         }
       />
 

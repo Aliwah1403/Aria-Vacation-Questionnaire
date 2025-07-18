@@ -57,6 +57,10 @@ export const usersColumns = [
   {
     accessorKey: "role",
     header: "Role",
+    cell: ({ row }) => {
+      const role = row.getValue("role");
+      return <span className="capitalize">{role}</span>;
+    },
   },
   //   {
   //     accessorKey: "ipAddress",

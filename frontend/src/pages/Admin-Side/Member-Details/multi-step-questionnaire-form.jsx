@@ -60,18 +60,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { emailSendApi } from "@/api/emailSend";
 
-const emailTemplates = [
-  { label: "Tester Survey Email Template", value: "tester-survey" },
-  { label: "Post Feedback Request", value: "post-feedback" },
-  { label: "Pre-Arrival Feedback Request", value: "pre-arrival" },
-  { label: "Post-Departure Feedback Request", value: "post-departure" },
-  { label: "Post-Stay Feedback Request", value: "post-stay" },
-  { label: "Pre-Stay Feedback Request", value: "pre-stay" },
-  { label: "Pre-Check-In Feedback Request", value: "pre-check-in" },
-  { label: "Post-Check-Out Feedback Request", value: "post-check-out" },
-  { label: "Pre-Check-Out Feedback Request", value: "pre-check-out" },
-];
-
 // Form schemas
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
@@ -797,7 +785,7 @@ const MultiStepQuestionnaireForm = ({
             <div className="space-x-2">
               <LoadingButton
                 loading={loading}
-                disabled={loading} 
+                disabled={loading}
                 type="button"
                 variant="outline"
                 onClick={() => handleEmailSend()}
