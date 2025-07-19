@@ -117,6 +117,25 @@ const UserManagementActions = ({ row }) => {
     }
   };
 
+  const handleDeleteUser = async () => {
+    setIsLoading(`delete-${userId}`);
+    try {
+      await authClient.admin.removeUser({
+        userId: userId,
+      });
+      toast.success(`${userName}'s account deleted successfully.`);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    } catch (error) {
+      console.error("Failed to delete user: ", error);
+      toast.error(
+        `There was a problem deleting ${userName}'s account. Please try again.`
+      );
+    } finally {
+      setIsLoading(undefined);
+      setDialogType(null);
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -263,9 +282,16 @@ const UserManagementActions = ({ row }) => {
             <Button variant="outline" onClick={() => setDialogType(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={() => setDialogType(null)}>
-              Delete
-            </Button>
+            <LoadingButton
+              variant="destructive"
+              loading={isLoading === `delete-${userId}`}
+              disabled={isLoading === `delete-${userId}`}
+              onClick={() => handleDeleteUser()}
+            >
+              {isLoading === `delete-${userId}`
+                ? "  Deleting...."
+                : "Delete User"}
+            </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
