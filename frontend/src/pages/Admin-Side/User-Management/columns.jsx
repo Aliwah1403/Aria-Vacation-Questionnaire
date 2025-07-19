@@ -93,7 +93,7 @@ const UserManagementActions = ({ row }) => {
       toast.error(`Failed to ban ${userName}. Please try again`);
     } finally {
       setIsLoading(undefined);
-      setIsBanDialogOpen(false);
+      setDialogType(null);
     }
   };
 
@@ -106,13 +106,14 @@ const UserManagementActions = ({ row }) => {
       toast.success(
         `${userName} unbanned successfully. They can now log into their account`
       );
-      setIsBanDialogOpen(false);
+
       queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (error) {
       console.error(`Failed to unban ${userName}: `, error);
       toast.error(`Failed to unban ${userName}. Please try again`);
     } finally {
       setIsLoading(undefined);
+      setDialogType(null);
     }
   };
 
