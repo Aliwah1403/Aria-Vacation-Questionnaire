@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
 
 const UserManagementActions = ({ row }) => {
   const queryClient = useQueryClient();
@@ -278,6 +279,34 @@ export const usersColumns = [
     cell: ({ row }) => {
       const role = row.getValue("role");
       return <span className="capitalize">{role}</span>;
+    },
+  },
+  {
+    accessorKey: "banned",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("banned");
+      return (
+        <div>
+          {status ? (
+            <Badge variant="outline" className="gap-1.5">
+              <span
+                className="size-1.5 rounded-full bg-red-500"
+                aria-hidden="true"
+              ></span>
+              Banned
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="gap-1.5">
+              <span
+                className="size-1.5 rounded-full bg-emerald-500"
+                aria-hidden="true"
+              ></span>
+              Active
+            </Badge>
+          )}
+        </div>
+      );
     },
   },
   //   {
