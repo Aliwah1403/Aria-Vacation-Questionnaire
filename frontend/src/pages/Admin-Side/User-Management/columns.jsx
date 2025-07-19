@@ -55,7 +55,7 @@ import { Badge } from "@/components/ui/badge";
 const UserManagementActions = ({ row }) => {
   const queryClient = useQueryClient();
 
-  const [dialogType, setDialogType] = useState(null); // 'delete' or 'ban'
+  const [dialogType, setDialogType] = useState(null); // 'delete' or 'ban' or 'unban
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -71,6 +71,9 @@ const UserManagementActions = ({ row }) => {
   const userId = user.id;
   const userEmail = user.email;
   const userName = user.name;
+  const isBanned = user.banned;
+
+  console.log("User status: ", isBanned);
 
   const handleBanUser = async (e) => {
     e.preventDefault();
@@ -83,11 +86,31 @@ const UserManagementActions = ({ row }) => {
       });
 
       toast.success(`${userName} banned successfully`);
-      setIsBanDialogOpen(false);
+
       queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (error) {
       console.error("Failed to ban the user: ", error);
       toast.error(`Failed to ban ${userName}. Please try again`);
+    } finally {
+      setIsLoading(undefined);
+      setIsBanDialogOpen(false);
+    }
+  };
+
+  const handleUnbanUser = async () => {
+    setIsLoading(`unban-${userId}`);
+    try {
+      await authClient.admin.unbanUser({
+        userId: userId,
+      });
+      toast.success(
+        `${userName} unbanned successfully. They can now log into their account`
+      );
+      setIsBanDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    } catch (error) {
+      console.error(`Failed to unban ${userName}: `, error);
+      toast.error(`Failed to unban ${userName}. Please try again`);
     } finally {
       setIsLoading(undefined);
     }
@@ -114,16 +137,29 @@ const UserManagementActions = ({ row }) => {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            className="text-red-500"
-            onClick={() => {
-              setDialogType("ban");
-              setIsBanDialogOpen(true);
-            }}
-          >
-            <UserLock className="size-4 text-red-500" />
-            Ban user
-          </DropdownMenuItem>
+          {isBanned ? (
+            <DropdownMenuItem
+              className="text-red-500"
+              onClick={() => {
+                setDialogType("unban");
+                setIsBanDialogOpen(true);
+              }}
+            >
+              <UserLock className="size-4 text-red-500" />
+              Unban user
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              className="text-red-500"
+              onClick={() => {
+                setDialogType("ban");
+                setIsBanDialogOpen(true);
+              }}
+            >
+              <UserLock className="size-4 text-red-500" />
+              Ban user
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem
             className="text-red-500"
@@ -229,6 +265,37 @@ const UserManagementActions = ({ row }) => {
             <Button variant="destructive" onClick={() => setDialogType(null)}>
               Delete
             </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={dialogType === "unban"}
+        onOpenChange={() => setDialogType(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unban User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to unban{" "}
+              <span className="font-semibold">{user.name}</span> ({user.email})?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setDialogType(null)}>
+              Cancel
+            </Button>
+            <LoadingButton
+              type="submit"
+              className="w-auto bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+              loading={isLoading === `unban-${userId}`}
+              disabled={isLoading === `unban-${userId}`}
+              onClick={() => handleUnbanUser()}
+            >
+              {isLoading === `unban-${userId}`
+                ? "  Processing...."
+                : "Unban User"}
+            </LoadingButton>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
