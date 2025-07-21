@@ -51,9 +51,11 @@ import {
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router";
 
 const UserManagementActions = ({ row }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'ban' or 'unban
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
@@ -136,6 +138,28 @@ const UserManagementActions = ({ row }) => {
     }
   };
 
+  const handleImpersonateUser = async () => {
+    setIsLoading(`impersonate-${userId}`);
+
+    try {
+      await authClient.admin.impersonateUser({
+        userId: userId,
+      });
+      toast.success(
+        `Impersonated ${userName}. You will be redirected to dashboard shortly`
+      );
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+        navigate(0);
+      }, 3000);
+    } catch (error) {
+      console.error(`Failed to impersonate ${userName}: `, error);
+      toast.error(
+        `There was a problem tying to impersonate ${userName}. Please try again.`
+      );
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -151,7 +175,7 @@ const UserManagementActions = ({ row }) => {
             <User2Icon className="size-4" />
             View profile
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleImpersonateUser()}>
             <UserCog className="size-4" />
             Impersonate user
           </DropdownMenuItem>
@@ -331,14 +355,6 @@ const UserManagementActions = ({ row }) => {
 };
 
 export const usersColumns = [
-  //   {
-  //     accessorKey: "name",
-  //     header: "Name",
-  //   },
-  //   {
-  //     accessorKey: "email",
-  //     header: "Email",
-  //   },
   {
     accessorKey: "User",
     header: "User",

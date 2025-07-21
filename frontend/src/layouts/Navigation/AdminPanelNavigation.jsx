@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Eclipse, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AriaLogo from "@/assets/AriaLogo.png";
 import { Separator } from "@/components/ui/separator";
@@ -19,12 +19,15 @@ import { signOut, useSession } from "@//lib/auth-client";
 import { toast } from "sonner";
 import AccountSettingsDialog from "@/pages/Admin-Side/Auth/User-Settings/account-settings-dialog";
 import SignOutOverlayLoader from "@/components/signout-overlay-loader";
+import { authClient } from "@/lib/auth-client";
 
 const AdminPanelNavigation = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const { data: session } = useSession();
+
+  console.log("Current Session: ", session);
 
   const user = session?.user;
 
@@ -58,6 +61,59 @@ const AdminPanelNavigation = () => {
       {isSigningOut && (
         <SignOutOverlayLoader message="Hang on tight while we sign you out of your account..." />
       )}
+      {/* User Impersonation Banner */}
+      {session?.session.impersonatedBy && (
+        <div className=" bg-fountain-blue-400 text-white px-4 py-3 md:py-2">
+          <div className="flex gap-2 md:items-center">
+            <div className="flex grow gap-3 md:items-center">
+              <UserCog
+                className="shrink-0 opacity-60 max-md:mt-0.5"
+                size={16}
+                aria-hidden="true"
+              />
+              <div className="flex grow flex-col justify-between gap-3 md:flex-row md:items-center">
+                <p className="text-sm">
+                  You are currently impersonating {user?.name}
+                </p>
+                <div className="flex gap-2 max-md:flex-wrap">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="text-sm"
+                    onClick={async () => {
+                      setIsSigningOut(true);
+                      await authClient.admin.stopImpersonating();
+                      setIsSigningOut(false);
+                      toast.info("Impersonation stopped successfully");
+                      navigate("/admin/users");
+                      navigate(0);
+                    }}
+                    disabled={isSigningOut}
+                  >
+                    End Session
+                  </Button>
+                  <Button variant="link" size="sm" className="text-sm">
+                    Learn more
+                  </Button>
+                </div>
+              </div>
+            </div>
+            {/* <Button
+            variant="ghost"
+            className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
+            // onClick={() => setIsVisible(false)}
+            aria-label="Close banner"
+          >
+            <XIcon
+              size={16}
+              className="opacity-60 transition-opacity group-hover:opacity-100"
+              aria-hidden="true"
+            />
+          </Button> */}
+          </div>
+        </div>
+      )}
+      {/* Panel Header */}
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 bg-background px-4 md:px-6">
         <div className="flex items-center gap-10">
           <img src={AriaLogo} className="mx-auto" width={100} height={50} />
