@@ -142,21 +142,21 @@ const UserManagementActions = ({ row }) => {
     setIsLoading(`impersonate-${userId}`);
 
     try {
-      await authClient.admin.impersonateUser({
+      const impersonatedUser = authClient.admin.impersonateUser({
         userId: userId,
       });
-      toast.success(
-        `Impersonated ${userName}. You will be redirected to dashboard shortly`
-      );
+      toast.promise(impersonatedUser, {
+        loading: "Impersonating User...",
+        success: `Impersonated ${userName}. You will be redirected to dashboard shortly`,
+        error: `There was a problem tying to impersonate ${userName}. Please try again.`,
+      });
+
       setTimeout(() => {
         navigate("/admin/dashboard");
         navigate(0);
       }, 3000);
     } catch (error) {
       console.error(`Failed to impersonate ${userName}: `, error);
-      toast.error(
-        `There was a problem tying to impersonate ${userName}. Please try again.`
-      );
     }
   };
 
