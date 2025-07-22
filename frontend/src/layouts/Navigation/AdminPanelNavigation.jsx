@@ -42,8 +42,6 @@ const AdminPanelNavigation = () => {
 
   const { data: session } = useSession();
 
-  console.log("Current Session: ", session);
-
   const user = session?.user;
 
   const initials = user?.name

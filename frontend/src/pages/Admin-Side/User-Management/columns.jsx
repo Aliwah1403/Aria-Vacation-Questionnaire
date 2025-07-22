@@ -75,8 +75,6 @@ const UserManagementActions = ({ row }) => {
   const userName = user.name;
   const isBanned = user.banned;
 
-  console.log("User status: ", isBanned);
-
   const handleBanUser = async (e) => {
     e.preventDefault();
     setIsLoading(`ban-${banForm.userId}`);
