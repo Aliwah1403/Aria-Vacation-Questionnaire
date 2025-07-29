@@ -51,7 +51,7 @@ import {
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 
 const UserManagementActions = ({ row }) => {
   const queryClient = useQueryClient();
@@ -169,10 +169,12 @@ const UserManagementActions = ({ row }) => {
         <DropdownMenuContent align="middle">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <User2Icon className="size-4" />
-            View profile
-          </DropdownMenuItem>
+          <Link to={`/admin/users/${userId}`}>
+            <DropdownMenuItem>
+              <User2Icon className="size-4" />
+              View profile
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem onClick={() => handleImpersonateUser()}>
             <UserCog className="size-4" />
             Impersonate user

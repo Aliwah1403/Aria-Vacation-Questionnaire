@@ -42,6 +42,8 @@ const Users = () => {
     },
   });
 
+  console.log("Users data:", users);
+
   if (isUsersLoading) {
     return <LoaderComponent />;
   }

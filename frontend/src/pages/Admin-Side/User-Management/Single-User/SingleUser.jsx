@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Calendar } from "@/components/ui/calendar";
@@ -85,6 +85,7 @@ const SingleUser = () => {
   const id = useId();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { id: userId } = useParams();
 
   const [currentRole, setCurrentRole] = useState("User");
   const [pendingRole, setPendingRole] = useState("");
@@ -101,11 +102,12 @@ const SingleUser = () => {
     expirationDate: undefined,
   });
 
-  const user = id;
-  const userId = user.id;
+  const user = userId;
   const userEmail = user.email;
   const userName = user.name;
   const isBanned = user.banned;
+
+
 
   const handleBanUser = async (e) => {
     e.preventDefault();
@@ -665,7 +667,7 @@ const SingleUser = () => {
                       </Label>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-sm font-mono">
-                          user_2knq-qMJXNvAMZ
+                          {userId}
                         </span>
                         <Button
                           variant="ghost"
