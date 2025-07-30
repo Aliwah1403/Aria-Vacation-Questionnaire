@@ -125,8 +125,6 @@ const SingleUser = () => {
     },
   });
 
-  const parser = UAParser(sessions?.userAgent);
-
   const user = userData?.data;
   const userEmail = user?.email;
   const userName = user?.name;
@@ -652,56 +650,68 @@ const SingleUser = () => {
                       </Button>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <MonitorIcon className="size-5 text-gray-400" />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">
-                              {parser.device.vendor}
-                            </span>
-                            <Badge
-                              variant="secondary"
-                              className="text-xs bg-green-100 text-green-700"
-                            >
-                              Active
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-gray-500">
-                            {parser.os.name} , {parser.browser.name}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <p className="text-xs text-gray-500">
-                          {sessions?.ipAddress || "Unknown IP"} (Al Sajaah, AE)
-                        </p>
-                      </div>
+                    {sessions?.map((session) => {
+                      const parser = UAParser(session.userAgent);
 
-                      <div className="flex items-center gap-2">
-                        <div className="text-right">
-                          <p className="text-xs text-gray-500">
-                            {/* {formatDistanceToNow(
-                              new Date(sessions.updatedAt),
-                              "PPP"
-                            )} */}
-                            {/* {sessions?.updatedAt} */}
-                          </p>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontalIcon className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="text-red-500">
-                              Remove device
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
+                      const lastActive = formatRelative(
+                        session.updatedAt,
+                        new Date()
+                      );
+
+                      return (
+                        <>
+                          <div
+                            key={session.id}
+                            className="flex items-center justify-between p-3 border rounded-lg"
+                          >
+                            <div className="flex items-center gap-3">
+                              <MonitorIcon className="size-5 text-gray-400" />
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium">
+                                    {parser.device.model}
+                                  </span>
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs bg-green-100 text-green-700"
+                                  >
+                                    Active
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-gray-500">
+                                  {parser.os.name} , {parser.browser.name}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center">
+                              <p className="text-xs text-gray-500">
+                                {session.ipAddress || "N/A"}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <div className="text-right">
+                                <p className="text-xs text-gray-500">
+                                  {lastActive}
+                                </p>
+                              </div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreHorizontalIcon className="w-4 h-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem className="text-red-500">
+                                    Remove device
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })}
                   </CardContent>
                 </Card>
               </div>
