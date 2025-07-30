@@ -30,8 +30,9 @@ import {
   UserCog,
   UserLock,
 } from "lucide-react";
+import { UAParser } from "ua-parser-js";
 import { useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, formatDistanceToNow, formatRelative } from "date-fns";
 import { Link, useParams } from "react-router";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LoadingButton } from "@/components/ui/loading-button";
@@ -71,6 +72,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+
 import { toast } from "sonner";
 import {
   Popover,
@@ -80,6 +82,9 @@ import {
 import { useNavigate } from "react-router";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { userDetailsApi } from "@/api/userDetails";
+import { useQuery } from "@tanstack/react-query";
+import { LoaderComponent } from "@/components/data-loader";
 
 const SingleUser = () => {
   const id = useId();
@@ -87,8 +92,6 @@ const SingleUser = () => {
   const queryClient = useQueryClient();
   const { id: userId } = useParams();
 
-  const [currentRole, setCurrentRole] = useState("User");
-  const [pendingRole, setPendingRole] = useState("");
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'ban' or 'unban
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
@@ -102,12 +105,44 @@ const SingleUser = () => {
     expirationDate: undefined,
   });
 
-  const user = userId;
-  const userEmail = user.email;
-  const userName = user.name;
-  const isBanned = user.banned;
+  const {
+    data: userData,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["userDetails", userId],
+    queryFn: () => userDetailsApi.getDetails(userId),
+  });
 
+  const { data: sessions, isPending: isUserSessionLoading } = useQuery({
+    queryKey: ["userSessions", userId],
+    queryFn: async () => {
+      const data = await authClient.admin.listUserSessions({
+        userId: userId,
+      });
+      // console.log("User Sessions Data: ", data);
+      return data?.data?.sessions || [];
+    },
+  });
 
+  const parser = UAParser(sessions?.userAgent);
+
+  const user = userData?.data;
+  const userEmail = user?.email;
+  const userName = user?.name;
+  const userRole = user?.role;
+  const firstName = user?.name.split(" ")[0];
+  const lastName = user?.name.split(" ")[1];
+  const initials = user?.name
+    .split(" ")
+    .map((part) => part[0].toUpperCase())
+    .join("");
+  const isBanned = user?.banned;
+  const dateCreated = user?.createdAt;
+  const dateUpdated = user?.updatedAt;
+
+  // const [currentRole, setCurrentRole] = useState(userRole || "NNuance");
+  const [pendingRole, setPendingRole] = useState("");
 
   const handleBanUser = async (e) => {
     e.preventDefault();
@@ -198,7 +233,7 @@ const SingleUser = () => {
   };
 
   const confirmRoleChange = () => {
-    setCurrentRole(pendingRole);
+    // setCurrentRole(pendingRole);
     setShowRoleDialog(false);
     // Here you would typically make an API call to update the role
     console.log(`Role changed to: ${pendingRole}`);
@@ -208,6 +243,14 @@ const SingleUser = () => {
     // Here you would typically make an API call to remove all sessions
     console.log("Removing all sessions...");
   };
+
+  if (isPending) {
+    return <LoaderComponent />;
+  }
+
+  if (error) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
 
   return (
     <>
@@ -223,13 +266,13 @@ const SingleUser = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Curtis Aliwah</BreadcrumbPage>
+              <BreadcrumbPage>{userName}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
       <AdminPageHeader
-        header="Curtis Aliwah"
+        header={userName}
         description="Last active yesterday"
         action={
           <>
@@ -445,7 +488,7 @@ const SingleUser = () => {
                       <Avatar className="size-15">
                         <AvatarImage src="/placeholder.svg" />
                         <AvatarFallback className="bg-fountain-blue-500 text-white">
-                          CA
+                          {initials}
                         </AvatarFallback>
                       </Avatar>
                       {/* <div>
@@ -464,7 +507,7 @@ const SingleUser = () => {
                         <Label htmlFor="firstName">First name</Label>
                         <Input
                           id="firstName"
-                          defaultValue="Curtis"
+                          defaultValue={firstName}
                           className="mt-1"
                         />
                       </div>
@@ -472,7 +515,7 @@ const SingleUser = () => {
                         <Label htmlFor="lastName">Last name</Label>
                         <Input
                           id="lastName"
-                          defaultValue="Aliwah"
+                          defaultValue={lastName}
                           className="mt-1"
                         />
                       </div>
@@ -481,7 +524,7 @@ const SingleUser = () => {
                       <Label htmlFor="email">email</Label>
                       <Input
                         id="email"
-                        defaultValue="curtis.aliwah@ariavacationnclub.com"
+                        defaultValue={userEmail}
                         className="mt-1"
                       />
                     </div>
@@ -502,7 +545,7 @@ const SingleUser = () => {
                     <CardTitle>Role Management</CardTitle>
                     <CardDescription>
                       Current role:{" "}
-                      <span className="font-medium">{currentRole}</span>
+                      <span className="font-medium">{userRole}</span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -513,7 +556,7 @@ const SingleUser = () => {
 
                       <RadioGroup
                         className="gap-3"
-                        value={currentRole}
+                        value={userRole}
                         onValueChange={handleRoleChange}
                       >
                         {/* Radio card #1 */}
@@ -615,7 +658,7 @@ const SingleUser = () => {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">
-                              Macintosh
+                              {parser.device.vendor}
                             </span>
                             <Badge
                               variant="secondary"
@@ -624,19 +667,25 @@ const SingleUser = () => {
                               Active
                             </Badge>
                           </div>
-                          <p className="text-xs text-gray-500">Firefox 140.0</p>
+                          <p className="text-xs text-gray-500">
+                            {parser.os.name} , {parser.browser.name}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center">
                         <p className="text-xs text-gray-500">
-                          5.32.107.38 (Al Sajaah, AE)
+                          {sessions?.ipAddress || "Unknown IP"} (Al Sajaah, AE)
                         </p>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <div className="text-right">
                           <p className="text-xs text-gray-500">
-                            Today at 8:41 AM
+                            {/* {formatDistanceToNow(
+                              new Date(sessions.updatedAt),
+                              "PPP"
+                            )} */}
+                            {/* {sessions?.updatedAt} */}
                           </p>
                         </div>
                         <DropdownMenu>
@@ -666,9 +715,7 @@ const SingleUser = () => {
                         User ID
                       </Label>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm font-mono">
-                          {userId}
-                        </span>
+                        <span className="text-sm font-mono">{userId}</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -684,9 +731,7 @@ const SingleUser = () => {
                         Primary email
                       </Label>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm">
-                          curtis.aliwah@ariavacationclub.com
-                        </span>
+                        <span className="text-sm">{userEmail}</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -701,14 +746,21 @@ const SingleUser = () => {
                       <Label className="text-sm font-medium text-gray-500">
                         User since
                       </Label>
-                      <p className="text-sm mt-1">August 18, 2024</p>
+                      <p className="text-sm mt-1">
+                        {format(dateCreated, "PPP")}
+                      </p>
                     </div>
 
                     <div>
                       <Label className="text-sm font-medium text-gray-500">
                         Profile updated
                       </Label>
-                      <p className="text-sm mt-1">3d ago</p>
+                      <p className="text-sm mt-1">
+                        {formatDistanceToNow(dateUpdated, {
+                          includeSeconds: true,
+                        })}{" "}
+                        ago
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -724,7 +776,7 @@ const SingleUser = () => {
             <AlertDialogTitle>Confirm Role Change</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to change Curtis Aliwah's role from{" "}
-              <span className="font-medium">{currentRole}</span> to{" "}
+              <span className="font-medium">{userRole}</span> to{" "}
               <span className="font-medium">{pendingRole}</span>? This action
               will take effect immediately.
             </AlertDialogDescription>
