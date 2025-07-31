@@ -560,7 +560,7 @@ const SingleUser = () => {
                         {/* Radio card #1 */}
                         <div className="border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none">
                           <RadioGroupItem
-                            value="User"
+                            value="user"
                             id="user-role"
                             aria-describedby="user-role-description"
                             className="order-1 after:absolute after:inset-0"
@@ -586,7 +586,7 @@ const SingleUser = () => {
                         {/* Radio card #2 */}
                         <div className="border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none">
                           <RadioGroupItem
-                            value="Admin"
+                            value="admin"
                             id="admin-role"
                             aria-describedby="admin-role-description"
                             className="order-1 after:absolute after:inset-0"
