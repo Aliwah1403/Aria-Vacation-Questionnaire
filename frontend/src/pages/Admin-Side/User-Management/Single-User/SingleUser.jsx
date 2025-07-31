@@ -97,6 +97,7 @@ const SingleUser = () => {
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isChangingRole, setIsChangingRole] = useState(undefined);
 
   const [isLoading, setIsLoading] = useState(undefined);
   const [banForm, setBanForm] = useState({
@@ -226,15 +227,31 @@ const SingleUser = () => {
   };
 
   const handleRoleChange = (newRole) => {
-    setPendingRole(newRole);
-    setShowRoleDialog(true);
+    if (newRole !== userRole) {
+      setPendingRole(newRole);
+      setShowRoleDialog(true);
+    }
   };
 
-  const confirmRoleChange = () => {
-    // setCurrentRole(pendingRole);
-    setShowRoleDialog(false);
-    // Here you would typically make an API call to update the role
-    console.log(`Role changed to: ${pendingRole}`);
+  const confirmRoleChange = async () => {
+    setIsChangingRole(`role-${userId}`);
+
+    try {
+      await authClient.admin.setRole({
+        userId: userId,
+        role: pendingRole,
+      });
+      toast.success(
+        `${userName}'s role has been updated from ${userRole} to ${pendingRole}`
+      );
+      queryClient.invalidateQueries({ queryKey: ["userDetails", userId] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    } catch (error) {
+      console.error("Failed to update user role: ", error);
+      toast.error(`Failed to update ${userName}'s role. Please try again.`);
+    } finally {
+      setIsChangingRole(undefined);
+    }
   };
 
   const handleRemoveAllSessions = () => {
@@ -556,6 +573,7 @@ const SingleUser = () => {
                         className="gap-3"
                         value={userRole}
                         onValueChange={handleRoleChange}
+                        // disabled={isChangingRole !== `role-${userId}`}
                       >
                         {/* Radio card #1 */}
                         <div className="border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none">
@@ -563,7 +581,7 @@ const SingleUser = () => {
                             value="user"
                             id="user-role"
                             aria-describedby="user-role-description"
-                            className="order-1 after:absolute after:inset-0"
+                            className="order-1 after:absolute after:inset-0 hover:cursor-pointer"
                           />
                           <div className="grid grow gap-2">
                             <Label htmlFor="user-role">
@@ -589,7 +607,7 @@ const SingleUser = () => {
                             value="admin"
                             id="admin-role"
                             aria-describedby="admin-role-description"
-                            className="order-1 after:absolute after:inset-0"
+                            className="order-1 after:absolute after:inset-0 hover:cursor-pointer"
                           />
                           <div className="grid grow gap-2">
                             <Label htmlFor="admin-role">Admin </Label>
@@ -792,12 +810,24 @@ const SingleUser = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel
+              disabled={isChangingRole === `role-${userId}`}
+              onClick={() => {
+                setShowRoleDialog(false);
+                setPendingRole("");
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmRoleChange}
               className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+              loading={isChangingRole === `role-${userId}`}
+              disabled={isChangingRole === `role-${userId}`}
             >
-              Confirm Change
+              {isChangingRole === `role-${userId}`
+                ? "Updating..."
+                : "Confirm Change"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
