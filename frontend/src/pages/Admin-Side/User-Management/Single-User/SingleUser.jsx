@@ -99,6 +99,7 @@ const SingleUser = () => {
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [revokeAllSessionsDialogOpen, setRevokeAllSessionsDialogOpen] =
     useState(false);
+  const [revokeSessionDialogOpen, setRevokeSessionDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'ban' or 'unban
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -346,6 +347,23 @@ const SingleUser = () => {
       toast.error(`Failed to update ${userName}'s password. Please try again.`);
     } finally {
       setIsChangingPassword(false);
+    }
+  };
+
+  const handleRemoveSession = async (token) => {
+    setIsLoading(`revoke-session-${userId}`);
+    try {
+      await authClient.admin.revokeUserSession({
+        sessionToken: token,
+      });
+      queryClient.invalidateQueries({ queryKey: ["userSessions", userId] });
+      toast.success(`Successfully revoked one session for ${userName}`);
+    } catch (error) {
+      console.log("Failed to revoke this session: ", error);
+      toast.error("Failed to revoke this session. Please try again.");
+    } finally {
+      setIsLoading(undefined);
+      setRevokeSessionDialogOpen(false);
     }
   };
 
@@ -855,18 +873,53 @@ const SingleUser = () => {
                                   {lastActive}
                                 </p>
                               </div>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger>
-                                  <Button variant="ghost" size="sm">
-                                    <MoreHorizontalIcon className="w-4 h-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem className="text-red-500">
-                                    Remove device
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                              <Dialog>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger>
+                                    <Button variant="ghost" size="sm">
+                                      <MoreHorizontalIcon className="w-4 h-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DialogTrigger asChild>
+                                      <DropdownMenuItem className="text-red-500">
+                                        Remove device
+                                      </DropdownMenuItem>
+                                    </DialogTrigger>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Revoke User Session
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      Are you sure you want to revoke this user
+                                      session?
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <DialogFooter>
+                                    <DialogClose asChild>
+                                      <Button variant="outline">Cancel</Button>
+                                    </DialogClose>
+                                    <LoadingButton
+                                      type="submit"
+                                      variant="destructive"
+                                      onClick={() =>
+                                        handleRemoveSession(session.token)
+                                      }
+                                      loading={
+                                        isLoading === `revoke-session-${userId}`
+                                      }
+                                      disabled={
+                                        isLoading === `revoke-session-${userId}`
+                                      }
+                                    >
+                                      Remove Device
+                                    </LoadingButton>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
                             </div>
                           </div>
                         </>
