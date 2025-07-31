@@ -97,6 +97,8 @@ const SingleUser = () => {
 
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [revokeAllSessionsDialogOpen, setRevokeAllSessionsDialogOpen] =
+    useState(false);
   const [dialogType, setDialogType] = useState(null); // 'delete' or 'ban' or 'unban
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -347,9 +349,21 @@ const SingleUser = () => {
     }
   };
 
-  const handleRemoveAllSessions = () => {
-    // Here you would typically make an API call to remove all sessions
-    console.log("Removing all sessions...");
+  const handleRemoveAllSessions = async () => {
+    setIsLoading(`revoke-sessions-${userId}`);
+    try {
+      await authClient.admin.revokeUserSessions({
+        userId: userId,
+      });
+      queryClient.invalidateQueries({ queryKey: ["userSessions", userId] });
+      toast.success(`Successfully revoked all sessions for ${userName}`);
+    } catch (error) {
+      console.error("Failed to revoke all sessions: ", error);
+      toast.error("Failed to revoke all sessions. Please try again.");
+    } finally {
+      setIsLoading(undefined);
+      setRevokeAllSessionsDialogOpen(false);
+    }
   };
 
   if (isPending) {
@@ -753,14 +767,47 @@ const SingleUser = () => {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium">Devices</h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleRemoveAllSessions}
-                        className="text-red-600 border-red-200 hover:bg-red-50 bg-transparent"
+                      <Dialog
+                        open={revokeAllSessionsDialogOpen}
+                        onOpenChange={setRevokeAllSessionsDialogOpen}
                       >
-                        Remove all devices
-                      </Button>
+                        <DialogTrigger>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 border-red-200 hover:bg-red-50 bg-transparent"
+                          >
+                            Remove all devices
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Revoke Sessions</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to revoke these user
+                              sessions?
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <LoadingButton
+                              type="submit"
+                              variant="destructive"
+                              onClick={handleRemoveAllSessions}
+                              loading={
+                                isLoading === `revoke-sessions-${userId}`
+                              }
+                              disabled={
+                                isLoading === `revoke-sessions-${userId}`
+                              }
+                            >
+                              Remove Devices
+                            </LoadingButton>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
 
                     {sessions?.map((session) => {
