@@ -88,6 +88,7 @@ import { cn } from "@/lib/utils";
 import { userDetailsApi } from "@/api/userDetails";
 import { useQuery } from "@tanstack/react-query";
 import { LoaderComponent } from "@/components/data-loader";
+import CopyInput from "@/components/copy-input";
 
 const SingleUser = () => {
   const id = useId();
@@ -939,14 +940,15 @@ const SingleUser = () => {
                         User ID
                       </Label>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm font-mono">{userId}</span>
-                        <Button
+                        {/* <span className="text-sm font-mono">{userId}</span> */}
+                        <CopyInput value={userId} />
+                        {/* <Button
                           variant="ghost"
                           size="sm"
                           className="h-6 w-6 p-0"
                         >
                           <CopyIcon className="w-3 h-3" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
 
@@ -955,14 +957,15 @@ const SingleUser = () => {
                         Primary email
                       </Label>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm">{userEmail}</span>
-                        <Button
+                        <CopyInput value={userEmail} className="w-full" />
+                        {/* <span className="text-sm">{userEmail}</span> */}
+                        {/* <Button
                           variant="ghost"
                           size="sm"
                           className="h-6 w-6 p-0"
                         >
                           <CopyIcon className="w-3 h-3" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
 
