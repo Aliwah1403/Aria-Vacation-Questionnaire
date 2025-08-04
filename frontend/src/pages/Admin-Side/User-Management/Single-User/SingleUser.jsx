@@ -233,6 +233,7 @@ const SingleUser = () => {
       });
       toast.success(`${userName}'s account deleted successfully.`);
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      // navigate to admin/users
     } catch (error) {
       console.error("Failed to delete user: ", error);
       toast.error(
@@ -414,7 +415,7 @@ const SingleUser = () => {
       </div>
       <AdminPageHeader
         header={userName}
-        description="Last active yesterday"
+        // description="Last active yesterday"
         action={
           <>
             <DropdownMenu>
