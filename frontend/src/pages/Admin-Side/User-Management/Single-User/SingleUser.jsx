@@ -794,6 +794,7 @@ const SingleUser = () => {
                             variant="outline"
                             size="sm"
                             className="text-red-600 border-red-200 hover:bg-red-50 bg-transparent"
+                            disabled={sessions?.length === 0}
                           >
                             Remove all devices
                           </Button>
