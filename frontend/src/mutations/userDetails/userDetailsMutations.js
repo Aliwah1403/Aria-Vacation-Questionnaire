@@ -5,10 +5,10 @@ export const useUpdateUserDetails = (userId) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, ...data }) =>
-      userDetailsApi.updateDetails(userId, data),
+    mutationFn: (userData) => userDetailsApi.updateDetails(userId, userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userDetails", userId] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
       console.error("Failed to update user details: ", error);

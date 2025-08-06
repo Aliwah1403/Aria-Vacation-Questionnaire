@@ -1,4 +1,4 @@
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
 import AdminPageHeader from "@/components/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,6 +98,18 @@ const SingleUser = () => {
   const { id: userId } = useParams();
   const userUpdateMutation = useUpdateUserDetails(userId);
 
+  // Form state for user details
+  const [userForm, setUserForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
+  const [originalUserForm, setOriginalUserForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
+
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [revokeAllSessionsDialogOpen, setRevokeAllSessionsDialogOpen] =
@@ -172,17 +184,64 @@ const SingleUser = () => {
   const userEmail = user?.email;
   const userName = user?.name;
   const userRole = user?.role;
-  const firstName = user?.name.split(" ")[0];
-  const lastName = user?.name.split(" ")[1];
+  const firstName = user?.name?.split(" ")[0] || "";
+  const lastName = user?.name?.split(" ")[1] || "";
   const initials = user?.name
-    .split(" ")
-    .map((part) => part[0].toUpperCase())
+    ?.split(" ")
+    .map((part) => part[0]?.toUpperCase())
     .join("");
   const isBanned = user?.banned;
   const dateCreated = user?.createdAt;
   const dateUpdated = user?.updatedAt;
 
-  // const [currentRole, setCurrentRole] = useState(userRole || "NNuance");
+  // Initialize form when user data is loaded
+  useEffect(() => {
+    if (user) {
+      const formData = {
+        firstName: firstName,
+        lastName: lastName,
+        email: userEmail,
+      };
+      setUserForm(formData);
+      setOriginalUserForm(formData);
+    }
+  }, [user, firstName, lastName, userEmail]);
+
+  // Check if form has changes
+  const hasFormChanges = () => {
+    return (
+      userForm.firstName !== originalUserForm.firstName ||
+      userForm.lastName !== originalUserForm.lastName ||
+      userForm.email !== originalUserForm.email
+    );
+  };
+
+  const handleUserFormChange = (field, value) => {
+    setUserForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleUserDetailsSubmit = async (e) => {
+    e.preventDefault();
+
+    // Combine firstName and lastName into name
+    const updateData = {
+      name: `${userForm.firstName.trim()} ${userForm.lastName.trim()}`.trim(),
+      email: userForm.email.trim(),
+    };
+
+    try {
+      await userUpdateMutation.mutateAsync(updateData);
+      toast.success(`User's details updated successfully`);
+      setOriginalUserForm(userForm);
+    } catch (error) {
+      toast.error(`User's details could not be updated. Please try again.`);
+      console.error("Error updating user details:", error);
+    }
+  };
+
   const [pendingRole, setPendingRole] = useState("");
 
   const handleBanUser = async (e) => {
@@ -387,8 +446,6 @@ const SingleUser = () => {
       setRevokeAllSessionsDialogOpen(false);
     }
   };
-
-  const handleUserUpdate = () => {}
 
   if (isPending) {
     return <LoaderComponent />;
@@ -624,65 +681,75 @@ const SingleUser = () => {
               <div className="lg:col-span-2 space-y-8">
                 {/* Personal Information */}
                 <Card>
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-medium mb-6">
-                      Personal Information
-                    </h3>
+                  <form onSubmit={handleUserDetailsSubmit}>
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-medium mb-6">
+                        Personal Information
+                      </h3>
 
-                    {/* Avatar Section */}
-                    <div className="flex items-center gap-4 mb-6">
-                      <Avatar className="size-15">
-                        <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback className="bg-fountain-blue-500 text-white">
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      {/* <div>
-                        <Button variant="outline" size="sm">
-                          Add avatar
-                        </Button>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Recommend size 1:1, up to 2mb
-                        </p>
-                      </div> */}
-                    </div>
+                      {/* Avatar Section */}
+                      <div className="flex items-center gap-4 mb-6">
+                        <Avatar className="size-15">
+                          <AvatarImage src="/placeholder.svg" />
+                          <AvatarFallback className="bg-fountain-blue-500 text-white">
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
 
-                    {/* Name Fields */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                      {/* Name Fields */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                          <Label htmlFor="firstName">First name</Label>
+                          <Input
+                            id="firstName"
+                            value={userForm.firstName}
+                            onChange={(e) =>
+                              handleUserFormChange("firstName", e.target.value)
+                            }
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="lastName">Last name</Label>
+                          <Input
+                            id="lastName"
+                            value={userForm.lastName}
+                            onChange={(e) =>
+                              handleUserFormChange("lastName", e.target.value)
+                            }
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
                       <div>
-                        <Label htmlFor="firstName">First name</Label>
+                        <Label htmlFor="email">Email</Label>
                         <Input
-                          id="firstName"
-                          defaultValue={firstName}
+                          id="email"
+                          type="email"
+                          value={userForm.email}
+                          onChange={(e) =>
+                            handleUserFormChange("email", e.target.value)
+                          }
                           className="mt-1"
                         />
                       </div>
-                      <div>
-                        <Label htmlFor="lastName">Last name</Label>
-                        <Input
-                          id="lastName"
-                          defaultValue={lastName}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="email">email</Label>
-                      <Input
-                        id="email"
-                        defaultValue={userEmail}
-                        className="mt-1"
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter className="justify-end">
-                    <Button
-                      className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
-                      disabled
-                    >
-                      Save Changes
-                    </Button>
-                  </CardFooter>
+                    </CardContent>
+                    <CardFooter className="justify-end">
+                      <LoadingButton
+                        type="submit"
+                        className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                        disabled={
+                          !hasFormChanges() || userUpdateMutation.isPending
+                        }
+                        loading={userUpdateMutation.isPending}
+                      >
+                        {userUpdateMutation.isPending
+                          ? "Saving..."
+                          : "Save Changes"}
+                      </LoadingButton>
+                    </CardFooter>
+                  </form>
                 </Card>
 
                 {/* Role Management */}
@@ -1008,7 +1075,7 @@ const SingleUser = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Role Change</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to change Curtis Aliwah's role from{" "}
+              Are you sure you want to change {userName}'s role from{" "}
               <span className="font-medium">{userRole}</span> to{" "}
               <span className="font-medium">{pendingRole}</span>? This action
               will take effect immediately.
