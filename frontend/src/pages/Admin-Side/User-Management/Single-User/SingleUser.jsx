@@ -462,11 +462,15 @@ const SingleUser = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/dashboard">Home</BreadcrumbLink>
+              <Link to={"/admin/dashboard"}>
+                <BreadcrumbLink>Home</BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/users">Users</BreadcrumbLink>
+              <Link to={"/admin/users"}>
+                <BreadcrumbLink>Users</BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
