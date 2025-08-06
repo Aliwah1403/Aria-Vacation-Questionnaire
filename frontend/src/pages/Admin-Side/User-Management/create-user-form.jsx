@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { Eye, EyeOff } from "lucide-react";
+
 import { authClient } from "@/lib/auth-client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -50,6 +52,7 @@ const userCreateSchema = z.object({
 
 export default function CreateUserForm({ setCreateUserDialog }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const queryClient = useQueryClient();
   const newUserForm = useForm({
     resolver: zodResolver(userCreateSchema),
@@ -154,11 +157,24 @@ export default function CreateUserForm({ setCreateUserDialog }) {
                         <Input
                           key="password"
                           placeholder="*********"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           id="password"
                           className=" "
                           {...field}
                         />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-auto p-1"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                     </FormControl>
                     <FormMessage />
