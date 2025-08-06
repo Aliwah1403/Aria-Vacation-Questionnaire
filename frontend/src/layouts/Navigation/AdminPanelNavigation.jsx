@@ -42,7 +42,11 @@ const AdminPanelNavigation = () => {
 
   const { data: session } = useSession();
 
+  console.log("Session data:", session);
+
   const user = session?.user;
+
+  const userRole = user?.role || "user";
 
   const initials = user?.name
     .split(" ")
@@ -297,34 +301,38 @@ const AdminPanelNavigation = () => {
                   Questionnaires
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to="/admin/questionnaire-setup"
-                  className={({ isActive }) =>
-                    `text-sm font-medium ${
-                      isActive
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-primary/80"
-                    }`
-                  }
-                >
-                  Setup
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/admin/users"
-                  className={({ isActive }) =>
-                    `text-sm font-medium ${
-                      isActive
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-primary/80"
-                    }`
-                  }
-                >
-                  Users
-                </NavLink>
-              </li>
+              {userRole === "admin" && (
+                <li>
+                  <NavLink
+                    to="/admin/questionnaire-setup"
+                    className={({ isActive }) =>
+                      `text-sm font-medium ${
+                        isActive
+                          ? "text-primary"
+                          : "text-muted-foreground hover:text-primary/80"
+                      }`
+                    }
+                  >
+                    Setup
+                  </NavLink>
+                </li>
+              )}
+              {userRole === "admin" && (
+                <li>
+                  <NavLink
+                    to="/admin/users"
+                    className={({ isActive }) =>
+                      `text-sm font-medium ${
+                        isActive
+                          ? "text-primary"
+                          : "text-muted-foreground hover:text-primary/80"
+                      }`
+                    }
+                  >
+                    Users
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </nav>
         </div>
