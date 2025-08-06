@@ -35,7 +35,7 @@ import {
 import { UAParser } from "ua-parser-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow, formatRelative } from "date-fns";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useNavigate } from "react-router";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Calendar } from "@/components/ui/calendar";
@@ -82,7 +82,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useNavigate } from "react-router";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { userDetailsApi } from "@/api/userDetails";
@@ -294,7 +293,9 @@ const SingleUser = () => {
       });
       toast.success(`${userName}'s account deleted successfully.`);
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      // navigate to admin/users
+      setTimeout(() => {
+        navigate("/admin/users");
+      }, 3000);
     } catch (error) {
       console.error("Failed to delete user: ", error);
       toast.error(
