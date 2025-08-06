@@ -89,12 +89,14 @@ import { userDetailsApi } from "@/api/userDetails";
 import { useQuery } from "@tanstack/react-query";
 import { LoaderComponent } from "@/components/data-loader";
 import CopyInput from "@/components/copy-input";
+import { useUpdateUserDetails } from "@/mutations/userDetails/userDetailsMutations";
 
 const SingleUser = () => {
   const id = useId();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id: userId } = useParams();
+  const userUpdateMutation = useUpdateUserDetails(userId);
 
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -385,6 +387,8 @@ const SingleUser = () => {
       setRevokeAllSessionsDialogOpen(false);
     }
   };
+
+  const handleUserUpdate = () => {}
 
   if (isPending) {
     return <LoaderComponent />;
