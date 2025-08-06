@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 
@@ -41,8 +39,6 @@ const AdminPanelNavigation = () => {
   const [hasShownCritical, setHasShownCritical] = useState(false);
 
   const { data: session } = useSession();
-
-  console.log("Session data:", session);
 
   const user = session?.user;
 
