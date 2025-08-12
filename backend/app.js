@@ -15,6 +15,7 @@ import { auth } from "./lib/auth.js";
 import { setSentryUserContext } from "./middleware/sentry-context.js";
 
 import * as Sentry from "@sentry/node";
+import usersRouter from "./routes/users.routes.js";
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use("/api/v1/form-template", formTemplateRouter);
 app.use("/api/v1/form-submission", formSubmissionRouter);
 app.use("/api/v1/email-template", emailTemplateRouter);
 app.use("/api/v1/email-send", emailRouter);
+app.use("/api/v1/users", usersRouter);
 
 Sentry.setupExpressErrorHandler(app);
 

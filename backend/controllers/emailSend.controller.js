@@ -36,3 +36,26 @@ export const sendFeedbackEmail = async (req, res) => {
     });
   }
 };
+
+export const sendTestMail = async (req, res) => {
+  try {
+    const { recepientEmail, subject, contentType, rawContent } = req.body;
+
+    await sendMail({
+      to: recepientEmail,
+      subject,
+      [contentType === "html" ? "html" : "text"]: rawContent,
+    });
+    res.status(200).json({
+      success: true,
+      message: "Test email sent successfully",
+    });
+  } catch (error) {
+    console.error("Error sending test email: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error sending test mail",
+      error: error.message,
+    });
+  }
+};

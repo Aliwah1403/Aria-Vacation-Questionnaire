@@ -67,9 +67,9 @@ export function VariableSelector({ variables, onSelectVariable }) {
           </Button>
         ))}
       </div>
-      <p className="text-xs text-gray-500 mt-2">
+      {/* <p className="text-xs text-gray-500 mt-2">
         Variables will be replaced with actual values when the email is sent.
-      </p>
+      </p> */}
     </div>
   );
 }

@@ -1,8 +1,13 @@
 import { Router } from "express";
-import { sendFeedbackEmail } from "../controllers/emailSend.controller.js";
+import {
+  sendFeedbackEmail,
+  sendTestMail,
+} from "../controllers/emailSend.controller.js";
 
 const emailRouter = Router();
 
-emailRouter.post("/send-feedback", sendFeedbackEmail);
+emailRouter
+  .post("/send-feedback", sendFeedbackEmail)
+  .post("/send-test-email", sendTestMail);
 
 export default emailRouter;

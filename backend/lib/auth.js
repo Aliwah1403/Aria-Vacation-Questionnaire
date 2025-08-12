@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { admin } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 // import connectToDb from "../database/mongoDb.js";
 import { MongoClient } from "mongodb";
@@ -28,10 +29,17 @@ setInterval(cleanupExpiredSessions, 24 * 60 * 60 * 1000);
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-  // trustedOrigins: [FRONTEND_URL],
   trustedOrigins: [FRONTEND_URL, BACKEND_URL],
   basePath: "/api/auth",
   disabledPaths: ["/api/auth/sign-up"],
+  plugins: [
+    admin({
+      defaultRole: "user",
+      adminRoles: ["admin", "superadmin"],
+      bannedUserMessage:
+        "You have been blocked from using this application. Please contact admin if you believe this to be an error",
+    }),
+  ],
   session: {
     expiresIn: 60 * 60 * 24 * 3, // 3 days
   },

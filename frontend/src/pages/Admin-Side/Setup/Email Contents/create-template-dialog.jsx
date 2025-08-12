@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -38,6 +37,8 @@ import {
 import { useCreateEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
 import { useUpdateEmailTemplate } from "@/mutations/emailTemplate/emailTemplateMutations";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { emailSendApi } from "@/api/emailSend";
+import { useSession } from "@/lib/auth-client";
 
 // Available variables
 const availableVariables = [
@@ -92,9 +93,11 @@ const CreateEmailDialog = ({
   onOpenChange,
 }) => {
   const [contentType, setContentType] = useState("text");
+  const [isTestEmailLoading, setIsTestEmailLoading] = useState(false);
   const createMutation = useCreateEmailTemplate();
   const updateMutation = useUpdateEmailTemplate();
   const isEditing = !!initialData;
+  const { data: session } = useSession();
 
   const textareaRef = useRef(null);
   const htmlEditorRef = useRef(null);
@@ -214,6 +217,58 @@ const CreateEmailDialog = ({
     }
   };
 
+  const handleSendTestEmail = async () => {
+    const formData = form.getValues();
+
+    // Validate form data before sending test email
+    const validationResult = formSchema.safeParse(formData);
+    if (!validationResult.success) {
+      toast.error(
+        "Please fill in all required fields before sending test email"
+      );
+      return;
+    }
+
+    // Get the current user's email from session
+    const userEmail = session?.user?.email;
+    if (!userEmail) {
+      toast.error("Unable to get your email address. Please try again.");
+      return;
+    }
+
+    // Check if content is not empty
+    const content =
+      formData.contentType === "text"
+        ? formData.textContent
+        : formData.htmlContent;
+    if (!content || content.trim() === "") {
+      toast.error(
+        "Please add some content to your email before sending a test."
+      );
+      return;
+    }
+
+    const testEmailData = {
+      recepientEmail: userEmail,
+      subject: formData.emailSubject,
+      contentType: formData.contentType,
+      rawContent: content,
+    };
+
+    setIsTestEmailLoading(true);
+    try {
+      await emailSendApi.sendTestEmail(testEmailData);
+      toast.success(
+        `Test email sent successfully to ${userEmail}! Check your inbox.`
+      );
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      toast.error("Failed to send test email. Please try again.");
+    } finally {
+      setIsTestEmailLoading(false);
+    }
+  };
+
   // Update Dialog component to handle close properly
   return (
     <Dialog
@@ -231,7 +286,11 @@ const CreateEmailDialog = ({
           Create New Email Template
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent
+        className="sm:max-w-[800px]"
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>
             {initialData ? "Edit Email Template" : "Create Email Template"}
@@ -375,10 +434,11 @@ const CreateEmailDialog = ({
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
+                className="justify-start"
                 onClick={() => {
                   resetForm();
                   onOpenChange(false);
@@ -387,19 +447,43 @@ const CreateEmailDialog = ({
               >
                 Cancel
               </Button>
-              <LoadingButton
-                type="submit"
-                loading={createMutation.isPending || updateMutation.isPending}
-                className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
-              >
-                {createMutation.isPending || updateMutation.isPending
-                  ? initialData
-                    ? "Updating..."
-                    : "Creating..."
-                  : initialData
-                  ? "Update Template"
-                  : "Create Template"}
-              </LoadingButton>
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center justify-center gap-2">
+                  <LoadingButton
+                    type="button"
+                    variant="secondary"
+                    loading={isTestEmailLoading}
+                    disabled={
+                      createMutation.isPending ||
+                      updateMutation.isPending ||
+                      isTestEmailLoading
+                    }
+                    onClick={handleSendTestEmail}
+                  >
+                    {isTestEmailLoading ? "Sending..." : "Send Test Mail"}
+                  </LoadingButton>
+                  <LoadingButton
+                    type="submit"
+                    loading={
+                      createMutation.isPending || updateMutation.isPending
+                    }
+                    className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80"
+                  >
+                    {createMutation.isPending || updateMutation.isPending
+                      ? initialData
+                        ? "Updating..."
+                        : "Creating..."
+                      : initialData
+                      ? "Update Template"
+                      : "Create Template"}
+                  </LoadingButton>
+                </div>
+                {session?.user?.email && (
+                  <p className="text-xs text-muted-foreground">
+                    Test email will be sent to: {session.user.email}
+                  </p>
+                )}
+              </div>
             </DialogFooter>
           </form>
         </Form>
