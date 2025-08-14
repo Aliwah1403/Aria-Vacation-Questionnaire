@@ -22,6 +22,12 @@ const emailTemplateSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    // Email language
+    language: {
+      type: String,
+      enum: ["en", "ar", "fr", "ru"],
+      required: true,
+    },
     contentType: {
       type: String,
       enum: ["text", "html"],
@@ -40,15 +46,6 @@ const emailTemplateSchema = new mongoose.Schema(
         return this.contentType === "html";
       },
     },
-    //   emailContent: {
-    //     type: String,
-    //     required: true,
-    //     trim: true,
-    //   },
-    //   isHtml: {
-    //     type: Boolean,
-    //     default: false,
-    //   },
 
     variables: [
       {

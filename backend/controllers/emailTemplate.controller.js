@@ -7,6 +7,7 @@ export const addEmailTemplate = async (req, res) => {
       formCode,
       emailTemplateName,
       emailSubject,
+      language,
       contentType,
       textContent,
       htmlContent,
@@ -51,6 +52,7 @@ export const addEmailTemplate = async (req, res) => {
       formTypeName: formType.formName,
       emailTemplateName,
       emailSubject,
+      language,
       contentType,
       textContent: contentType === "text" ? textContent : undefined,
       htmlContent: contentType === "html" ? htmlContent : undefined,
@@ -117,6 +119,7 @@ export const updateEmailTemplate = async (req, res) => {
     const {
       emailTemplateName,
       emailSubject,
+      language,
       contentType,
       textContent,
       htmlContent,
@@ -168,6 +171,7 @@ export const updateEmailTemplate = async (req, res) => {
     const updateData = {};
     if (emailTemplateName) updateData.emailTemplateName = emailTemplateName;
     if (emailSubject) updateData.emailSubject = emailSubject;
+    if (language) updateData.language = language;
     if (contentType) {
       updateData.contentType = contentType;
       // Reset content fields based on new content type
