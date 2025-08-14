@@ -202,7 +202,7 @@ const MultiStepQuestionnaireForm = ({
   };
 
   // Fetching email templates based on form template chosen
-  const { data: emailTemplateData } = useQuery({
+  const { data: emailTemplateData, isPaused: emailTemplateLoading } = useQuery({
     queryKey: [
       "emailTemplates",
       questionnaireTypeForm.watch("formTemplateId"),
@@ -616,52 +616,56 @@ const MultiStepQuestionnaireForm = ({
                           placeholder="Search email template..."
                           className="h-9"
                         />
-                        <CommandList>
-                          <CommandEmpty>
-                            {questionnaireTypeForm.watch("formTemplateId") ? (
-                              <div className="flex flex-col gap-2 p-2">
-                                <span>
-                                  No email templates found for this language.
-                                </span>
-                                <Button
-                                  size="sm"
-                                  className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    navigate("/admin/questionnaire-setup");
-                                    setStayDetailsDialog(false);
-                                  }}
+                        {emailTemplateLoading ? (
+                          <div>Loading....</div>
+                        ) : (
+                          <CommandList>
+                            <CommandEmpty>
+                              {questionnaireTypeForm.watch("formTemplateId") ? (
+                                <div className="flex flex-col gap-2 p-2">
+                                  <span>
+                                    No email templates found for this language.
+                                  </span>
+                                  <Button
+                                    size="sm"
+                                    className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      navigate("/admin/questionnaire-setup");
+                                      setStayDetailsDialog(false);
+                                    }}
+                                  >
+                                    Create new template
+                                    <PlusCircleIcon className="size-4 ml-2" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <span>Please select a form template first</span>
+                              )}
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {emailTemplateData?.map((template) => (
+                                <CommandItem
+                                  value={template._id}
+                                  key={template.emailTemplateName}
+                                  onSelect={() =>
+                                    handleTemplateSelect(template._id)
+                                  }
                                 >
-                                  Create new template
-                                  <PlusCircleIcon className="size-4 ml-2" />
-                                </Button>
-                              </div>
-                            ) : (
-                              <span>Please select a form template first</span>
-                            )}
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {emailTemplateData?.map((template) => (
-                              <CommandItem
-                                value={template._id}
-                                key={template.emailTemplateName}
-                                onSelect={() =>
-                                  handleTemplateSelect(template._id)
-                                }
-                              >
-                                {template.emailTemplateName}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    template._id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
+                                  {template.emailTemplateName}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      template._id === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        )}
                       </Command>
                     </PopoverContent>
                   </Popover>
