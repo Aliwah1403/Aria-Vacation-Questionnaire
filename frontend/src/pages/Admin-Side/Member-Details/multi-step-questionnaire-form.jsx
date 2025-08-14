@@ -60,18 +60,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { emailSendApi } from "@/api/emailSend";
 
-const emailTemplates = [
-  { label: "Tester Survey Email Template", value: "tester-survey" },
-  { label: "Post Feedback Request", value: "post-feedback" },
-  { label: "Pre-Arrival Feedback Request", value: "pre-arrival" },
-  { label: "Post-Departure Feedback Request", value: "post-departure" },
-  { label: "Post-Stay Feedback Request", value: "post-stay" },
-  { label: "Pre-Stay Feedback Request", value: "pre-stay" },
-  { label: "Pre-Check-In Feedback Request", value: "pre-check-in" },
-  { label: "Post-Check-Out Feedback Request", value: "post-check-out" },
-  { label: "Pre-Check-Out Feedback Request", value: "pre-check-out" },
-];
-
 // Form schemas
 const stayDetailsSchema = z.object({
   memberId: z.string().min(1, "Member ID is required"),
@@ -215,17 +203,31 @@ const MultiStepQuestionnaireForm = ({
 
   // Fetching email templates based on form template chosen
   const { data: emailTemplateData } = useQuery({
-    queryKey: ["emailTemplates", questionnaireTypeForm.watch("formTemplateId")],
+    queryKey: [
+      "emailTemplates",
+      questionnaireTypeForm.watch("formTemplateId"),
+      questionnaireTypeForm.watch("language"),
+    ],
     queryFn: async () => {
       const selectedTemplate = validFormTemplates.find(
         (t) => t._id === questionnaireTypeForm.watch("formTemplateId")
       );
       if (!selectedTemplate?.formTypeId?.formCode) return [];
-      return emailTemplateApi.getByFormType(
+
+      const templates = await emailTemplateApi.getByFormType(
         selectedTemplate.formTypeId.formCode
       );
+
+      // Filter templates by selected language
+      const selectedLanguage = questionnaireTypeForm.watch("language");
+      return templates.filter(
+        (template) => template.language === selectedLanguage
+      );
     },
-    enabled: !!questionnaireTypeForm.watch("formTemplateId"),
+    enabled: !!(
+      questionnaireTypeForm.watch("formTemplateId") &&
+      questionnaireTypeForm.watch("language")
+    ),
   });
 
   // Send email
@@ -616,19 +618,27 @@ const MultiStepQuestionnaireForm = ({
                         />
                         <CommandList>
                           <CommandEmpty>
-                            <span>No email template found.</span>
-                            <Button
-                              size="sm"
-                              className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigate("/admin/questionnaire-setup");
-                                setStayDetailsDialog(false);
-                              }}
-                            >
-                              Create new template
-                              <PlusCircleIcon className="size-4" />
-                            </Button>
+                            {questionnaireTypeForm.watch("formTemplateId") ? (
+                              <div className="flex flex-col gap-2 p-2">
+                                <span>
+                                  No email templates found for this language.
+                                </span>
+                                <Button
+                                  size="sm"
+                                  className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate("/admin/questionnaire-setup");
+                                    setStayDetailsDialog(false);
+                                  }}
+                                >
+                                  Create new template
+                                  <PlusCircleIcon className="size-4 ml-2" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <span>Please select a form template first</span>
+                            )}
                           </CommandEmpty>
                           <CommandGroup>
                             {emailTemplateData?.map((template) => (
@@ -797,7 +807,7 @@ const MultiStepQuestionnaireForm = ({
             <div className="space-x-2">
               <LoadingButton
                 loading={loading}
-                disabled={loading} 
+                disabled={loading}
                 type="button"
                 variant="outline"
                 onClick={() => handleEmailSend()}
