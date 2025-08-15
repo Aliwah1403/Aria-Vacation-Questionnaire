@@ -202,18 +202,32 @@ const MultiStepQuestionnaireForm = ({
   };
 
   // Fetching email templates based on form template chosen
-  const { data: emailTemplateData } = useQuery({
-    queryKey: ["emailTemplates", questionnaireTypeForm.watch("formTemplateId")],
+  const { data: emailTemplateData, isPaused: emailTemplateLoading } = useQuery({
+    queryKey: [
+      "emailTemplates",
+      questionnaireTypeForm.watch("formTemplateId"),
+      questionnaireTypeForm.watch("language"),
+    ],
     queryFn: async () => {
       const selectedTemplate = validFormTemplates.find(
         (t) => t._id === questionnaireTypeForm.watch("formTemplateId")
       );
       if (!selectedTemplate?.formTypeId?.formCode) return [];
-      return emailTemplateApi.getByFormType(
+
+      const templates = await emailTemplateApi.getByFormType(
         selectedTemplate.formTypeId.formCode
       );
+
+      // Filter templates by selected language
+      const selectedLanguage = questionnaireTypeForm.watch("language");
+      return templates.filter(
+        (template) => template.language === selectedLanguage
+      );
     },
-    enabled: !!questionnaireTypeForm.watch("formTemplateId"),
+    enabled: !!(
+      questionnaireTypeForm.watch("formTemplateId") &&
+      questionnaireTypeForm.watch("language")
+    ),
   });
 
   // Send email
@@ -602,44 +616,56 @@ const MultiStepQuestionnaireForm = ({
                           placeholder="Search email template..."
                           className="h-9"
                         />
-                        <CommandList>
-                          <CommandEmpty>
-                            <span>No email template found.</span>
-                            <Button
-                              size="sm"
-                              className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigate("/admin/questionnaire-setup");
-                                setStayDetailsDialog(false);
-                              }}
-                            >
-                              Create new template
-                              <PlusCircleIcon className="size-4" />
-                            </Button>
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {emailTemplateData?.map((template) => (
-                              <CommandItem
-                                value={template._id}
-                                key={template.emailTemplateName}
-                                onSelect={() =>
-                                  handleTemplateSelect(template._id)
-                                }
-                              >
-                                {template.emailTemplateName}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    template._id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
+                        {emailTemplateLoading ? (
+                          <div>Loading....</div>
+                        ) : (
+                          <CommandList>
+                            <CommandEmpty>
+                              {questionnaireTypeForm.watch("formTemplateId") ? (
+                                <div className="flex flex-col gap-2 p-2">
+                                  <span>
+                                    No email templates found for this language.
+                                  </span>
+                                  <Button
+                                    size="sm"
+                                    className="bg-fountain-blue-400 hover:bg-fountain-blue-400/80 cursor-pointer"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      navigate("/admin/questionnaire-setup");
+                                      setStayDetailsDialog(false);
+                                    }}
+                                  >
+                                    Create new template
+                                    <PlusCircleIcon className="size-4 ml-2" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <span>Please select a form template first</span>
+                              )}
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {emailTemplateData?.map((template) => (
+                                <CommandItem
+                                  value={template._id}
+                                  key={template.emailTemplateName}
+                                  onSelect={() =>
+                                    handleTemplateSelect(template._id)
+                                  }
+                                >
+                                  {template.emailTemplateName}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      template._id === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        )}
                       </Command>
                     </PopoverContent>
                   </Popover>

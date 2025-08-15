@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -57,8 +58,15 @@ const formSchema = z
       required_error: "Please select a form type",
     }),
     templateName: z.string().min(1, "Template name is required"),
+    templateLanguage: z.enum(["en", "ar", "fr", "ru"]),
     emailSubject: z.string().min(1, "Email subject is required"),
-    contentType: z.enum(["text", "html"]),
+    contentType: z.enum(["text", "html"], {
+      errorMap: (issue, ctx) => {
+        if (issue.code === "invalid_enum_value ") {
+          return { message: "Please select a language" };
+        }
+      },
+    }),
     textContent: z.string().optional(),
     htmlContent: z.string().optional(),
   })
@@ -80,6 +88,7 @@ const formSchema = z
 const defaultValues = {
   formType: "",
   templateName: "",
+  templateLanguage: "",
   emailSubject: "",
   contentType: "text",
   textContent: "",
@@ -122,6 +131,7 @@ const CreateEmailDialog = ({
       form.reset({
         formType: initialData.formCode || "",
         templateName: initialData.emailTemplateName || "",
+        templateLanguage: initialData.language || "en",
         emailSubject: initialData.emailSubject || "",
         contentType: initialData.contentType || "text",
         textContent: initialData.textContent || "",
@@ -192,6 +202,7 @@ const CreateEmailDialog = ({
     const templateData = {
       formCode: data.formType,
       emailTemplateName: data.templateName,
+      language: data.templateLanguage,
       emailSubject: data.emailSubject,
       contentType: data.contentType,
       textContent: data.contentType === "text" ? data.textContent : undefined,
@@ -206,7 +217,7 @@ const CreateEmailDialog = ({
         initialData ? { id: initialData._id, ...templateData } : templateData
       );
       onOpenChange(false);
-      resetForm(); // Use the new reset function
+      resetForm();
       toast.success(
         `Email template ${initialData ? "updated" : "created"} successfully`
       );
@@ -349,6 +360,33 @@ const CreateEmailDialog = ({
                     </FormControl>
                     <FormMessage />
                   </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="templateLanguage"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormLabel className="text-right">Form Language</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl className="col-span-3">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="ar">Arabic</SelectItem>
+                      <SelectItem value="fr">French</SelectItem>
+                      <SelectItem value="ru">Russian</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
                 </FormItem>
               )}
             />
