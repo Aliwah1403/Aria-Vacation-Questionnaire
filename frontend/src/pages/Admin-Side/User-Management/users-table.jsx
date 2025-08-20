@@ -54,6 +54,7 @@ import {
   XCircle,
   Search,
   FileQuestion,
+  User2,
 } from "lucide-react";
 import {
   Pagination,
@@ -62,6 +63,14 @@ import {
 } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/empty-state";
 import { useId, useState, useRef, Fragment } from "react";
+
+const globalUserFilter = (row, columnId, filterValue) => {
+  const { name = "", email = "" } = row.original;
+  const search = filterValue?.toLowerCase() || "";
+  return (
+    name.toLowerCase().includes(search) || email.toLowerCase().includes(search)
+  );
+};
 
 export const UserManagementTable = ({ columns, data }) => {
   const tableId = useId();
@@ -86,6 +95,7 @@ export const UserManagementTable = ({ columns, data }) => {
       columnFilters,
       globalFilter,
     },
+    globalFilterFn: globalUserFilter,
     pageCount: Math.ceil(data.length / pagination.pageSize),
     onPaginationChange: setPagination,
     onColumnFiltersChange: setColumnFilters,
@@ -105,7 +115,7 @@ export const UserManagementTable = ({ columns, data }) => {
         {/* Filters */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Filter by Name or MemberId */}
+            {/* Filter by Name or Email */}
             <div className="relative">
               <Input
                 id={`${tableId}-input`}
@@ -116,9 +126,9 @@ export const UserManagementTable = ({ columns, data }) => {
                 )}
                 value={globalFilter ?? ""}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                placeholder="Filter by Name, Email or Member ID..."
+                placeholder="Filter by Name or Email"
                 type="text"
-                aria-label="Filter by Name, Email or Member ID"
+                aria-label="Filter by Name or Email "
               />
               <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
                 <ListFilterIcon size={16} aria-hidden="true" />
@@ -177,7 +187,7 @@ export const UserManagementTable = ({ columns, data }) => {
                         </TableCell>
                       ))}
                     </TableRow>
-                    {row.getIsExpanded() && (
+                    {/* {row.getIsExpanded() && (
                       <TableRow>
                         <TableCell colSpan={row.getVisibleCells().length}>
                           <div className="space-y-4 py-2">
@@ -233,16 +243,16 @@ export const UserManagementTable = ({ columns, data }) => {
                           </div>
                         </TableCell>
                       </TableRow>
-                    )}
+                    )} */}
                   </Fragment>
                 ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length}>
                     <EmptyState
-                      title="No Responses Found"
-                      description="Try adjusting your filters or wait for some responses from members."
-                      icons={[Search, FileQuestion]}
+                      title="No Users Found"
+                      description="Try creating some new users or adjusting your filters."
+                      icons={[User2, FileQuestion]}
                     />
                   </TableCell>
                 </TableRow>
