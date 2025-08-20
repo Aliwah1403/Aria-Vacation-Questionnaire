@@ -21,6 +21,52 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+
+const TableActions = ({ row }) => {
+  const status = row.getValue("status");
+  const language = row.original.language;
+  const url = import.meta.env.VITE_URL;
+  const feedbackId = row.original._id;
+  const feedbackLink = `${url}/${feedbackId}/?lng=${language}`;
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(feedbackLink);
+      toast.success("Link copied to clipboard!");
+    } catch (error) {
+      toast.error("Failed to copy link. Please try again.");
+      console.error("Failed to copy Feedback link:", error);
+    }
+  };
+
+  if (status != "completed") {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <EllipsisIcon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="middle">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem onClick={() => copyToClipboard()}>
+            <Clipboard className="size-4" />
+            Copy Link
+          </DropdownMenuItem>
+
+          {/* <DropdownMenuItem>
+                <PencilIcon className="size-4" />
+                Edit stay details
+              </DropdownMenuItem> */}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+};
 
 export const overviewColumns = [
   {
@@ -161,40 +207,6 @@ export const overviewColumns = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const status = row.getValue("status");
-      const language = row.original.language;
-      const url = import.meta.env.VITE_URL;
-      const feedbackId = row.original._id;
-      const feedbackLink = `${url}/${feedbackId}/?lng=${language}`;
-      if (status != "completed") {
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <EllipsisIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="middle">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-              <DropdownMenuSeparator />
-
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(feedbackLink)}
-              >
-                <Clipboard className="size-4" />
-                Copy Link
-              </DropdownMenuItem>
-
-              {/* <DropdownMenuItem>
-                <PencilIcon className="size-4" />
-                Edit stay details
-              </DropdownMenuItem> */}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      }
-    },
+    cell: ({ row }) => <TableActions row={row} />,
   },
 ];
