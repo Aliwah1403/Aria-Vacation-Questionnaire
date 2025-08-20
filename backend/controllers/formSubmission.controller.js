@@ -13,7 +13,7 @@ export const addFormSubmission = async (req, res) => {
       unitNo,
       checkIn,
       checkOut,
-      language = "en",
+      language,
     } = req.body;
 
     // Validate if form template exists
@@ -42,6 +42,7 @@ export const addFormSubmission = async (req, res) => {
       unitNo,
       checkIn: new Date(checkIn),
       checkOut: new Date(checkOut),
+      language: language || "en",
       status: "pending",
       sentAt: new Date(),
       responses, // Pre-filled with questions
