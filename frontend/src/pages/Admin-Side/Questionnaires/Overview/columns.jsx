@@ -11,6 +11,7 @@ import {
   BellRingIcon,
   LoaderIcon,
   Star,
+  Clipboard,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -158,36 +159,42 @@ export const overviewColumns = [
       );
     },
   },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => {
-  //     const status = row.getValue("status");
-  //     if (status != "completed") {
-  //       return (
-  //         <DropdownMenu>
-  //           <DropdownMenuTrigger asChild>
-  //             <Button variant="ghost" className="h-8 w-8 p-0">
-  //               <EllipsisIcon className="h-4 w-4" />
-  //             </Button>
-  //           </DropdownMenuTrigger>
-  //           <DropdownMenuContent align="middle">
-  //             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const status = row.getValue("status");
+      const language = row.getValue("language");
+      const url = import.meta.env.VITE_URL;
+      const feedbackId = row.original._id;
+      const feedbackLink = `${url}/${feedbackId}/?lng=${language}`;
+      if (status != "completed") {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <EllipsisIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="middle">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-  //             <DropdownMenuSeparator />
+              <DropdownMenuSeparator />
 
-  //             <DropdownMenuItem>
-  //               <BellRingIcon className="size-4" />
-  //               Send Reminder
-  //             </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(feedbackLink)}
+              >
+                <Clipboard className="size-4" />
+                Copy Link
+              </DropdownMenuItem>
 
-  //             <DropdownMenuItem>
-  //               <PencilIcon className="size-4" />
-  //               Edit stay details
-  //             </DropdownMenuItem>
-  //           </DropdownMenuContent>
-  //         </DropdownMenu>
-  //       );
-  //     }
-  //   },
-  // },
+              {/* <DropdownMenuItem>
+                <PencilIcon className="size-4" />
+                Edit stay details
+              </DropdownMenuItem> */}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      }
+    },
+  },
 ];
