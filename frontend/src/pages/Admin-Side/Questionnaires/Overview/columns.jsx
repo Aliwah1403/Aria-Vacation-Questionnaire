@@ -163,7 +163,7 @@ export const overviewColumns = [
     id: "actions",
     cell: ({ row }) => {
       const status = row.getValue("status");
-      const language = row.getValue("language");
+      const language = row.original.language;
       const url = import.meta.env.VITE_URL;
       const feedbackId = row.original._id;
       const feedbackLink = `${url}/${feedbackId}/?lng=${language}`;
