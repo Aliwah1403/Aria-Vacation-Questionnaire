@@ -107,7 +107,7 @@ export const overviewColumns = [
   },
   {
     accessorKey: "memberId",
-    header: "Member ID",
+    header: "Member Name ID",
     filterFn: multiColumnFilterFn,
   },
   {

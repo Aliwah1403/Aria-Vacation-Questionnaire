@@ -338,9 +338,9 @@ const MultiStepQuestionnaireForm = ({
               name="memberId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Member ID</FormLabel>
+                  <FormLabel>Member Name ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter member ID" {...field} />
+                    <Input placeholder="Enter member's name ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
