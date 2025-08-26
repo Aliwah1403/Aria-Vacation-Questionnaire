@@ -225,10 +225,10 @@ export const getAllFormSubmissions = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching form submissions:", error);
+    console.error("Error fetching all submissions:", error);
     res.status(500).json({
       success: false,
-      message: "Error fetching form submissions",
+      message: "Error fetching all submissions",
       error: error.message,
     });
   }

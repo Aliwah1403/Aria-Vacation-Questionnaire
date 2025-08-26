@@ -55,6 +55,13 @@ const MemberHomepage = () => {
       formData.message?.toLowerCase().includes("already completed")) ||
     formData?.data?.status === "completed";
 
+  // Check if monngo id is valid
+  const linkNotValid =
+    formData &&
+    formData.success === false &&
+    formData.message &&
+    formData.message?.toLowerCase().includes("error fetching form submission");
+
   // Determine the reason for unavailability
   const getUnavailableReason = () => {
     if (!formData || !formData.message) return "url-error";
@@ -115,7 +122,7 @@ const MemberHomepage = () => {
     );
   }
 
-  if (isNotAvailable) {
+  if (isNotAvailable || linkNotValid) {
     return (
       <FormUnavailable
         title={"Form Not Available"}

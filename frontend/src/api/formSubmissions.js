@@ -28,6 +28,9 @@ export const formSubmissionApi = {
       if (error.response?.status === 404) {
         return error.response.data;
       }
+      if (error.response?.status === 500) {
+        return error.response.data;
+      }
       throw error; // Re-throw other errors
     }
   },
