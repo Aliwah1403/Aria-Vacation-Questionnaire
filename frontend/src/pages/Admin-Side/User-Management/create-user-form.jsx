@@ -70,12 +70,16 @@ export default function CreateUserForm({ setCreateUserDialog }) {
     try {
       const name =
         `${values.firstName.trim()} ${values.lastName.trim()}`.trim();
-      await authClient.admin.createUser({
-        name,
-        email: values.email,
-        password: values.password,
-        role: values.role,
-      });
+      await authClient.admin.createUser(
+        {
+          name,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+        },
+        { throw: true }
+      );
+
       toast.success("User created successfully");
       setCreateUserDialog(false);
       newUserForm.reset();

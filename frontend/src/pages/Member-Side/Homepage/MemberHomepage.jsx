@@ -39,8 +39,6 @@ const MemberHomepage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  console.log("Form Details: ", formData);
-
   // Check if form is not available in the DB
   const isNotAvailable =
     formData &&
